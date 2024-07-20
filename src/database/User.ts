@@ -5,14 +5,12 @@ import {
   InferAttributes,
   CreationOptional,
 } from "sequelize";
-import { sequelize } from "./index";
+import { sequelize } from "./sequelize";
 import { createHash } from "crypto";
 import "server-only";
+import Assigned from "./Assigned";
 
-export class User extends Model<
-  InferAttributes<User>,
-  InferCreationAttributes<User>
-> {
+class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   public declare id: CreationOptional<number>;
   public declare email: string;
   public declare firstName: string;
@@ -41,10 +39,10 @@ User.init(
   },
   {
     sequelize,
-    modelName: "user",
+    tableName: "users",
   },
 );
 
-(async () => {
-  await sequelize.sync();
-})();
+
+
+export default User;
