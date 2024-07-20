@@ -1,7 +1,6 @@
-import { Sequelize } from "sequelize";
 import "server-only";
+import User from "./User";
+import Assigned from "./Assigned";
+import "./relations.ts";
 
-export const sequelize = new Sequelize({
-  dialect: "sqlite",
-  storage: "database.sqlite",
-});
+export { User, Assigned };
