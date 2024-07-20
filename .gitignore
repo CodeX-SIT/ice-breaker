@@ -37,3 +37,14 @@ next-env.d.ts
 
 # Lock files
 yarn.lock
+bun.lockb
+package-lock.json
+
+# Env
+.env
+
+# VSCode
+.vscode/settings.json
+
+#SQLite
+*.sqlite
