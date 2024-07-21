@@ -1,7 +1,15 @@
+import { User } from "@/database";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
-  console.log(request);
+export async function POST(request: NextRequest) {
+  const { firstName, lastName, email, password } = await request.json();
+  const user = new User({
+    firstName,
+    lastName,
+    email,
+    password,
+  });
+  await user.save();
 
-  return new NextResponse("Hello, world!");
+  return NextResponse.redirect(new URL("/", request.url).toString());
 }
