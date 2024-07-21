@@ -17,24 +17,23 @@ class Assigned extends Model<
   public declare id: CreationOptional<number>;
   public declare userId: ForeignKey<number>;
   public declare assignedUserId: ForeignKey<number>;
-  public declare completedAt: Date;
+  public declare completedAt: Date | null;
   public declare assignedAt: Date;
   public declare isCompleted: boolean;
-  // public declare isSkipped: boolean;
+  // public declare selfie: Buffer | null;
 }
 
 Assigned.init(
   {
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-    userId: { type: DataTypes.INTEGER, allowNull: false },
-    assignedUserId: { type: DataTypes.INTEGER, allowNull: false },
     assignedAt: { type: DataTypes.DATE, allowNull: false },
-    completedAt: { type: DataTypes.DATE, allowNull: true },
+    completedAt: { type: DataTypes.DATE },
     isCompleted: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false,
     },
+    // selfie: { type: DataTypes.BLOB("medium") },
     // isSkipped: {
     //   type: DataTypes.BOOLEAN,
     //   allowNull: false,
@@ -43,7 +42,5 @@ Assigned.init(
   },
   { sequelize, tableName: "assigned" },
 );
-
-
 
 export default Assigned;
