@@ -62,7 +62,7 @@ export default async function createUser(
 
   if (foundUser) {
     return {
-      status: 400,
+      status: 409,
       body: {
         message: "User already exists",
         errors: [],
