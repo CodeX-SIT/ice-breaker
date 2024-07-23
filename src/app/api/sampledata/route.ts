@@ -1,0 +1,10 @@
+import generateSampleData from "@/database/sampleData/sampleData";
+import { NextRequest, NextResponse } from "next/server";
+
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const force = searchParams.get("force") === "true";
+  await generateSampleData({ force });
+
+  return new NextResponse("Sample data generated");
+}
