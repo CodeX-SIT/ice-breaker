@@ -4,6 +4,7 @@ import {
   InferCreationAttributes,
   InferAttributes,
   CreationOptional,
+  NonAttribute,
 } from "sequelize";
 import { sequelize } from "./sequelize";
 import { createHash } from "crypto";
@@ -16,6 +17,9 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   public declare firstName: string;
   public declare lastName: string;
   public declare password: string;
+  public get token(): NonAttribute<string> {
+    return this.password;
+  }
   // public get name() {
   //   return `${this.firstName} ${this.lastName}`;
   // }
@@ -24,7 +28,7 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
 User.init(
   {
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-    email: DataTypes.STRING,
+    email: { type: DataTypes.STRING, unique: true },
     lastName: DataTypes.STRING,
     firstName: DataTypes.STRING,
     password: {
@@ -32,7 +36,9 @@ User.init(
       set(val: string) {
         this.setDataValue(
           "password",
-          createHash("sha256").update(val).digest("hex"),
+          createHash("sha256")
+            .update(val + this.email)
+            .digest("hex"),
         );
       },
     },
@@ -42,7 +48,5 @@ User.init(
     tableName: "users",
   },
 );
-
-
 
 export default User;
