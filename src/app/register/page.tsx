@@ -16,6 +16,7 @@ import NavBar from "@/components/NavBar";
 import createUser from "@/actions/createUser";
 import { UserCreateResponse } from "@/actions/UserCreateResponse";
 import InvalidRegister from "@/components/Snackbars/InvalidRegister";
+import { redirect, useRouter } from "next/navigation";
 
 const initialState: UserCreateResponse = {
   status: 0,
@@ -29,6 +30,8 @@ export default function RegisterPage() {
   const [state, formAction] = useFormState(createUser, initialState);
   const [open, setOpen] = useState(false);
 
+  const router = useRouter();
+
   const closeSnackbar = () => {
     setTimeout(() => {
       setOpen(false);
@@ -40,6 +43,12 @@ export default function RegisterPage() {
     } else if (state.status === 400) {
       setOpen(true);
       closeSnackbar();
+    } else if (state.status === 409) {
+      setOpen(true);
+      closeSnackbar();
+      setTimeout(() => {
+        router.push("/login");
+      }, 3000);
     }
   }, [state]);
 
