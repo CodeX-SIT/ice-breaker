@@ -1,52 +1,48 @@
 "use client";
 
-import NavBar from "@/components/NavBar";
-import Avatar from "@mui/material/Avatar";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
 import { useEffect, useState } from "react";
-import { useFormStatus } from "react-dom";
+import { useFormState } from "react-dom";
+import {
+  Avatar,
+  Box,
+  Button,
+  TextField,
+  Grid,
+  Paper,
+  Typography,
+} from "@mui/material";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import NavBar from "@/components/NavBar";
 import createUser from "@/actions/createUser";
+import { UserCreateResponse } from "@/actions/UserCreateResponse";
+import InvalidRegister from "@/components/Snackbars/InvalidRegister";
+
+const initialState: UserCreateResponse = {
+  status: 0,
+  body: {
+    message: "",
+    errors: [],
+  },
+};
 
 export default function RegisterPage() {
-  const [fname, setFname] = useState("");
-  const [lname, setLname] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordVerify, setPasswordVerify] = useState("");
-  const { pending: formPending } = useFormStatus();
+  const [state, formAction] = useFormState(createUser, initialState);
+  const [open, setOpen] = useState(false);
 
-  const [allowSubmit, setAllowSubmit] = useState(false);
+  const closeSnackbar = () => {
+    setTimeout(() => {
+      setOpen(false);
+    }, 3000);
+  };
 
   useEffect(() => {
-    if (
-      fname &&
-      lname &&
-      email &&
-      password &&
-      passwordVerify &&
-      password === passwordVerify
-    ) {
-      setAllowSubmit(true);
-    } else {
-      setAllowSubmit(false);
+    if (state.status === 201) {
+    } else if (state.status === 400) {
+      setOpen(true);
+      closeSnackbar();
     }
-  }, [fname, lname, email, password, passwordVerify]);
+  }, [state]);
 
-  const handleSubmit = (data: FormData) => {
-    fetch("/api/register", {
-      method: "POST",
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    });
-  };
   return (
     <main>
       <NavBar />
@@ -75,7 +71,7 @@ export default function RegisterPage() {
             </Typography>
             <form
               className="m-4 flex flex-col items-center"
-              action={createUser}
+              action={formAction}
             >
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
@@ -87,7 +83,6 @@ export default function RegisterPage() {
                     name="firstName"
                     autoComplete="given-name"
                     autoFocus
-                    onChange={(e) => setFname(e.target.value)}
                     color="primary"
                   />
                 </Grid>
@@ -99,7 +94,6 @@ export default function RegisterPage() {
                     label="Last Name"
                     name="lastName"
                     autoComplete="family-name"
-                    onChange={(e) => setLname(e.target.value)}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -110,7 +104,6 @@ export default function RegisterPage() {
                     label="Email Address"
                     name="email"
                     autoComplete="email"
-                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -122,7 +115,6 @@ export default function RegisterPage() {
                     name="password"
                     type="password"
                     autoComplete="new-password"
-                    onChange={(e) => setPassword(e.target.value)}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -134,7 +126,6 @@ export default function RegisterPage() {
                     name="passwordVerify"
                     type="password"
                     autoComplete="new-password"
-                    onChange={(e) => setPasswordVerify(e.target.value)}
                   />
                 </Grid>
               </Grid>
@@ -142,14 +133,14 @@ export default function RegisterPage() {
                 type="submit"
                 fullWidth
                 variant="contained"
-                disabled={!allowSubmit || formPending}
                 sx={{ mt: 3, mb: 2, width: "50%" }}
               >
-                {formPending ? "Loading..." : "Sign Up"}
+                <Typography>Sign Up</Typography>
               </Button>
             </form>
           </Paper>
         </Box>
+        <InvalidRegister open={open} userCreateResponse={state} />
       </section>
     </main>
   );
