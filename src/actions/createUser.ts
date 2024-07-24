@@ -41,8 +41,6 @@ export default async function createUser(
   }
 
   const emailDomain = result.data.email.split("@")[1].trim();
-  console.log(emailDomain);
-  console.log(emailDomain === "sitpune.edu.in");
 
   if (!(emailDomain === "sitpune.edu.in")) {
     return {
