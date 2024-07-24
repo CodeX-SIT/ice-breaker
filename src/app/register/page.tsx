@@ -1,22 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useFormState } from "react-dom";
-import {
-  Avatar,
-  Box,
-  Button,
-  TextField,
-  Grid,
-  Paper,
-  Typography,
-} from "@mui/material";
+import { Avatar, Box, Paper, Typography } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import NavBar from "@/components/NavBar";
-import createUser from "@/actions/createUser";
 import { UserCreateResponse } from "@/actions/UserCreateResponse";
-import InvalidRegister from "@/components/Snackbars/InvalidRegister";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { SessionProvider, useSession } from "next-auth/react";
 
 const initialState: UserCreateResponse = {
   status: 0,
@@ -27,30 +17,24 @@ const initialState: UserCreateResponse = {
 };
 
 export default function RegisterPage() {
-  const [state, formAction] = useFormState(createUser, initialState);
-  const [open, setOpen] = useState(false);
+  console.log(process.env);
+  return (
+    <SessionProvider>
+      <_RegisterPage />
+    </SessionProvider>
+  );
+}
 
+function _RegisterPage() {
+  const { data: session } = useSession();
+  
   const router = useRouter();
 
-  const closeSnackbar = () => {
-    setTimeout(() => {
-      setOpen(false);
-    }, 3000);
-  };
+  if (session) {
+    router.push("/");
+  }
 
-  useEffect(() => {
-    if (state.status === 201) {
-    } else if (state.status === 400) {
-      setOpen(true);
-      closeSnackbar();
-    } else if (state.status === 409) {
-      setOpen(true);
-      closeSnackbar();
-      setTimeout(() => {
-        router.push("/login");
-      }, 3000);
-    }
-  }, [state]);
+  useEffect(() => {}, []);
 
   return (
     <main>
@@ -78,78 +62,8 @@ export default function RegisterPage() {
             <Typography component="h1" variant="h5">
               Sign up
             </Typography>
-            <form
-              className="m-4 flex flex-col items-center"
-              action={formAction}
-            >
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="firstName"
-                    label="First Name"
-                    name="firstName"
-                    autoComplete="given-name"
-                    autoFocus
-                    color="primary"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="lastName"
-                    label="Last Name"
-                    name="lastName"
-                    autoComplete="family-name"
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="email"
-                    label="Email Address"
-                    name="email"
-                    autoComplete="email"
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="password"
-                    label="Password"
-                    name="password"
-                    type="password"
-                    autoComplete="new-password"
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="passwordVerify"
-                    label="Confirm Password"
-                    name="passwordVerify"
-                    type="password"
-                    autoComplete="new-password"
-                  />
-                </Grid>
-              </Grid>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2, width: "50%" }}
-              >
-                <Typography>Sign Up</Typography>
-              </Button>
-            </form>
           </Paper>
         </Box>
-        <InvalidRegister open={open} userCreateResponse={state} />
       </section>
     </main>
   );

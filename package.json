@@ -17,6 +17,7 @@
     "@mui/material-nextjs": "^5.16.4",
     "mysql2": "^3.10.3",
     "next": "14.2.5",
+    "next-auth": "^4.24.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "sequelize": "6.37.3",
@@ -27,6 +28,7 @@
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
     "@types/node": "^20.14.11",
+    "@types/nodemailer": "^6.4.15",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "eslint": "^8.57.0",
