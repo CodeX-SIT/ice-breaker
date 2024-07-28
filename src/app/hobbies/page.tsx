@@ -23,107 +23,121 @@ const HobbiesPage = () => {
 
   return (
     <main>
-      <NavBar />
-      <Container>
-        <Box
-          sx={{
-            marginTop: 8,
-            width: "80%",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Paper
+      <section className="flex h-screen w-screen justify-center items-center">
+        <NavBar />
+        <Container>
+          <Box
             sx={{
+              marginTop: 8,
+              width: "80%",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
+              position: "relative",
+              minHeight: "100vh",
+              paddingTop: "64px",
+              paddingBottom: "64px",
+              overflow: "hidden",
             }}
           >
-            <Typography component="h1" variant="h5">
-              Hobbies Page
-            </Typography>
-            <form className="m-4 flex flex-col items-center">
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="name"
-                    label="Name"
-                    name="name"
-                    autoComplete="name"
-                    autoFocus
-                    color="primary"
-                  />
+            <Paper
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                position: "relative",
+                overflow: "auto",
+                maxHeight: "calc(100vh - 64px)",
+              }}
+            >
+              <Typography component="h1" variant="h5">
+                Hobbies Page
+              </Typography>
+              <form className="m-4 flex flex-col items-center">
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      fullWidth
+                      id="name"
+                      label="Name"
+                      name="name"
+                      autoComplete="name"
+                      autoFocus
+                      color="primary"
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      fullWidth
+                      id="dateOfBirth"
+                      label="Date of Birth"
+                      name="dateOfBirth"
+                      type="date"
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      fullWidth
+                      id="hobbies"
+                      label="Hobbies"
+                      name="hobbies"
+                      autoComplete="off"
+                      multiline
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      fullWidth
+                      id="guiltyPleasures"
+                      label="Guilty Pleasures"
+                      name="guiltyPleasures"
+                      autoComplete="off"
+                      multiline
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      fullWidth
+                      id="favoriteMovies"
+                      label="Favorite Movies"
+                      name="favoriteMovies"
+                      autoComplete="off"
+                      multiline
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      fullWidth
+                      id="favoriteMusicians"
+                      label="Favorite Musicians"
+                      name="favoriteMusicians"
+                      autoComplete="off"
+                      multiline
+                    />
+                  </Grid>
                 </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="dateOfBirth"
-                    label="Date of Birth"
-                    name="dateOfBirth"
-                    type="date"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="hobbies"
-                    label="Hobbies"
-                    name="hobbies"
-                    autoComplete="off"
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="guiltyPleasures"
-                    label="Guilty Pleasures"
-                    name="guiltyPleasures"
-                    autoComplete="off"
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="favoriteMovies"
-                    label="Favorite Movies"
-                    name="favoriteMovies"
-                    autoComplete="off"
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="favoriteMusicians"
-                    label="Favorite Musicians"
-                    name="favoriteMusicians"
-                    autoComplete="off"
-                  />
-                </Grid>
-              </Grid>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2, width: "50%" }}
-              >
-                <Typography>Submit</Typography>
-              </Button>
-            </form>
-          </Paper>
-        </Box>
-      </Container>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2, width: "50%" }}
+                >
+                  <Typography>Submit</Typography>
+                </Button>
+              </form>
+            </Paper>
+          </Box>
+        </Container>
+      </section>
     </main>
   );
 };
