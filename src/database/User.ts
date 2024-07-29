@@ -12,36 +12,20 @@ import "server-only";
 import Assigned from "./Assigned";
 
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
-  public declare id: CreationOptional<number>;
+  public declare id: string;
   public declare email: string;
-  public declare firstName: string;
-  public declare lastName: string;
-  public declare password: string;
-  public get token(): NonAttribute<string> {
-    return this.password;
-  }
-  // public get name() {
-  //   return `${this.firstName} ${this.lastName}`;
-  // }
+  public declare emailVerified: Date | null;
+  public declare image: string | null;
+  public declare name: string | null;
 }
 
 User.init(
   {
-    id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+    id: { type: DataTypes.STRING, primaryKey: true },
     email: { type: DataTypes.STRING, unique: true },
-    lastName: DataTypes.STRING,
-    firstName: DataTypes.STRING,
-    password: {
-      type: DataTypes.STRING,
-      set(val: string) {
-        this.setDataValue(
-          "password",
-          createHash("sha256")
-            .update(val + this.email)
-            .digest("hex"),
-        );
-      },
-    },
+    emailVerified: { type: DataTypes.DATE, allowNull: true },
+    image: { type: DataTypes.STRING, allowNull: true },
+    name: { type: DataTypes.STRING, allowNull: true },
   },
   {
     sequelize,
