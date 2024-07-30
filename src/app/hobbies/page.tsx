@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Button,
@@ -11,20 +11,35 @@ import {
   styled,
 } from "@mui/material";
 import NavBar from "@/components/NavBar";
+import hobbySubmit, { HobbySubmitReturnType } from "@/actions/hobbySubmit";
+import { useFormState } from "react-dom";
+import InvalidHobbies from "@/components/Snackbars/InvalidHobbies";
+import { useRouter } from "next/navigation";
 
 const HobbiesPage = () => {
-  const Container = styled("div")(({ theme }) => ({
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh",
-    backgroundColor: theme.palette.background.default,
-  }));
+  const [state, formAction] = useFormState(hobbySubmit, {
+    error: "defaultError",
+    success: false,
+  } as HobbySubmitReturnType);
+  const [open, setOpen] = React.useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (state.error === "defaultError") return;
+    setOpen(true);
+    setTimeout(() => {
+      setOpen(false);
+    }, 3000);
+    setTimeout(() => {
+      router.push("/");
+    }, 4000);
+  }, [state]);
 
   return (
     <main>
       <NavBar />
-      <Container>
+      <section className="flex h-screen w-screen justify-center items-center">
+        {/* <Container> */}
         <Box
           sx={{
             marginTop: 8,
@@ -39,12 +54,17 @@ const HobbiesPage = () => {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
+              overflow: "auto",
+              maxHeight: "80vh",
             }}
           >
-            <Typography component="h1" variant="h5">
+            <Typography component="h1" variant="h5" sx={{ marginTop: 2 }}>
               Hobbies Page
             </Typography>
-            <form className="m-4 flex flex-col items-center">
+            <form
+              className="m-4 flex flex-col items-center"
+              action={formAction}
+            >
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <TextField
@@ -79,6 +99,7 @@ const HobbiesPage = () => {
                     label="Hobbies"
                     name="hobbies"
                     autoComplete="off"
+                    multiline
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -89,6 +110,7 @@ const HobbiesPage = () => {
                     label="Guilty Pleasures"
                     name="guiltyPleasures"
                     autoComplete="off"
+                    multiline
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -99,6 +121,7 @@ const HobbiesPage = () => {
                     label="Favorite Movies"
                     name="favoriteMovies"
                     autoComplete="off"
+                    multiline
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -109,6 +132,7 @@ const HobbiesPage = () => {
                     label="Favorite Musicians"
                     name="favoriteMusicians"
                     autoComplete="off"
+                    multiline
                   />
                 </Grid>
               </Grid>
@@ -123,7 +147,9 @@ const HobbiesPage = () => {
             </form>
           </Paper>
         </Box>
-      </Container>
+        <InvalidHobbies open={open} hobbySubmitResponse={state} />
+        {/* </Container> */}
+      </section>
     </main>
   );
 };
