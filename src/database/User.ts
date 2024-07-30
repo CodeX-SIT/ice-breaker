@@ -1,52 +1,54 @@
-import {
-  Model,
-  DataTypes,
-  InferCreationAttributes,
-  InferAttributes,
-  CreationOptional,
-  NonAttribute,
-} from "sequelize";
-import { sequelize } from "./sequelize";
-import { createHash } from "crypto";
 import "server-only";
-import Assigned from "./Assigned";
+import { Model, DataTypes } from "sequelize";
+import { sequelize } from "./sequelize";
+import { AdapterUser } from "next-auth/adapters";
 
-class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
-  public declare id: CreationOptional<number>;
+// class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
+//   public declare id: string;
+//   public declare email: string;
+//   public declare emailVerified: Date | null;
+//   public declare image: string | null;
+//   public declare name: string | null;
+// }
+
+// User.init(
+//   {
+//     id: { type: DataTypes.STRING, primaryKey: true },
+//     email: { type: DataTypes.STRING, unique: true },
+//     emailVerified: { type: DataTypes.DATE, allowNull: true },
+//     image: { type: DataTypes.STRING, allowNull: true },
+//     name: { type: DataTypes.STRING, allowNull: true },
+//   },
+//   {
+//     sequelize,
+//     tableName: "users",
+//   },
+// );
+
+// export default User;
+
+export class User extends Model<AdapterUser, Partial<AdapterUser>> {
+  public declare id: string;
   public declare email: string;
-  public declare firstName: string;
-  public declare lastName: string;
-  public declare password: string;
-  public get token(): NonAttribute<string> {
-    return this.password;
-  }
-  // public get name() {
-  //   return `${this.firstName} ${this.lastName}`;
-  // }
+  public declare emailVerified: Date | null;
+  public declare image: string | null;
+  public declare name: string | null;
 }
 
 User.init(
   {
-    id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-    email: { type: DataTypes.STRING, unique: true },
-    lastName: DataTypes.STRING,
-    firstName: DataTypes.STRING,
-    password: {
-      type: DataTypes.STRING,
-      set(val: string) {
-        this.setDataValue(
-          "password",
-          createHash("sha256")
-            .update(val + this.email)
-            .digest("hex"),
-        );
-      },
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
     },
+    name: { type: DataTypes.STRING },
+    email: { type: DataTypes.STRING, unique: "email" },
+    emailVerified: { type: DataTypes.DATE },
+    image: { type: DataTypes.STRING },
   },
   {
     sequelize,
     tableName: "users",
   },
 );
-
-export default User;

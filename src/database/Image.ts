@@ -7,7 +7,7 @@ import {
 } from "sequelize";
 import { sequelize } from "./sequelize";
 
-class Image extends Model<
+export class Image extends Model<
   InferAttributes<Image>,
   InferCreationAttributes<Image>
 > {
