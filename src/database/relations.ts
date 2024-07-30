@@ -2,6 +2,7 @@ import { User } from "./User";
 import { Assigned } from "./Assigned";
 import { Hobby } from "./Hobby";
 import { sequelize } from "./sequelize";
+import { GameCode } from "./GameCode";
 
 // This user is supposed to find ...
 User.hasMany(Assigned, { as: "AssignedUsers", foreignKey: "userId" });
@@ -14,5 +15,8 @@ Assigned.belongsTo(User, { as: "AssignedUser", foreignKey: "assignedUserId" });
 
 User.hasMany(Hobby, { as: "Hobbies", foreignKey: "userId" });
 Hobby.belongsTo(User, { as: "User", foreignKey: "userId" });
+
+GameCode.hasMany(User);
+User.belongsTo(GameCode, { as: "GameCode", foreignKey: "gameCode" });
 
 // sequelize.sync({ force: true });
