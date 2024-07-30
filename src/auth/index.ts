@@ -1,5 +1,8 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import Sequelize, { AccountInstance } from "./adapter";
+import { sequelize, User, Account } from "@/database";
+import { ModelStatic } from "sequelize";
 
 if (!process.env.GOOGLE_CLIENT_ID) {
   throw new Error("GOOGLE_CLIENT_ID is not set");
@@ -19,4 +22,10 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
+  adapter: Sequelize(sequelize, {
+    models: {
+      User: User,
+    },
+    synchronize: true,
+  }),
 });
