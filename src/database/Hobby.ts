@@ -1,3 +1,4 @@
+import "server-only";
 import { sequelize } from "./sequelize";
 import {
   Model,
@@ -7,9 +8,8 @@ import {
   CreationOptional,
   ForeignKey,
 } from "sequelize";
-import "server-only";
 
-class Hobby extends Model<
+export class Hobby extends Model<
   InferAttributes<Hobby>,
   InferCreationAttributes<Hobby>
 > {
@@ -25,5 +25,3 @@ Hobby.init(
   },
   { sequelize, tableName: "hobbies" },
 );
-
-export default Hobby;

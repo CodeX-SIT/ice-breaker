@@ -1,3 +1,4 @@
+import "server-only";
 import {
   Model,
   DataTypes,
@@ -7,10 +8,8 @@ import {
   ForeignKey,
 } from "sequelize";
 import { sequelize } from "./sequelize";
-import "server-only";
-import User from "./User";
 
-class Assigned extends Model<
+export class Assigned extends Model<
   InferAttributes<Assigned>,
   InferCreationAttributes<Assigned>
 > {
@@ -42,5 +41,3 @@ Assigned.init(
   },
   { sequelize, tableName: "assigned" },
 );
-
-export default Assigned;

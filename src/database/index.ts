@@ -1,8 +1,8 @@
 import "server-only";
-import User from "./User";
-import Assigned from "./Assigned";
-import Hobby from "./Hobby";
 import "./relations";
-import { sequelize } from "./sequelize";
 
-export { User, Assigned, Hobby, sequelize };
+export { Account } from "./Account";
+export { Assigned } from "./Assigned";
+export { Hobby } from "./Hobby";
+export { User } from "./User";
+export { sequelize } from "./sequelize";
