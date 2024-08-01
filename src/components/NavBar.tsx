@@ -7,6 +7,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import React from "react";
 import { SessionProvider, useSession } from "next-auth/react";
 import { Avatar } from "@mui/material";
+import Image from "next/image";
 
 export default function NavBar() {
   return (
@@ -15,6 +16,7 @@ export default function NavBar() {
     </SessionProvider>
   );
 }
+
 function _NavBar() {
   const { data: session } = useSession();
   return (
@@ -29,6 +31,12 @@ function _NavBar() {
         >
           <MenuIcon />
         </IconButton>
+        <Image
+          src={"/images/CodeXDark20PxPad.png"}
+          alt="CodeX Logo"
+          width={147.5}
+          height={50}
+        />
         <div className="flex flex-grow" />
         <Avatar src={session?.user?.image ?? ""} />
       </Toolbar>
