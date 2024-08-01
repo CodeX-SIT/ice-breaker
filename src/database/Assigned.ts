@@ -19,6 +19,7 @@ export class Assigned extends Model<
   public declare completedAt: Date | null;
   public declare assignedAt: Date;
   public declare isCompleted: boolean;
+  public declare gameCodeId: ForeignKey<number>;
   // public declare selfie: Buffer | null;
 }
 

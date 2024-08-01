@@ -1,5 +1,5 @@
 import "server-only";
-import { Model, DataTypes, ForeignKey } from "sequelize";
+import { Model, DataTypes } from "sequelize";
 import { sequelize } from "./sequelize";
 import { AdapterUser } from "next-auth/adapters";
 
@@ -33,12 +33,6 @@ export class User extends Model<AdapterUser, Partial<AdapterUser>> {
   public declare emailVerified: Date | null;
   public declare image: string | null;
   public declare name: string | null;
-  public declare gameCode: ForeignKey<string>;
-
-  public async setGameCode(gameCode: string) {
-    this.gameCode = gameCode;
-    await this.save();
-  }
 }
 
 User.init(
