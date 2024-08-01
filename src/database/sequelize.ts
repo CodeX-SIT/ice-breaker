@@ -7,6 +7,7 @@ export const sequelize = new Sequelize({
   define: {
     defaultScope: {
       attributes: {
+        // exclude these attributes by default from all queries
         exclude: ["createdAt", "updatedAt"],
       },
     },
