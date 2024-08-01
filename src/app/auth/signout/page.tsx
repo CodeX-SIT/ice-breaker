@@ -1,11 +1,10 @@
-import { auth, signIn } from "@/auth";
+import { auth, signOut } from "@/auth";
 import { Box, Button, Paper, Typography } from "@mui/material";
 import { redirect, RedirectType } from "next/navigation";
-import GoogleIcon from "@mui/icons-material/Google";
 
-export default async function SignIn() {
+export default async function SignOut() {
   const session = await auth();
-  if (session) {
+  if (!session) {
     redirect("/", RedirectType.replace);
   }
   return (
@@ -14,14 +13,13 @@ export default async function SignIn() {
         <form
           action={async () => {
             "use server";
-            await signIn("google");
+            await signOut({ redirect: true, redirectTo: "/" });
           }}
         >
           <Box>
             <Paper>
-              <GoogleIcon sx={{ m: 2, mr: 0 }} />
               <Button type="submit" variant="contained" sx={{ m: 2 }}>
-                <Typography>Signin with Google</Typography>
+                <Typography>Signout</Typography>
               </Button>
             </Paper>
           </Box>
