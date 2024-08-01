@@ -11,35 +11,45 @@ import {
   styled,
 } from "@mui/material";
 import NavBar from "@/components/NavBar";
-import hobbySubmit, { HobbySubmitReturnType } from "@/actions/hobbySubmit";
-import { useFormState } from "react-dom";
-import InvalidHobbies from "@/components/Snackbars/InvalidHobbies";
 import { useRouter } from "next/navigation";
+import InvalidHobbies from "@/components/Snackbars/InvalidHobbies";
 
-const HobbiesPage = () => {
-  const [state, formAction] = useFormState(hobbySubmit, {
-    error: "defaultError",
-    success: false,
-  } as HobbySubmitReturnType);
+export default function _HobbiesPage() {
   const [open, setOpen] = React.useState(false);
+  const [response, setResponse] = React.useState({ status: 0, message: "" });
   const router = useRouter();
 
-  useEffect(() => {
-    if (state.error === "defaultError") return;
-    setOpen(true);
-    setTimeout(() => {
-      setOpen(false);
-    }, 3000);
-    setTimeout(() => {
-      router.push("/");
-    }, 4000);
-  }, [state]);
+  const handleSubmit = async (data: FormData) => {
+    const response = await fetch("/api/hobbies", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+
+    if (response.ok) {
+      setResponse({ status: 201, message: "Hobbies saved!" });
+      setOpen(true);
+      setTimeout(() => {
+        setOpen(false);
+        router.push("/aboutme/avatar");
+      }, 3000);
+    } else if (response.status === 400) {
+      setResponse({
+        status: 400,
+        message: "There was an error. Please try again!",
+      });
+      setOpen(true);
+      setTimeout(() => {
+        setOpen(false);
+      }, 3000);
+    } else if (response.status === 401) {
+      router.push("/auth/signin");
+    }
+  };
 
   return (
     <main>
       <NavBar />
       <section className="flex h-screen w-screen justify-center items-center">
-        {/* <Container> */}
         <Box
           sx={{
             marginTop: 8,
@@ -59,28 +69,27 @@ const HobbiesPage = () => {
             }}
           >
             <Typography component="h1" variant="h5" sx={{ marginTop: 2 }}>
-              Hobbies Page
+              About Me
             </Typography>
             <form
               className="m-4 flex flex-col items-center"
-              action={formAction}
+              action={handleSubmit}
             >
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <TextField
-                    required
+                    // required
                     fullWidth
                     id="name"
                     label="Name"
                     name="name"
                     autoComplete="name"
-                    autoFocus
                     color="primary"
                   />
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
-                    required
+                    // required
                     fullWidth
                     id="dateOfBirth"
                     label="Date of Birth"
@@ -93,7 +102,7 @@ const HobbiesPage = () => {
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
-                    required
+                    // required
                     fullWidth
                     id="hobbies"
                     label="Hobbies"
@@ -104,7 +113,7 @@ const HobbiesPage = () => {
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
-                    required
+                    // required
                     fullWidth
                     id="guiltyPleasures"
                     label="Guilty Pleasures"
@@ -115,7 +124,7 @@ const HobbiesPage = () => {
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
-                    required
+                    // required
                     fullWidth
                     id="favoriteMovies"
                     label="Favorite Movies"
@@ -126,7 +135,7 @@ const HobbiesPage = () => {
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
-                    required
+                    // required
                     fullWidth
                     id="favoriteMusicians"
                     label="Favorite Musicians"
@@ -147,11 +156,8 @@ const HobbiesPage = () => {
             </form>
           </Paper>
         </Box>
-        <InvalidHobbies open={open} hobbySubmitResponse={state} />
-        {/* </Container> */}
+        <InvalidHobbies open={open} response={response} />
       </section>
     </main>
   );
-};
-
-export default HobbiesPage;
+}
