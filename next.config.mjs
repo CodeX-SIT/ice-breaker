@@ -5,6 +5,9 @@ const nextConfig = {
     missingSuspenseWithCSRBailout: true,
     taint: true,
   },
+  poweredByHeader: false,
+  reactStrictMode: true,
+  output: "standalone",
 };
 
 export default nextConfig;
