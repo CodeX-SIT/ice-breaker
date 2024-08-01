@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   const result = await Assigned.findAll({
-    include: ["User", "AssignedUser"],
+    include: ["user", "assignedUser"],
   });
   return new NextResponse(JSON.stringify(result, null, 2));
 }
@@ -14,16 +14,16 @@ export async function GET() {
 async function sampleQueries() {
   // List of users with their hobbies
   User.findAll({
-    include: ["Hobbies"],
+    include: ["hobbies"],
   });
 
   // List of users that the person is supposed to find.
   User.findAll({
-    include: ["AssignedUsers"],
+    include: ["assignedUsers"],
   });
 
   // List of users who are supposed to find that person
   User.findAll({
-    include: ["AssignedToUsers"],
+    include: ["assignedToUsers"],
   });
 }
