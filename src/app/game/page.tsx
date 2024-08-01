@@ -1,6 +1,6 @@
 "use server";
 import { redirect } from "next/navigation";
-import { _GameCodePage } from "./gamePage";
+import { _GameCodePage } from "./GamePage";
 import { auth } from "@/auth";
 
 export default async function GameCodePage() {

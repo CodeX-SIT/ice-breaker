@@ -11,16 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import WebhookOutlinedIcon from "@mui/icons-material/WebhookOutlined";
-import { useFormState } from "react-dom";
-import { SessionProvider, useSession } from "next-auth/react";
-import { redirect, useRouter } from "next/navigation";
-import { auth } from "@/auth";
-import {
-  ChangeEvent,
-  ChangeEventHandler,
-  MouseEventHandler,
-  useState,
-} from "react";
+import { MouseEventHandler, useState } from "react";
 
 export function _GameCodePage() {
   const [gameCode, setGameCode] = useState("");
@@ -28,10 +19,12 @@ export function _GameCodePage() {
   const handleSubmit: MouseEventHandler<HTMLButtonElement> = async (e) => {
     e.preventDefault();
 
-    const response = await fetch("http://localhost:3000/api/gamecode", {
-      body: JSON.stringify({ gameCode: gameCode }),
+    const response = await fetch("/api/gamecode", {
+      body: JSON.stringify({ gameCode }),
       method: "POST",
     });
+
+    
   };
   return (
     <main>
