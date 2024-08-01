@@ -14,13 +14,13 @@ User.hasMany(Assigned, { as: "assignedToUsers", foreignKey: "assignedUserId" });
 Assigned.belongsTo(User, { as: "user", foreignKey: "userId" });
 Assigned.belongsTo(User, { as: "assignedUser", foreignKey: "assignedUserId" });
 
-User.hasOne(Hobby, { as: "hobbies", foreignKey: "userId" });
+User.hasOne(Hobby, { as: "hobby", foreignKey: "userId" });
 Hobby.belongsTo(User, { as: "user", foreignKey: "userId" });
 
 GameCode.hasMany(User, { as: "users", foreignKey: "gameCodeId" });
 User.belongsTo(GameCode, { as: "gameCode", foreignKey: "gameCodeId" });
 
-User.belongsTo(Avatar, { as: "avatar", foreignKey: "avatarId" });
-Avatar.hasOne(User, { as: "user", foreignKey: "avatarId" });
+User.hasOne(Avatar, { as: "avatar", foreignKey: "userId" });
+Avatar.belongsTo(User, { as: "user", foreignKey: "userId" });
 
-sequelize.sync({ force: true });
+sequelize.sync({ alter: true });

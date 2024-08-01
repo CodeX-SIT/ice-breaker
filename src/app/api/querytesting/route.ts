@@ -9,9 +9,14 @@ export async function GET() {
 }
 
 /**
- * This function just keeps a record for queries for reference.
+ * @description This function just keeps a record for queries for reference.
  */
 async function sampleQueries() {
+  // List of all current assignments (useful for admins)
+  Assigned.findAll({
+    include: ["User", "AssignedUser"],
+  });
+
   // List of users with their hobbies
   User.findAll({
     include: ["hobbies"],

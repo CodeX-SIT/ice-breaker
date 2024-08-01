@@ -31,7 +31,7 @@ Hobby.init(
         return randomUUID();
       },
     },
-    // userId: { type: DataTypes.INTEGER, allowNull: false, unique: true },
+    userId: { type: DataTypes.INTEGER, allowNull: false, unique: true },
     hobbies: { type: DataTypes.TEXT("medium"), allowNull: false },
     guiltyPleasures: { type: DataTypes.TEXT("medium"), allowNull: false },
     favoriteMovies: { type: DataTypes.TEXT("medium"), allowNull: false },

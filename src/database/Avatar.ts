@@ -4,6 +4,7 @@ import {
   InferCreationAttributes,
   CreationOptional,
   DataTypes,
+  ForeignKey,
 } from "sequelize";
 import { sequelize } from "./sequelize";
 
@@ -24,6 +25,7 @@ export class Avatar extends Model<
   public declare facialHairColor: string;
   public declare clotheType: string;
   public declare clotheColor: string;
+  public declare userId: ForeignKey<number>
 }
 
 Avatar.init(
