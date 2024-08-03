@@ -9,3 +9,4 @@ export { GameCode } from "./GameCode";
 export { Avatar } from "./Avatar";
 export { UserGame } from "./UserGame";
 export { sequelize } from "./sequelize";
+export { Avatar } from "./Avatar";

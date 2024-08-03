@@ -1,7 +1,6 @@
 import { User } from "./User";
 import { Assigned } from "./Assigned";
 import { Hobby } from "./Hobby";
-import { sequelize } from "./sequelize";
 import { GameCode } from "./GameCode";
 import { Avatar } from "./Avatar";
 import { UserGame } from "./UserGame";
@@ -21,6 +20,10 @@ Hobby.belongsTo(User, { as: "user", foreignKey: "userId" });
 User.hasOne(Avatar, { as: "avatar", foreignKey: "userId" });
 Avatar.belongsTo(User, { as: "user", foreignKey: "userId" });
 
+User.hasOne(Avatar, { as: "Avatar", foreignKey: "userId" });
+Avatar.belongsTo(User, { as: "User", foreignKey: "userId" });
+
+// sequelize.sync({ force: true });
 GameCode.hasMany(Assigned, { as: "assigned", foreignKey: "gameCodeId" });
 Assigned.belongsTo(GameCode, { as: "gameCode", foreignKey: "gameCodeId" });
 
