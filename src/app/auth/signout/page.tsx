@@ -1,12 +1,12 @@
+"use server";
+
 import { auth, signOut } from "@/auth";
+import checkAuthAndRedirect from "@/utils/checkAuthAndRedirect";
 import { Box, Button, Paper, Typography } from "@mui/material";
 import { redirect, RedirectType } from "next/navigation";
 
 export default async function SignOut() {
-  const session = await auth();
-  if (!session) {
-    redirect("/", RedirectType.replace);
-  }
+  await checkAuthAndRedirect();
   return (
     <main>
       <section className="flex h-screen w-screen justify-center items-center">

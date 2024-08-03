@@ -1,13 +1,10 @@
-import { auth } from "@/auth";
-import { redirect } from "next/navigation";
+"use server";
+
 import _HobbiesPage from "./HobbiesPage";
+import checkAuthAndRedirect from "@/utils/checkAuthAndRedirect";
 
 export default async function HobbiesPage() {
-  const session = await auth();
-
-  if (!session) redirect("/auth/signin");
-  if (!session.user) redirect("/auth/signin");
-  if (!session.user.id) redirect("/auth/signin");
+  await checkAuthAndRedirect();
 
   return <_HobbiesPage />;
 }

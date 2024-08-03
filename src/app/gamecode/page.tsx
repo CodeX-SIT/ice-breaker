@@ -1,10 +1,8 @@
 "use server";
-import { redirect } from "next/navigation";
 import { _GameCodePage } from "./GamePage";
-import { auth } from "@/auth";
+import checkAuthAndRedirect from "@/utils/checkAuthAndRedirect";
 
 export default async function GameCodePage() {
-  const session = await auth();
-  if (!session) redirect("/auth/signin");
+  await checkAuthAndRedirect();
   return <_GameCodePage />;
 }
