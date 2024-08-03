@@ -1,45 +1,68 @@
 "use client";
 
-import React, { useEffect } from "react";
-import {
-  Box,
-  Button,
-  TextField,
-  Grid,
-  Paper,
-  Typography,
-  styled,
-} from "@mui/material";
+import React from "react";
+import { Box, Button, TextField, Grid, Paper, Typography } from "@mui/material";
 import NavBar from "@/components/NavBar";
-import hobbySubmit, { HobbySubmitReturnType } from "@/actions/hobbySubmit";
-import { useFormState } from "react-dom";
-import InvalidHobbies from "@/components/Snackbars/InvalidHobbies";
 import { useRouter } from "next/navigation";
+import InvalidHobbies from "@/components/Snackbars/InvalidHobbies";
 
-const HobbiesPage = () => {
-  const [state, formAction] = useFormState(hobbySubmit, {
-    error: "defaultError",
-    success: false,
-  } as HobbySubmitReturnType);
+export default function _HobbiesPage() {
   const [open, setOpen] = React.useState(false);
+  const [response, setResponse] = React.useState({ status: 0, message: "" });
+  const [name, setName] = React.useState("");
+  const [dateOfBirth, setDateOfBirth] = React.useState(new Date());
+  const [hobbies, setHobbies] = React.useState("");
+  const [guiltyPleasures, setGuiltyPleasures] = React.useState("");
+  const [favoriteMovies, setFavoriteMovies] = React.useState("");
+  const [favoriteSongs, setFavoriteSongs] = React.useState("");
+
   const router = useRouter();
 
-  useEffect(() => {
-    if (state.error === "defaultError") return;
-    setOpen(true);
-    setTimeout(() => {
-      setOpen(false);
-    }, 3000);
-    setTimeout(() => {
-      router.push("/");
-    }, 4000);
-  }, [state]);
+  const onClick: React.MouseEventHandler<HTMLButtonElement> = (event) => {
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("dateOfBirth", dateOfBirth.toISOString());
+    formData.append("hobbies", hobbies);
+    formData.append("guiltyPleasures", guiltyPleasures);
+    formData.append("favoriteMovies", favoriteMovies);
+    formData.append("favoriteSongs", favoriteSongs);
+    handleSubmit(formData);
+  };
+
+  const handleSubmit = async (data: FormData) => {
+    const response = await fetch("/api/hobbies", {
+      method: "POST",
+      body: data,
+    });
+
+    console.log(data);
+
+    if (response.ok) {
+      setResponse({ status: 201, message: "Hobbies saved!" });
+      setOpen(true);
+      setTimeout(() => {
+        setOpen(false);
+        router.push("/aboutme/avatar");
+      }, 3000);
+    } else if (response.status === 400) {
+      setResponse({
+        status: 400,
+        message: "There was an error. Please try again!",
+      });
+      setOpen(true);
+      setTimeout(() => {
+        setOpen(false);
+      }, 3000);
+    } else if ([401, 403].includes(response.status)) {
+      router.push("/auth/signin");
+    }
+  };
 
   return (
     <main>
       <NavBar />
       <section className="flex h-screen w-screen justify-center items-center">
-        {/* <Container> */}
         <Box
           sx={{
             marginTop: 8,
@@ -59,12 +82,9 @@ const HobbiesPage = () => {
             }}
           >
             <Typography component="h1" variant="h5" sx={{ marginTop: 2 }}>
-              Hobbies Page
+              About Me
             </Typography>
-            <form
-              className="m-4 flex flex-col items-center"
-              action={formAction}
-            >
+            <form className="m-4 flex flex-col items-center">
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <TextField
@@ -74,8 +94,10 @@ const HobbiesPage = () => {
                     label="Name"
                     name="name"
                     autoComplete="name"
-                    autoFocus
                     color="primary"
+                    onChange={(e) => {
+                      setName(e.target.value);
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -89,6 +111,9 @@ const HobbiesPage = () => {
                     InputLabelProps={{
                       shrink: true,
                     }}
+                    onChange={(e) => {
+                      setDateOfBirth(new Date(e.target.value));
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -100,6 +125,9 @@ const HobbiesPage = () => {
                     name="hobbies"
                     autoComplete="off"
                     multiline
+                    onChange={(e) => {
+                      setHobbies(e.target.value);
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -111,6 +139,9 @@ const HobbiesPage = () => {
                     name="guiltyPleasures"
                     autoComplete="off"
                     multiline
+                    onChange={(e) => {
+                      setGuiltyPleasures(e.target.value);
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -122,17 +153,23 @@ const HobbiesPage = () => {
                     name="favoriteMovies"
                     autoComplete="off"
                     multiline
+                    onChange={(e) => {
+                      setFavoriteMovies(e.target.value);
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
                     required
                     fullWidth
-                    id="favoriteMusicians"
-                    label="Favorite Musicians"
-                    name="favoriteMusicians"
+                    id="favoriteSongs"
+                    label="Favorite Songs"
+                    name="favoriteSongs"
                     autoComplete="off"
                     multiline
+                    onChange={(e) => {
+                      setFavoriteSongs(e.target.value);
+                    }}
                   />
                 </Grid>
               </Grid>
@@ -141,17 +178,15 @@ const HobbiesPage = () => {
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2, width: "50%" }}
+                onClick={onClick}
               >
                 <Typography>Submit</Typography>
               </Button>
             </form>
           </Paper>
         </Box>
-        <InvalidHobbies open={open} hobbySubmitResponse={state} />
-        {/* </Container> */}
+        <InvalidHobbies open={open} response={response} />
       </section>
     </main>
   );
-};
-
-export default HobbiesPage;
+}

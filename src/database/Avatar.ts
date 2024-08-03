@@ -1,54 +1,48 @@
-import { DataTypes, Model } from "sequelize";
+import {
+  Model,
+  InferAttributes,
+  InferCreationAttributes,
+  CreationOptional,
+  DataTypes,
+  ForeignKey,
+} from "sequelize";
 import { sequelize } from "./sequelize";
 
-class Avatar extends Model {
-  public id!: number;
-  public userId!: number;
-  public avatarStyle!: string;
-  public topType!: string;
-  public accessoriesType!: string;
-  public hairColor!: string;
-  public facialHairType!: string;
-  public facialHairColor!: string;
-  public clotheType!: string;
-  public clotheColor!: string;
-  public eyeType!: string;
-  public eyebrowType!: string;
-  public mouthType!: string;
-  public skinColor!: string;
-
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+export class Avatar extends Model<
+  InferAttributes<Avatar>,
+  InferCreationAttributes<Avatar>
+> {
+  public declare id: CreationOptional<number>;
+  public declare avatarStyle: string;
+  public declare topType: string;
+  public declare skinColor: string;
+  public declare eyeType: string;
+  public declare eyebrowType: string;
+  public declare accessoriesType: string;
+  public declare mouthType: string;
+  public declare hairColor: string;
+  public declare facialHairType: string;
+  public declare facialHairColor: string;
+  public declare clotheType: string;
+  public declare clotheColor: string;
+  public declare userId: ForeignKey<number>
 }
 
 Avatar.init(
   {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    userId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    avatarStyle: DataTypes.STRING,
-    topType: DataTypes.STRING,
-    accessoriesType: DataTypes.STRING,
-    hairColor: DataTypes.STRING,
-    facialHairType: DataTypes.STRING,
-    facialHairColor: DataTypes.STRING,
-    clotheType: DataTypes.STRING,
-    clotheColor: DataTypes.STRING,
-    eyeType: DataTypes.STRING,
-    eyebrowType: DataTypes.STRING,
-    mouthType: DataTypes.STRING,
-    skinColor: DataTypes.STRING,
+    id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+    avatarStyle: { type: DataTypes.STRING },
+    topType: { type: DataTypes.STRING },
+    skinColor: { type: DataTypes.STRING },
+    eyeType: { type: DataTypes.STRING },
+    eyebrowType: { type: DataTypes.STRING },
+    accessoriesType: { type: DataTypes.STRING },
+    mouthType: { type: DataTypes.STRING },
+    hairColor: { type: DataTypes.STRING },
+    facialHairType: { type: DataTypes.STRING },
+    facialHairColor: { type: DataTypes.STRING },
+    clotheType: { type: DataTypes.STRING },
+    clotheColor: { type: DataTypes.STRING },
   },
-  {
-    sequelize,
-    modelName: 'Avatar',
-  }
+  { sequelize, tableName: "avatars" },
 );
-
-export { Avatar };

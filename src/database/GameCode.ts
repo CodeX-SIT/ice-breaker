@@ -48,7 +48,7 @@ GameCode.init(
   },
   {
     sequelize,
-    tableName: 'gamecode',
+    tableName: 'gameCodes',
   }
 );
 

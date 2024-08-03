@@ -1,4 +1,4 @@
-import generateSampleData from "@/database/sampleData/sampleData";
+import generateSampleData from "@controllers/sampleData/sampleData";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {

@@ -1,7 +1,6 @@
 import React from "react";
 import { Alert, Snackbar, Typography } from "@mui/material";
 import Slide, { SlideProps } from "@mui/material/Slide";
-import type { HobbySubmitReturnType } from "@/actions/hobbySubmit";
 import { redirect } from "next/navigation";
 
 function SlideTransition(props: SlideProps) {
@@ -10,23 +9,19 @@ function SlideTransition(props: SlideProps) {
 
 export default function InvalidHobbies({
   open,
-  hobbySubmitResponse,
+  response,
 }: {
   open: boolean;
-  hobbySubmitResponse: HobbySubmitReturnType;
+  response: { status: number; message: string };
 }) {
   return (
     <Snackbar open={open} TransitionComponent={SlideTransition}>
       <Alert
-        severity={hobbySubmitResponse.error ? "error" : "success"}
+        severity={response.status === 400 ? "error" : "success"}
         variant="filled"
         sx={{ width: "100%" }}
       >
-        <Typography>
-          {hobbySubmitResponse.success
-            ? "Hobbies saved!"
-            : hobbySubmitResponse.error}
-        </Typography>
+        <Typography>{response.message}</Typography>
       </Alert>
     </Snackbar>
   );

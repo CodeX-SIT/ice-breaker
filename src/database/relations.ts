@@ -3,23 +3,39 @@ import { Assigned } from "./Assigned";
 import { Hobby } from "./Hobby";
 import { GameCode } from "./GameCode";
 import { Avatar } from "./Avatar";
+import { UserGame } from "./UserGame";
 
 // This user is supposed to find ...
-User.hasMany(Assigned, { as: "AssignedUsers", foreignKey: "userId" });
+User.hasMany(Assigned, { as: "assignedUsers", foreignKey: "userId" });
 
 // This user is supposed to found by...
-User.hasMany(Assigned, { as: "AssignedToUsers", foreignKey: "assignedUserId" });
+User.hasMany(Assigned, { as: "assignedToUsers", foreignKey: "assignedUserId" });
 
-Assigned.belongsTo(User, { as: "User", foreignKey: "userId" });
-Assigned.belongsTo(User, { as: "AssignedUser", foreignKey: "assignedUserId" });
+Assigned.belongsTo(User, { as: "user", foreignKey: "userId" });
+Assigned.belongsTo(User, { as: "assignedUser", foreignKey: "assignedUserId" });
 
-User.hasMany(Hobby, { as: "Hobbies", foreignKey: "userId" });
-Hobby.belongsTo(User, { as: "User", foreignKey: "userId" });
+User.hasOne(Hobby, { as: "hobby", foreignKey: "userId" });
+Hobby.belongsTo(User, { as: "user", foreignKey: "userId" });
 
-GameCode.hasMany(User);
-User.belongsTo(GameCode, { as: "GameCode", foreignKey: "gameCode" });
+User.hasOne(Avatar, { as: "avatar", foreignKey: "userId" });
+Avatar.belongsTo(User, { as: "user", foreignKey: "userId" });
 
 User.hasOne(Avatar, { as: "Avatar", foreignKey: "userId" });
 Avatar.belongsTo(User, { as: "User", foreignKey: "userId" });
 
 // sequelize.sync({ force: true });
+GameCode.hasMany(Assigned, { as: "assigned", foreignKey: "gameCodeId" });
+Assigned.belongsTo(GameCode, { as: "gameCode", foreignKey: "gameCodeId" });
+
+User.belongsToMany(GameCode, {
+  as: "gameCodes",
+  foreignKey: "userId",
+  through: UserGame,
+});
+GameCode.belongsToMany(User, {
+  as: "users",
+  foreignKey: "gameCodeId",
+  through: UserGame,
+});
+
+sequelize.sync({ alter: true });

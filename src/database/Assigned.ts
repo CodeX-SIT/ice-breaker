@@ -14,11 +14,12 @@ export class Assigned extends Model<
   InferCreationAttributes<Assigned>
 > {
   public declare id: CreationOptional<number>;
-  public declare userId: ForeignKey<number>;
-  public declare assignedUserId: ForeignKey<number>;
+  public declare userId: ForeignKey<string>;
+  public declare assignedUserId: ForeignKey<string>;
   public declare completedAt: Date | null;
   public declare assignedAt: Date;
   public declare isCompleted: boolean;
+  public declare gameCodeId: ForeignKey<number>;
   // public declare selfie: Buffer | null;
 }
 
@@ -32,12 +33,6 @@ Assigned.init(
       allowNull: false,
       defaultValue: false,
     },
-    // selfie: { type: DataTypes.BLOB("medium") },
-    // isSkipped: {
-    //   type: DataTypes.BOOLEAN,
-    //   allowNull: false,
-    //   defaultValue: false,
-    // },
   },
   { sequelize, tableName: "assigned" },
 );

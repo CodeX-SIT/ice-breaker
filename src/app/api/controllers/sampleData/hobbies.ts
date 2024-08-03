@@ -1,8 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { Hobby } from "@/database"; // Adjust the path as necessary
 import { User } from "@/database"; // Adjust the path as necessary
-import { InferCreationAttributes, UUIDV4 } from "sequelize";
-import { randomUUID } from "crypto";
 
 const hobbyList = [
   "Reading",
@@ -17,32 +15,6 @@ const hobbyList = [
   "Writing",
 ];
 
-const movieList = [
-  "Action",
-  "Adventure",
-  "Comedy",
-  "Crime",
-  "Drama",
-  "Fantasy",
-  "Historical",
-  "Horror",
-  "Mystery",
-  "Sci-Fi",
-];
-
-const songList = [
-  "Pop",
-  "Rock",
-  "Rap",
-  "Country",
-  "Jazz",
-  "Classical",
-  "Blues",
-  "Reggae",
-  "Electronic",
-  "Folk",
-];
-
 async function generateSampleHobbies(numberOfHobbies = 10) {
   const users = await User.findAll();
 
@@ -51,22 +23,15 @@ async function generateSampleHobbies(numberOfHobbies = 10) {
     return;
   }
 
-  const hobbies: InferCreationAttributes<Hobby>[] = [];
+  const hobbies = [];
 
   for (let i = 0; i < numberOfHobbies; i++) {
-    const id = randomUUID();
     const user = faker.helpers.arrayElement(users);
-    const hobby = faker.helpers.arrayElement(hobbyList);
-    const movie = faker.helpers.arrayElement(movieList);
-    const song = faker.helpers.arrayElement(songList);
+    const hobby = faker.helpers.arrayElement(hobbyList); // Random hobby from list
 
     hobbies.push({
-      id,
       userId: user.id,
-      hobbies: hobby,
-      guiltyPleasures: hobby,
-      favoriteMovies: movie,
-      favoriteSongs: song,
+      hobby,
     });
   }
 
