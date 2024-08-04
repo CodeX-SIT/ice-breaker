@@ -9,4 +9,6 @@ export default async function checkAuthAndRedirect() {
   if (!session) redirect("/auth/signin");
   if (!session.user) redirect("/auth/signin");
   if (!session.user.id) redirect("/auth/signin");
+
+  return session;
 }
