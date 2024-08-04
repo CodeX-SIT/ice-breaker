@@ -1,31 +1,30 @@
 import { Avatar } from "@/database";
 import { NextRequest, NextResponse } from "next/server";
 import { AvatarProps } from "@/components/AvatarPreview";
+import checkAuthAndRedirect from "@/utils/checkAuthAndRedirect";
+
 type AvatarRouterParams = {
   params: {
     userId: string;
   };
 };
 
-export async function GET(
-  request: NextRequest, // needs request function argument due to format of the GET function
-  { params }: AvatarRouterParams,
-) {
-  const result = await Avatar.findOne({ where: { userId: params.userId } });
+export async function GET() {
+  const session = await checkAuthAndRedirect();
+  const userId = session.user?.id;
+  const result = await Avatar.findOne({ where: { userId } });
   return new NextResponse(JSON.stringify(result, null, 2));
 }
 
-export async function POST(
-  request: NextRequest,
-  { params }: AvatarRouterParams,
-) {
+export async function POST(request: NextRequest) {
+  const session = await checkAuthAndRedirect();
+  const userId = session.user?.id!;
   const body: AvatarProps | null = await request.json();
   if (!body) {
     return new NextResponse(null, { status: 400 });
   }
 
-  // implement zod parsing for body, and validate user id
-  const { userId } = params;
+  //TODO: implement zod parsing for body, and validate user id
   const avatar = await Avatar.findOne({ where: { userId } });
   let newAvatar: Avatar;
   if (avatar) {
