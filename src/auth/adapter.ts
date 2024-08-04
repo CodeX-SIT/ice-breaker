@@ -7,7 +7,13 @@ import type {
   AdapterSession,
   VerificationToken,
 } from "@auth/core/adapters";
-import { Sequelize, Model, ModelCtor, ModelStatic } from "sequelize";
+import {
+  Sequelize,
+  Model,
+  ModelCtor,
+  ModelStatic,
+  SyncOptions,
+} from "sequelize";
 import * as defaultModels from "./models";
 
 export { defaultModels as models };
@@ -84,9 +90,8 @@ export default function SequelizeAdapter(
   };
   let _synced = false;
   const sync = async () => {
-    if (process.env.NODE_ENV !== "production" && synchronize && !_synced) {
-      const syncOptions =
-        typeof synchronize === "object" ? synchronize : undefined;
+    if (synchronize && !_synced) {
+      const syncOptions: SyncOptions = { force: true };
 
       await Promise.all([
         User.sync(syncOptions),
@@ -130,7 +135,13 @@ export default function SequelizeAdapter(
       const accountInstance = await Account.findOne({
         // @ts-expect-error
         where: { provider, providerAccountId },
+      }).catch((e) => {
+        console.error(e);
+        console.error(e.stack);
+        return null;
       });
+
+      console.log(JSON.stringify(accountInstance, null, 2));
 
       if (!accountInstance) {
         return null;
@@ -179,6 +190,10 @@ export default function SequelizeAdapter(
 
       const sessionInstance = await Session.findOne({
         where: { sessionToken },
+      }).catch((e) => {
+        console.error(e);
+        console.error(e.stack);
+        return;
       });
 
       if (!sessionInstance) {

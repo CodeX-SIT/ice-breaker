@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import Sequelize, { AccountInstance } from "./adapter";
-import { sequelize, User, Account } from "@/database";
+import { sequelize, User } from "@/database";
 import { ModelStatic } from "sequelize";
 
 if (!process.env.GOOGLE_CLIENT_ID) {

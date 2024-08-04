@@ -6,18 +6,18 @@ import { AvatarProps } from "@/components/AvatarPreview";
 import axios from "axios";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import AvatarPage from "./AvatarPage";
+import _AvatarPage from "./AvatarPage";
 
 const AvatarChooser = dynamic(() => import("@/components/AvatarChooser"), {
   ssr: false,
 });
 
-export default async function () {
+export default async function AvatarPage() {
   const session = await auth();
 
   if (!session?.user?.id) redirect("/auth/login");
 
   const userId = session?.user?.id;
 
-  return <AvatarPage userId={userId} />;
+  return <_AvatarPage userId={userId} />;
 }
