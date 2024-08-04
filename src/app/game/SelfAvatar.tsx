@@ -19,7 +19,7 @@ export default function SelfAvatar({ userId }: { userId: string }) {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    axios(`/api/users/${userId}/avatar`, {
+    axios(`/api/user/avatar`, {
       method: "GET",
     })
       .then((response) => {

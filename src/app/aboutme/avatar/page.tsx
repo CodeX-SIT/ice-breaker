@@ -15,7 +15,7 @@ const AvatarChooser = dynamic(() => import("@/components/AvatarChooser"), {
 export default async function AvatarPage() {
   const session = await auth();
 
-  if (!session?.user?.id) redirect("/auth/login");
+  if (!session?.user?.id) redirect("/auth/signin");
 
   const userId = session?.user?.id;
 
