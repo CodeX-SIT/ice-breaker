@@ -17,7 +17,7 @@ type AvatarPropKey =
   | "mouthType"
   | "skinColor";
 
-interface AvatarProps {
+export interface AvatarProps {
   avatarStyle: string;
   topType: string;
   accessoriesType: string;

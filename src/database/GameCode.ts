@@ -4,18 +4,23 @@ import {
   InferCreationAttributes,
   InferAttributes,
   CreationOptional,
-} from 'sequelize';
-import { sequelize } from './sequelize';
-import { randomBytes } from 'crypto';
+} from "sequelize";
+import { sequelize } from "./sequelize";
+import { randomBytes } from "crypto";
 import "server-only";
 
-export class GameCode extends Model<InferAttributes<GameCode>, InferCreationAttributes<GameCode>> {
+export class GameCode extends Model<
+  InferAttributes<GameCode>,
+  InferCreationAttributes<GameCode>
+> {
   public declare id: CreationOptional<number>;
   public declare code: string;
   public declare expiry: Date;
+  public declare startedAt: Date | null;
+  public declare endedAt: Date | null;
 
   public static generateCode(): string {
-    return randomBytes(3).toString('hex');
+    return randomBytes(3).toString("hex");
   }
   // unix time
   public static async createGameCode(): Promise<GameCode> {
@@ -32,7 +37,6 @@ export class GameCode extends Model<InferAttributes<GameCode>, InferCreationAttr
     }
 
     if (new Date() > gameCode.expiry) {
-      await gameCode.destroy(); // Remove expired code
       return false; // Code expired
     }
 
@@ -45,10 +49,11 @@ GameCode.init(
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     code: { type: DataTypes.STRING, unique: true },
     expiry: { type: DataTypes.DATE },
+    startedAt: { type: DataTypes.DATE, defaultValue: null },
+    endedAt: { type: DataTypes.DATE, defaultValue: null },
   },
   {
     sequelize,
-    tableName: 'gameCodes',
-  }
+    tableName: "gameCodes",
+  },
 );
-

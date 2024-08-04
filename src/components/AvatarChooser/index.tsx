@@ -1,9 +1,8 @@
 "use client";
-
 import React, { useState } from "react";
 import Avatar from "avataaars";
-import AvatarPreview from "../AvatarPreview";
-import { Tabs, Tab, Box, Typography, Grid, Paper } from "@mui/material";
+import AvatarPreview, { AvatarProps } from "../AvatarPreview";
+import { Tabs, Tab, Box, Grid, Paper } from "@mui/material";
 
 type AvatarPropKey =
   | "topType"
@@ -32,22 +31,13 @@ const keyHeadingMapping: Record<AvatarPropKey, string> = {
   clotheColor: "Cloth Color",
 };
 
-const AvatarChooser = () => {
-  const [avatarProps, setAvatarProps] = useState({
-    avatarStyle: "transparent",
-    topType: "NoHair",
-    skinColor: "Light",
-    eyeType: "Default",
-    eyebrowType: "Default",
-    accessoriesType: "Blank",
-    mouthType: "Default",
-    hairColor: "Brown",
-    facialHairType: "Blank",
-    facialHairColor: "Brown",
-    clotheType: "BlazerShirt",
-    clotheColor: "Black",
-  });
-
+const AvatarChooser = ({
+  avatarProps,
+  setAvatarProps,
+}: {
+  avatarProps: AvatarProps;
+  setAvatarProps: React.Dispatch<React.SetStateAction<AvatarProps>>;
+}) => {
   const [currentTab, setCurrentTab] = useState("topType");
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {

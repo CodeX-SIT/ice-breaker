@@ -1,38 +1,23 @@
-"use client";
 import dynamic from "next/dynamic";
-import React from "react";
+import React, { useState } from "react";
 import NavBar from "@/components/NavBar";
 import { Button, Box, Typography } from "@mui/material";
+import { AvatarProps } from "@/components/AvatarPreview";
+import axios from "axios";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+import AvatarPage from "./AvatarPage";
 
-const AvatarChooser = dynamic(
-  () => import("@/components/AvatarChooser"),
-  {
-    ssr: false,
-  },
-);
+const AvatarChooser = dynamic(() => import("@/components/AvatarChooser"), {
+  ssr: false,
+});
 
-function CreateAvatarPage() {
-  return (
-    <main>
-      <NavBar />
-      <section className="mt-16">
-        <Typography component="h1" variant="h6" textAlign="center">
-          Create Your Avatar
-        </Typography>
-        <AvatarChooser />
-        <Box textAlign="center">
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2, width: "50%" }}
-          >
-            <Typography>Finish</Typography>
-          </Button>
-        </Box>
-      </section>
-    </main>
-  );
+export default async function () {
+  const session = await auth();
+
+  if (!session?.user?.id) redirect("/auth/login");
+
+  const userId = session?.user?.id;
+
+  return <AvatarPage userId={userId} />;
 }
-
-export default CreateAvatarPage;

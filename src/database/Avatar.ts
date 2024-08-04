@@ -25,7 +25,7 @@ export class Avatar extends Model<
   public declare facialHairColor: string;
   public declare clotheType: string;
   public declare clotheColor: string;
-  public declare userId: ForeignKey<number>
+  public declare userId: ForeignKey<string>
 }
 
 Avatar.init(
