@@ -21,5 +21,5 @@ UserGame.init(
   {
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
   },
-  { sequelize, tableName: "userGames" },
+  { sequelize, tableName: "user_games" },
 );

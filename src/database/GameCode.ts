@@ -6,28 +6,17 @@ import {
   CreationOptional,
 } from "sequelize";
 import { sequelize } from "./sequelize";
-import { randomBytes } from "crypto";
-import "server-only";
+import { createHash, randomBytes } from "crypto";
 
 export class GameCode extends Model<
   InferAttributes<GameCode>,
   InferCreationAttributes<GameCode>
 > {
   public declare id: CreationOptional<number>;
-  public declare code: string;
-  public declare expiry: Date;
-  public declare startedAt: Date | null;
-  public declare endedAt: Date | null;
-
-  public static generateCode(): string {
-    return randomBytes(3).toString("hex");
-  }
-  // unix time
-  public static async createGameCode(): Promise<GameCode> {
-    const code = this.generateCode();
-    const expiry = new Date(Date.now() + 3600000); // 1 hour from now
-    return await this.create({ code, expiry });
-  }
+  public declare code: CreationOptional<string>;
+  public declare expiry: CreationOptional<Date>;
+  public declare startedAt: CreationOptional<Date>;
+  public declare endedAt: CreationOptional<Date>;
 
   public static async validateGameCode(code: string): Promise<boolean> {
     const gameCode = await this.findOne({ where: { code } });
@@ -42,18 +31,36 @@ export class GameCode extends Model<
 
     return true; // Code is valid
   }
+
+  public async endGame(): Promise<GameCode> {
+    await this.update({ endedAt: new Date() });
+    return this;
+  }
 }
 
 GameCode.init(
   {
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-    code: { type: DataTypes.STRING, unique: true },
-    expiry: { type: DataTypes.DATE },
-    startedAt: { type: DataTypes.DATE, defaultValue: null },
-    endedAt: { type: DataTypes.DATE, defaultValue: null },
+    code: {
+      type: DataTypes.STRING,
+      unique: true,
+      defaultValue: () => {
+        const date = new Date();
+        const hash = createHash("sha1");
+        hash.update(randomBytes(8));
+        hash.update(date.toISOString());
+        return hash.digest("hex").slice(0, 8);
+      },
+    },
+    expiry: {
+      type: DataTypes.DATE,
+      defaultValue: () => new Date(Date.now() + 24 * 60 * 60 * 1000),
+    },
+    startedAt: { type: DataTypes.DATE, allowNull: true, defaultValue: null },
+    endedAt: { type: DataTypes.DATE, allowNull: true, defaultValue: null },
   },
   {
     sequelize,
-    tableName: "gameCodes",
+    tableName: "game_codes",
   },
 );

@@ -1,4 +1,3 @@
-import "server-only";
 import { sequelize } from "./sequelize";
 import {
   Model,
@@ -8,13 +7,12 @@ import {
   CreationOptional,
   ForeignKey,
 } from "sequelize";
-import { randomUUID } from "crypto";
 
 export class Hobby extends Model<
   InferAttributes<Hobby>,
   InferCreationAttributes<Hobby>
 > {
-  public declare id: CreationOptional<string>;
+  public declare id: CreationOptional<number>;
   public declare hobbies: string;
   public declare guiltyPleasures: string;
   public declare favoriteMovies: string;
@@ -27,9 +25,7 @@ Hobby.init(
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      set(val) {
-        return randomUUID();
-      },
+      autoIncrement: true,
     },
     userId: { type: DataTypes.INTEGER, allowNull: false, unique: true },
     hobbies: { type: DataTypes.TEXT("medium"), allowNull: false },
