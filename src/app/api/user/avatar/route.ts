@@ -11,9 +11,9 @@ type AvatarRouterParams = {
 
 export async function GET() {
   const session = await checkAuthAndRedirect();
-  const userId = session.user?.id;
+  const userId = session.user?.id!;
   const result = await Avatar.findOne({ where: { userId } });
-  return new NextResponse(JSON.stringify(result, null, 2));
+  return NextResponse.json(JSON.stringify(result, null, 2));
 }
 
 export async function POST(request: NextRequest) {
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
   const userId = session.user?.id!;
   const body: AvatarProps | null = await request.json();
   if (!body) {
-    return new NextResponse(null, { status: 400 });
+    return NextResponse.json(null, { status: 400 });
   }
 
   //TODO: implement zod parsing for body, and validate user id
@@ -32,5 +32,5 @@ export async function POST(request: NextRequest) {
   } else {
     newAvatar = await Avatar.create({ ...body, userId });
   }
-  return new NextResponse(JSON.stringify(newAvatar.id), { status: 201 });
+  return NextResponse.json(JSON.stringify(newAvatar.id), { status: 201 });
 }

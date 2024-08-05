@@ -15,24 +15,32 @@ export async function GET(
   request: NextRequest, // needs request function argument due to format of the GET function
 ) {
   const session = await checkAuthAndRedirect();
-  const userId = session.user?.id;
+  const userId = session.user?.id!;
 
-  const userGame = await UserGame.findOne({
-    where: { userId: userId },
-    order: [["createdAt", "DESC"]],
-  });
-  if (!userGame) {
-    return new NextResponse("User not found", { status: 404 });
-  }
-
+  // get the latest game that the user is a part of
   const gameCode = await GameCode.findOne({
-    where: { id: userGame.gameCodeId },
+    where: {
+      endedAt: { $ne: null },
+    },
+    include: [
+      {
+        association: "users",
+        where: { id: userId },
+        required: true,
+      },
+    ],
   });
+
   if (!gameCode) {
-    return new NextResponse("Game code not found", { status: 404 });
+    return NextResponse.json("User is not in game", { status: 404 });
   }
 
-  const result = await Assigned.findAll({
+  if (!gameCode.startedAt) {
+    // TODO: Redirect user to game waiting page
+  }
+
+  // get the latest assignment
+  const result = await Assigned.findOne({
     where: {
       userId: userId,
       isCompleted: false,
@@ -40,12 +48,13 @@ export async function GET(
     },
     include: [
       {
-        as: "assignedUser",
+        association: "assignedUser",
+
         include: ["avatar", "hobby"],
       },
     ],
-    limit: 1,
     order: [["assignedAt", "DESC"]],
   });
-  return new NextResponse(JSON.stringify(result, null, 2));
+
+  return NextResponse.json(result);
 }

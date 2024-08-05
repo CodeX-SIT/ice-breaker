@@ -6,5 +6,5 @@ export async function GET(request: NextRequest) {
   const force = searchParams.get("force") === "true";
   await generateSampleData({ force });
 
-  return new NextResponse("Sample data generated");
+  return NextResponse.json("Sample data generated");
 }

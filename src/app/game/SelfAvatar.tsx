@@ -13,7 +13,7 @@ import { AvatarProps } from "@/components/AvatarPreview";
 // If it is, get the latest assignment
 // If no uncompleted assignment, wait for the next assignment/game to start
 
-export default function SelfAvatar({ userId }: { userId: string }) {
+export default function SelfAvatar() {
   const [avatar, setAvatar] = useState<AvatarProps>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -31,7 +31,7 @@ export default function SelfAvatar({ userId }: { userId: string }) {
         setLoading(false);
         setError(true);
       });
-  }, [userId]);
+  });
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Avatar could not be fetched.</div>;

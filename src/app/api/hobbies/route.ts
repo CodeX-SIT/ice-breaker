@@ -12,20 +12,20 @@ const schema = z.object({
 
 export async function POST(req: NextRequest) {
   const session = await auth();
-  if (!session) return new NextResponse("Unauthorized", { status: 401 });
-  if (!session.user) return new NextResponse("Unauthorized", { status: 403 });
+  if (!session) return NextResponse.json("Unauthorized", { status: 401 });
+  if (!session.user) return NextResponse.json("Unauthorized", { status: 403 });
   if (!session.user.id)
-    return new NextResponse("Unauthorized", { status: 403 });
+    return NextResponse.json("Unauthorized", { status: 403 });
 
   let parsedData;
   try {
     const data = await req.json();
     parsedData = schema.parse(data);
   } catch (error) {
-    return new NextResponse("Invalid data", { status: 400 });
+    return NextResponse.json("Invalid data", { status: 400 });
   }
 
-  if (!parsedData) return new NextResponse("Invalid data", { status: 400 });
+  if (!parsedData) return NextResponse.json("Invalid data", { status: 400 });
 
   const { hobbies, guiltyPleasures, favoriteMovies, favoriteSongs } =
     parsedData;
@@ -40,5 +40,5 @@ export async function POST(req: NextRequest) {
 
   await newHobby.save();
 
-  return new NextResponse(null, { status: 201 });
+  return NextResponse.json(null, { status: 201 });
 }

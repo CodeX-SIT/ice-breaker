@@ -28,7 +28,7 @@ export default function CreateAvatarPage({ userId }: { userId: string }) {
   });
 
   const handleSubmit = () => {
-    axios(`/api/users/${userId}/avatar`, {
+    axios(`/api/user/avatar`, {
       method: "POST",
       data: JSON.stringify(avatarProps),
     })

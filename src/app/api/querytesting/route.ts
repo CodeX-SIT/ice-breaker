@@ -5,7 +5,7 @@ export async function GET() {
   const result = await Assigned.findAll({
     include: ["user", "assignedUser"],
   });
-  return new NextResponse(JSON.stringify(result, null, 2));
+  return NextResponse.json(result);
 }
 
 /**
