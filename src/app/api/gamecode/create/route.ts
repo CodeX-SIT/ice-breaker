@@ -1,5 +1,6 @@
 import { GameCode } from "@/database";
 import checkAuthAndRedirect from "@/utils/checkAuthAndRedirect";
+import { create } from "domain";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -42,19 +43,19 @@ export async function POST(request: NextRequest) {
 
   const gameCode = await GameCode.findOne({ order: [["createdAt", "DESC"]] });
 
-  if (createGameCode) {
-    if (!gameCode?.endedAt && force) {
-      const newGameCode = await GameCode.create();
-      return NextResponse.json(newGameCode, { status: 201 });
-    } else if (!gameCode?.endedAt) {
-      return NextResponse.json("Unused Game code already exists", {
-        status: 409,
-      });
-    }
-  } else {
-    if (gameCode?.endedAt) {
+  if (!gameCode) {
+    if (!createGameCode) {
       return NextResponse.json("No game code available", { status: 404 });
     }
-    return NextResponse.json(gameCode);
+    return NextResponse.json(await GameCode.create());
   }
+
+  if (gameCode.endedAt || force) {
+    // Game has ended or forced, create a new game code
+    return NextResponse.json(await GameCode.create(), { status: 201 });
+  }
+
+  return NextResponse.json("Unused Game code already exists", {
+    status: 409,
+  });
 }
