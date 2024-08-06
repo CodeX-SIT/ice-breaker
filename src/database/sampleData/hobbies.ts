@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { Hobby } from "@/database"; // Adjust the path as necessary
+import { AboutUser } from "@/database"; // Adjust the path as necessary
 import { User } from "@/database"; // Adjust the path as necessary
 import { InferCreationAttributes, UUIDV4 } from "sequelize";
 import { randomUUID } from "crypto";
@@ -51,27 +51,29 @@ async function generateSampleHobbies(numberOfHobbies = 10) {
     return;
   }
 
-  const hobbies: InferCreationAttributes<Hobby>[] = [];
+  const hobbies: InferCreationAttributes<AboutUser>[] = [];
 
   for (let i = 0; i < numberOfHobbies; i++) {
-    const id = randomUUID();
+    const id = faker.number.int();
     const user = faker.helpers.arrayElement(users);
-    const hobby = faker.helpers.arrayElement(hobbyList);
+    const AboutUser = faker.helpers.arrayElement(hobbyList);
     const movie = faker.helpers.arrayElement(movieList);
     const song = faker.helpers.arrayElement(songList);
 
     hobbies.push({
       id,
+      name: faker.person.fullName(),
+      dateOfBirth: faker.date.past(),
       userId: user.id,
-      hobbies: hobby,
-      guiltyPleasures: hobby,
+      hobbies: AboutUser,
+      guiltyPleasures: AboutUser,
       favoriteMovies: movie,
       favoriteSongs: song,
     });
   }
 
   try {
-    await Hobby.bulkCreate(hobbies);
+    await AboutUser.bulkCreate(hobbies);
     console.log(`${numberOfHobbies} hobbies have been created.`);
   } catch (error) {
     console.error("Error creating sample hobbies:", error);
