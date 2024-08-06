@@ -7,7 +7,7 @@ function SlideTransition(props: SlideProps) {
   return <Slide {...props} direction="up" />;
 }
 
-export default function InvalidHobbies({
+export default function ErrorSuccessSnackbar({
   open,
   response,
 }: {
@@ -17,7 +17,9 @@ export default function InvalidHobbies({
   return (
     <Snackbar open={open} TransitionComponent={SlideTransition}>
       <Alert
-        severity={response.status === 400 ? "error" : "success"}
+        severity={
+          !String(response.status).startsWith("2") ? "error" : "success"
+        }
         variant="filled"
         sx={{ width: "100%" }}
       >

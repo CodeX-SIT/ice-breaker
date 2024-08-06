@@ -91,7 +91,9 @@ export default function SequelizeAdapter(
   let _synced = false;
   const sync = async () => {
     if (synchronize && !_synced) {
-      const syncOptions: SyncOptions = { force: true };
+      const syncOptions: SyncOptions = {
+        force: process.env.NODE_ENV === "production",
+      };
 
       await Promise.all([
         User.sync(syncOptions),

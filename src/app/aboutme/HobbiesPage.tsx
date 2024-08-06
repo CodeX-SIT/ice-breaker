@@ -4,17 +4,31 @@ import React from "react";
 import { Box, Button, TextField, Grid, Paper, Typography } from "@mui/material";
 import NavBar from "@/components/NavBar";
 import { useRouter } from "next/navigation";
-import InvalidHobbies from "@/components/Snackbars/InvalidHobbies";
+import ErrorSuccessSnackbar from "@/components/Snackbars/ErrorSuccessSnackbar";
+import { AboutUser } from "@/database";
+import { InferAttributes } from "sequelize";
 
-export default function _HobbiesPage() {
+export default function _HobbiesPage({
+  previousAboutMe,
+}: {
+  previousAboutMe: InferAttributes<AboutUser> | null;
+}) {
   const [open, setOpen] = React.useState(false);
   const [response, setResponse] = React.useState({ status: 0, message: "" });
-  const [name, setName] = React.useState("");
-  const [dateOfBirth, setDateOfBirth] = React.useState(new Date());
-  const [hobbies, setHobbies] = React.useState("");
-  const [guiltyPleasures, setGuiltyPleasures] = React.useState("");
-  const [favoriteMovies, setFavoriteMovies] = React.useState("");
-  const [favoriteSongs, setFavoriteSongs] = React.useState("");
+  const [name, setName] = React.useState(previousAboutMe?.name || "");
+  const [dateOfBirth, setDateOfBirth] = React.useState(
+    previousAboutMe?.dateOfBirth || new Date(),
+  );
+  const [hobbies, setHobbies] = React.useState(previousAboutMe?.hobbies || "");
+  const [guiltyPleasures, setGuiltyPleasures] = React.useState(
+    previousAboutMe?.guiltyPleasures || "",
+  );
+  const [favoriteMovies, setFavoriteMovies] = React.useState(
+    previousAboutMe?.favoriteMovies || "",
+  );
+  const [favoriteSongs, setFavoriteSongs] = React.useState(
+    previousAboutMe?.favoriteSongs || "",
+  );
 
   const router = useRouter();
 
@@ -36,7 +50,7 @@ export default function _HobbiesPage() {
       body: data,
     });
 
-    console.log(data);
+    console.log(response);
 
     if (response.ok) {
       setResponse({ status: 201, message: "Hobbies saved!" });
@@ -44,8 +58,19 @@ export default function _HobbiesPage() {
       setTimeout(() => {
         setOpen(false);
         router.push("/aboutme/avatar");
+      }, 2000);
+    } else if ([401, 403].includes(response.status)) {
+      router.push("/auth/signin");
+    } else if (String(response.status).startsWith("5")) {
+      setResponse({
+        status: 500,
+        message: "There was an internal server error. Please contact support.",
+      });
+      setOpen(true);
+      setTimeout(() => {
+        setOpen(false);
       }, 3000);
-    } else if (response.status === 400) {
+    } else {
       setResponse({
         status: 400,
         message: "There was an error. Please try again!",
@@ -54,8 +79,6 @@ export default function _HobbiesPage() {
       setTimeout(() => {
         setOpen(false);
       }, 3000);
-    } else if ([401, 403].includes(response.status)) {
-      router.push("/auth/signin");
     }
   };
 
@@ -66,8 +89,8 @@ export default function _HobbiesPage() {
         <Box
           sx={{
             marginTop: 8,
-            width: "80%",
             display: "flex",
+            width: "90%",
             flexDirection: "column",
             alignItems: "center",
           }}
@@ -81,7 +104,7 @@ export default function _HobbiesPage() {
               maxHeight: "80vh",
             }}
           >
-            <Typography component="h1" variant="h5" sx={{ marginTop: 2 }}>
+            <Typography component="h1" variant="h5" sx={{ m: 2 }}>
               About Me
             </Typography>
             <form className="m-4 flex flex-col items-center">
@@ -98,6 +121,7 @@ export default function _HobbiesPage() {
                     onChange={(e) => {
                       setName(e.target.value);
                     }}
+                    defaultValue={previousAboutMe?.name}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -114,6 +138,7 @@ export default function _HobbiesPage() {
                     onChange={(e) => {
                       setDateOfBirth(new Date(e.target.value));
                     }}
+                    defaultValue={previousAboutMe?.dateOfBirth}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -128,6 +153,7 @@ export default function _HobbiesPage() {
                     onChange={(e) => {
                       setHobbies(e.target.value);
                     }}
+                    defaultValue={previousAboutMe?.hobbies}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -142,6 +168,7 @@ export default function _HobbiesPage() {
                     onChange={(e) => {
                       setGuiltyPleasures(e.target.value);
                     }}
+                    defaultValue={previousAboutMe?.guiltyPleasures}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -156,6 +183,7 @@ export default function _HobbiesPage() {
                     onChange={(e) => {
                       setFavoriteMovies(e.target.value);
                     }}
+                    defaultValue={previousAboutMe?.favoriteMovies}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -170,11 +198,11 @@ export default function _HobbiesPage() {
                     onChange={(e) => {
                       setFavoriteSongs(e.target.value);
                     }}
+                    defaultValue={previousAboutMe?.favoriteSongs}
                   />
                 </Grid>
               </Grid>
               <Button
-                type="submit"
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2, width: "50%" }}
@@ -185,7 +213,7 @@ export default function _HobbiesPage() {
             </form>
           </Paper>
         </Box>
-        <InvalidHobbies open={open} response={response} />
+        <ErrorSuccessSnackbar open={open} response={response} />
       </section>
     </main>
   );

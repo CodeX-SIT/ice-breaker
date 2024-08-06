@@ -1,12 +1,12 @@
-export interface HobbyProps {
+export interface AboutUserProps {
   hobbies: string;
   guiltyPleasures: string;
   favoriteMovies: string;
   favoriteSongs: string;
 }
 
-export default function Hobby({ hobby }: { hobby: HobbyProps }) {
-  const { hobbies, guiltyPleasures, favoriteMovies, favoriteSongs } = hobby;
+export default function Hobby({ aboutUser }: { aboutUser: AboutUserProps }) {
+  const { hobbies, guiltyPleasures, favoriteMovies, favoriteSongs } = aboutUser;
   return (
     <div>
       <h2>Hobbies</h2>

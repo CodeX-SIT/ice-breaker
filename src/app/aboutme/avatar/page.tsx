@@ -1,23 +1,23 @@
 import dynamic from "next/dynamic";
-import React, { useState } from "react";
-import NavBar from "@/components/NavBar";
-import { Button, Box, Typography } from "@mui/material";
-import { AvatarProps } from "@/components/AvatarPreview";
-import axios from "axios";
-import { auth } from "@/auth";
-import { redirect } from "next/navigation";
+import React from "react";
 import _AvatarPage from "./AvatarPage";
+import checkAuthAndRedirect from "@/utils/checkAuthAndRedirect";
+import { Avatar } from "@/database";
 
 const AvatarChooser = dynamic(() => import("@/components/AvatarChooser"), {
   ssr: false,
 });
 
 export default async function AvatarPage() {
-  const session = await auth();
+  const session = await checkAuthAndRedirect();
+  const userId = session?.user?.id!;
 
-  if (!session?.user?.id) redirect("/auth/signin");
+  const previousAvatar = await Avatar.findOne({ where: { userId } });
 
-  const userId = session?.user?.id;
-
-  return <_AvatarPage userId={userId} />;
+  return (
+    <_AvatarPage
+      userId={userId}
+      previousAvatar={previousAvatar ? previousAvatar.get() : null}
+    />
+  );
 }

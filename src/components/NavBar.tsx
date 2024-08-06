@@ -1,45 +1,38 @@
 "use client";
 
-import AppBar from "@mui/material/AppBar";
-import IconButton from "@mui/material/IconButton";
-import Toolbar from "@mui/material/Toolbar";
+import { Toolbar, IconButton, AppBar } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import React from "react";
-import { SessionProvider, useSession } from "next-auth/react";
-import { Avatar } from "@mui/material";
 import Image from "next/image";
+import ActionDrawer from "./ActionDrawer";
 
 export default function NavBar() {
-  return (
-    <SessionProvider>
-      <_NavBar />
-    </SessionProvider>
-  );
-}
+  const [open, setOpen] = React.useState(false);
 
-function _NavBar() {
-  const { data: session } = useSession();
   return (
-    <AppBar position="absolute">
-      <Toolbar>
-        <IconButton
-          size="large"
-          edge="start"
-          color="inherit"
-          aria-label="menu"
-          sx={{ mr: 2 }}
-        >
-          <MenuIcon />
-        </IconButton>
-        <Image
-          src={"/images/CodeXDark20PxPad.png"}
-          alt="CodeX Logo"
-          width={147.5}
-          height={50}
-        />
-        <div className="flex flex-grow" />
-        <Avatar src={session?.user?.image ?? ""} />
-      </Toolbar>
-    </AppBar>
+    <React.Fragment>
+      <AppBar position="absolute">
+        <Toolbar>
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+            onClick={() => setOpen(true)}
+          >
+            <MenuIcon />
+          </IconButton>
+          <div className="flex flex-grow" />
+          <Image
+            src={"/images/CodeXDark20PxPad.png"}
+            alt="CodeX Logo"
+            width={147.5}
+            height={50}
+          />
+        </Toolbar>
+      </AppBar>
+      <ActionDrawer open={open} toggleDrawer={(open) => () => setOpen(open)} />
+    </React.Fragment>
   );
 }

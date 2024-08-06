@@ -28,4 +28,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     },
     synchronize: true,
   }),
+  pages: {
+    signIn: "/auth/signin",
+    signOut: "/auth/signout",
+  },
 });

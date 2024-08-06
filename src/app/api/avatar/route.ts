@@ -1,8 +1,7 @@
-import { NextResponse } from 'next/server';
-import { Avatar } from '../../../database/Avatar';
+import { NextResponse } from "next/server";
+import { Avatar } from "../../../database/Avatar";
 
-
-
+//TODO: zod validation
 
 export async function POST(req: Request) {
   try {
@@ -10,6 +9,9 @@ export async function POST(req: Request) {
     const avatar = await Avatar.create(body);
     return NextResponse.json(avatar);
   } catch (error) {
-    return NextResponse.json({ error: 'Error creating avatar' }, { status: 500 });
+    return NextResponse.json(
+      { error: "Error creating avatar" },
+      { status: 500 },
+    );
   }
 }

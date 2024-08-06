@@ -8,6 +8,7 @@ export default async function SignIn() {
   if (session) {
     redirect("/", RedirectType.replace);
   }
+
   return (
     <main>
       <section className="flex h-screen w-screen justify-center items-center">

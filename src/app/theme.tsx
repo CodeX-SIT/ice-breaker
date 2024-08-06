@@ -13,11 +13,13 @@ const theme = createTheme({
     error: {
       main: "hsl(0, 60%, 50%)",
     },
+    success: {
+      main: "hsl(120, 100%, 60%)",
+    },
     background: {
-      default: "#104",
+      default: "#fff",
     },
   },
 });
 
 export default theme;
- 

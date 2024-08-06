@@ -50,7 +50,7 @@ export async function GET(
       {
         association: "assignedUser",
 
-        include: ["avatar", "hobby"],
+        include: ["avatar", "aboutUser"],
       },
     ],
     order: [["assignedAt", "DESC"]],

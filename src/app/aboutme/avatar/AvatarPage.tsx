@@ -5,38 +5,59 @@ import NavBar from "@/components/NavBar";
 import { Button, Box, Typography } from "@mui/material";
 import { AvatarProps } from "@/components/AvatarPreview";
 import axios from "axios";
-import { auth } from "@/auth";
+import { InferAttributes } from "sequelize";
+import { Avatar } from "@/database";
+import ErrorSuccessSnackbar from "@/components/Snackbars/ErrorSuccessSnackbar";
+import { useRouter } from "next/navigation";
 
 const AvatarChooser = dynamic(() => import("@/components/AvatarChooser"), {
   ssr: false,
 });
 
-export default function CreateAvatarPage({ userId }: { userId: string }) {
+export default function CreateAvatarPage({
+  userId,
+  previousAvatar,
+}: {
+  userId: string;
+  previousAvatar: InferAttributes<Avatar> | null;
+}) {
   const [avatarProps, setAvatarProps] = useState<AvatarProps>({
-    avatarStyle: "transparent",
-    topType: "NoHair",
-    skinColor: "Light",
-    eyeType: "Default",
-    eyebrowType: "Default",
-    accessoriesType: "Blank",
-    mouthType: "Default",
-    hairColor: "Brown",
-    facialHairType: "Blank",
-    facialHairColor: "Brown",
-    clotheType: "BlazerShirt",
-    clotheColor: "Black",
+    avatarStyle: previousAvatar?.avatarStyle ?? "transparent",
+    topType: previousAvatar?.topType ?? "NoHair",
+    skinColor: previousAvatar?.skinColor ?? "Light",
+    eyeType: previousAvatar?.eyeType ?? "Default",
+    eyebrowType: previousAvatar?.eyebrowType ?? "Default",
+    accessoriesType: previousAvatar?.accessoriesType ?? "Blank",
+    mouthType: previousAvatar?.mouthType ?? "Default",
+    hairColor: previousAvatar?.hairColor ?? "Brown",
+    facialHairType: previousAvatar?.facialHairType ?? "Blank",
+    facialHairColor: previousAvatar?.facialHairColor ?? "Brown",
+    clotheType: previousAvatar?.clotheType ?? "BlazerShirt",
+    clotheColor: previousAvatar?.clotheColor ?? "Black",
   });
+  const [open, setOpen] = React.useState(false);
+  const [response, setResponse] = React.useState({ status: 0, message: "" });
+  const router = useRouter();
 
   const handleSubmit = () => {
     axios(`/api/user/avatar`, {
       method: "POST",
       data: JSON.stringify(avatarProps),
     })
-      .then((response) => {
-        console.log(response);
+      .then(() => {
+        setResponse({ status: 201, message: "Avatar saved!" });
+        setOpen(true);
+        setTimeout(() => {
+          setOpen(false);
+          router.push("/gamecode");
+        }, 2000);
       })
       .catch((err) => {
         console.error(err);
+        setResponse({ status: 400, message: "Error saving avatar!" });
+        setTimeout(() => {
+          setOpen(false);
+        }, 2000);
       });
   };
 
@@ -63,6 +84,7 @@ export default function CreateAvatarPage({ userId }: { userId: string }) {
           </Button>
         </Box>
       </section>
+      <ErrorSuccessSnackbar open={open} response={response} />
     </main>
   );
 }

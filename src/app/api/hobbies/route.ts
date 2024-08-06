@@ -1,9 +1,11 @@
-import { auth } from "@/auth";
-import { Hobby } from "@/database";
+import { AboutUser } from "@/database";
+import checkAuthAndRedirect from "@/utils/checkAuthAndRedirect";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 const schema = z.object({
+  name: z.string(),
+  dateOfBirth: z.date({ coerce: true }),
   hobbies: z.string(),
   guiltyPleasures: z.string(),
   favoriteMovies: z.string(),
@@ -11,34 +13,59 @@ const schema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session) return NextResponse.json("Unauthorized", { status: 401 });
-  if (!session.user) return NextResponse.json("Unauthorized", { status: 403 });
-  if (!session.user.id)
-    return NextResponse.json("Unauthorized", { status: 403 });
+  const session = await checkAuthAndRedirect();
 
   let parsedData;
   try {
-    const data = await req.json();
-    parsedData = schema.parse(data);
+    const formData = await req.formData();
+    parsedData = schema.parse({
+      name: formData.get("name"),
+      dateOfBirth: formData.get("dateOfBirth"),
+      hobbies: formData.get("hobbies"),
+      guiltyPleasures: formData.get("guiltyPleasures"),
+      favoriteMovies: formData.get("favoriteMovies"),
+      favoriteSongs: formData.get("favoriteSongs"),
+    });
   } catch (error) {
-    return NextResponse.json("Invalid data", { status: 400 });
+    console.log("Error parsing data", error);
+    return new NextResponse("Invalid data", { status: 400 });
   }
 
-  if (!parsedData) return NextResponse.json("Invalid data", { status: 400 });
+  if (!parsedData) return new NextResponse("Invalid data", { status: 400 });
 
-  const { hobbies, guiltyPleasures, favoriteMovies, favoriteSongs } =
-    parsedData;
+  const {
+    dateOfBirth,
+    name,
+    hobbies,
+    guiltyPleasures,
+    favoriteMovies,
+    favoriteSongs,
+  } = parsedData;
 
-  const newHobby = await Hobby.create({
+  const prevHobbies = await AboutUser.findOne({
+    where: { userId: session.user!.id },
+  });
+
+  if (prevHobbies) {
+    await prevHobbies.update({
+      hobbies: hobbies ?? prevHobbies.hobbies,
+      guiltyPleasures: guiltyPleasures ?? prevHobbies.guiltyPleasures,
+      favoriteMovies: favoriteMovies ?? prevHobbies.favoriteMovies,
+      favoriteSongs: favoriteSongs ?? prevHobbies.favoriteSongs,
+    });
+
+    return NextResponse.json(prevHobbies.id ?? null, { status: 200 });
+  }
+
+  const newHobby = await AboutUser.create({
+    name,
+    dateOfBirth,
     favoriteMovies,
     favoriteSongs,
     guiltyPleasures,
     hobbies,
-    userId: session.user.id!,
+    userId: session.user!.id!,
   });
 
-  await newHobby.save();
-
-  return NextResponse.json(null, { status: 201 });
+  return NextResponse.json(newHobby.id ?? null, { status: 201 });
 }

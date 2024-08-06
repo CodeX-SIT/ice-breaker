@@ -3,7 +3,7 @@ import { AvatarProps } from "@/components/AvatarPreview";
 import { useEffect, useState } from "react";
 import Avatar from "avataaars";
 import axios from "axios";
-import Hobby, { HobbyProps } from "@/components/Hobby";
+import Hobby, { AboutUserProps } from "@/components/Hobby";
 import NavBar from "@/components/NavBar";
 
 export default function GamePage() {
@@ -32,13 +32,13 @@ export default function GamePage() {
     return <div>Waiting for game to start... or Please enter a game code</div>;
 
   const avatarProps: AvatarProps = assigned.avatar;
-  const hobbyProps: HobbyProps = assigned.hobby;
+  const aboutUserProps: AboutUserProps = assigned.aboutUser;
 
   return (
     <>
       <NavBar />
       <Avatar {...avatarProps} />
-      <Hobby hobby={hobbyProps} />
+      <Hobby aboutUser={aboutUserProps} />
     </>
   );
 }

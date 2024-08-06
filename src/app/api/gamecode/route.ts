@@ -1,45 +1,72 @@
 import { auth } from "@/auth";
-import { User } from "@/database";
+import { ADMINS } from "@/constants";
+import { User, UserGame } from "@/database";
 import { GameCode } from "@/database/GameCode";
+import checkAuthAndRedirect from "@/utils/checkAuthAndRedirect";
 import { redirect, RedirectType } from "next/navigation";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
 export async function GET(request: NextRequest) {
-  const gameCodes = await GameCode.findAll();
-  const response = new NextResponse(JSON.stringify(gameCodes), { status: 200 });
-  return response;
+  const session = await checkAuthAndRedirect();
+
+  if (!ADMINS.includes(session.user?.email ?? "")) {
+    return NextResponse.json("Forbidden", { status: 403 });
+  }
+
+  const gameCode = await GameCode.findOne({ order: [["createdAt", "DESC"]] });
+
+  return NextResponse.json(gameCode, { status: 200 });
 }
 
 export async function POST(request: NextRequest) {
   const session = await auth();
 
   if (!session) {
-    return new NextResponse("Unauthorized", { status: 483 });
+    return NextResponse.json("Forbidden", { status: 403 });
   }
 
   const userId = session.user?.id;
 
   if (!userId) {
-    return new NextResponse("Unauthorized", { status: 484 });
+    return NextResponse.json("Forbidden", { status: 403 });
   }
 
-  const jsonBody = JSON.parse(
-    String((await request.body?.getReader().read()) ?? ""),
-  );
-  if (!jsonBody.gameCode) {
-    return new NextResponse("Invalid body", { status: 400 });
+  const unverifiedGameCode = await request.text();
+  if (!unverifiedGameCode) {
+    return NextResponse.json("Invalid body", { status: 400 });
   }
 
-  const gameCode = jsonBody.gameCode;
-
-  const valid = GameCode.validateGameCode(gameCode);
-  if (!valid) {
-    return new NextResponse("Invalid game code", { status: 404 });
+  let gameCode: string | null = null;
+  try {
+    gameCode = z.string().parse(unverifiedGameCode);
+  } catch (error) {
+    return NextResponse.json("Invalid body", { status: 400 });
   }
 
-  const dbUser = await User.findByPk(userId);
-  if (!dbUser) return new NextResponse("User not found", { status: 500 });
-  await dbUser.setGameCode(gameCode);
+  if (!gameCode) {
+    return NextResponse.json("Invalid body", { status: 400 });
+  }
 
-  return redirect("/", RedirectType.replace);
+  const dbGameCode = await GameCode.findOne({
+    where: { code: gameCode.toLowerCase() },
+  });
+  if (!dbGameCode) {
+    return NextResponse.json("Invalid game code", { status: 404 });
+  }
+
+  const userGame = await UserGame.findOne({
+    where: { userId, gameCodeId: dbGameCode.id },
+  });
+
+  if (userGame) {
+    return NextResponse.json("You are already in a game!", { status: 409 });
+  }
+
+  await UserGame.create({
+    userId,
+    gameCodeId: dbGameCode.id,
+  });
+
+  return redirect("/game", RedirectType.replace);
 }

@@ -48,3 +48,4 @@ package-lock.json
 
 #SQLite
 *.sqlite
+!database.template.sqlite
