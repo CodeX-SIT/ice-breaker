@@ -20,11 +20,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const session = await auth();
-
-  if (!session) {
-    return NextResponse.json("Forbidden", { status: 403 });
-  }
+  const session = await checkAuthAndRedirect();
 
   const userId = session.user?.id;
 
@@ -37,14 +33,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json("Invalid body", { status: 400 });
   }
 
-  let gameCode: string | null = null;
+  let gameCode = null;
   try {
     gameCode = z.string().parse(unverifiedGameCode);
   } catch (error) {
-    return NextResponse.json("Invalid body", { status: 400 });
-  }
-
-  if (!gameCode) {
     return NextResponse.json("Invalid body", { status: 400 });
   }
 
