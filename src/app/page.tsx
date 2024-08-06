@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import NavBar from "@/components/NavBar";
-import { Avatar, AboutUser, UserGame } from "@/database";
+import { Avatar, AboutUser, UserGame, GameCode } from "@/database";
 import checkAuthAndRedirect from "@/utils/checkAuthAndRedirect";
 import { redirect } from "next/navigation";
 
@@ -26,12 +26,19 @@ export default async function Home() {
 
   const userGame = await UserGame.findOne({
     where: { userId: session!.user!.id! },
-    attributes: ["id"],
+    order: [["createdAt", "DESC"]],
   });
 
   if (!userGame) {
     redirect("/gamecode");
   }
 
-  redirect("/game");
+  const gameCode = (
+    await GameCode.findOne({
+      where: { id: userGame.gameCodeId, endedAt: null },
+      attributes: ["code"],
+    })
+  )?.code;
+
+  gameCode ? redirect(`/game/${gameCode}`) : redirect("/gamecode");
 }
