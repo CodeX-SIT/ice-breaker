@@ -63,7 +63,7 @@ export default function GamePage({ code }: { code: string }) {
         return <div>Waiting for next assignment...</div>;
       }
 
-      const avatarProps: AvatarProps = state.assigned.avatar;
+      const avatarProps: AvatarProps = state.assigned.assignedUser.avatar;
       const aboutUserProps: AboutUserProps =
         state.assigned.assignedUser.aboutUser;
 
