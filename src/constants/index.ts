@@ -7,3 +7,4 @@ export const ADMINS = [
   "saksham.gupta.btech2021@sitpune.edu.in",
   "pranav.suri.btech2022@sitpune.edu.in",
 ];
+export const ASSIGNMENT_AUTO_SKIP_MS = 1000 * 60 * 5; // 5 minutes in milliseconds
