@@ -71,7 +71,7 @@ export default function GamePage({ code }: { code: string }) {
           <NavBar />
           <Avatar {...avatarProps} />
           <Hobby aboutUser={aboutUserProps} />
-          <GameForm code={code} />
+          <GameForm code={code} assignedId={state.assigned.id} />
         </>
       );
   }

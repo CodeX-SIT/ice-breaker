@@ -5,8 +5,10 @@ import {
   InferAttributes,
   CreationOptional,
   ForeignKey,
+  NonAttribute,
 } from "sequelize";
 import { sequelize } from "./sequelize";
+import { User } from "./User";
 
 export class Assigned extends Model<
   InferAttributes<Assigned>,
@@ -17,9 +19,10 @@ export class Assigned extends Model<
   public declare assignedUserId: ForeignKey<string>;
   public declare completedAt: Date | null;
   public declare assignedAt: Date;
-  public declare isCompleted: boolean;
+  public declare isSkipped: boolean;
   public declare gameCodeId: ForeignKey<number>;
-  // public declare selfie: Buffer | null;
+  public declare user: NonAttribute<User>;
+  public declare assignedUser: NonAttribute<User>;
 }
 
 Assigned.init(
@@ -27,7 +30,7 @@ Assigned.init(
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     assignedAt: { type: DataTypes.DATE, allowNull: false },
     completedAt: { type: DataTypes.DATE },
-    isCompleted: {
+    isSkipped: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false,

@@ -5,6 +5,7 @@ import { GameCode } from "./GameCode";
 import { Avatar } from "./Avatar";
 import { UserGame } from "./UserGame";
 import { sequelize } from "./sequelize";
+import { Selfie } from "./Selfie";
 
 // This user is supposed to find ...
 User.hasMany(Assigned, { as: "assignedUsers", foreignKey: "userId" });
@@ -34,5 +35,8 @@ GameCode.belongsToMany(User, {
   foreignKey: "gameCodeId",
   through: UserGame,
 });
+
+Assigned.hasOne(Selfie, { as: "selfie", foreignKey: "assignedId" });
+Selfie.belongsTo(Assigned, { as: "assigned", foreignKey: "assigned" });
 
 // sequelize.sync({ force: true });

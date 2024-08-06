@@ -1,10 +1,28 @@
-import React, { useState } from 'react';
-import { Box, Button, TextField, Typography } from '@mui/material';
-import axios from 'axios';
+import React, { useState } from "react";
+import { Box, Button, styled, TextField, Typography } from "@mui/material";
+import axios from "axios";
 
-export default function GameForm({ code }: { code: string }) {
-  const [name, setName] = useState('');
-  const [selfie, setSelfie] = useState<File | null>(null);
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
+
+export default function GameForm({
+  code,
+  assignedId,
+}: {
+  code: string;
+  assignedId: number;
+}) {
+  const [name, setName] = useState("");
+  const [selfie, setSelfie] = useState<File>();
 
   const handleSelfieChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -15,28 +33,32 @@ export default function GameForm({ code }: { code: string }) {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const formData = new FormData();
-    formData.append('name', name);
+    formData.append("name", name);
     if (selfie) {
-      formData.append('selfie', selfie);
+      formData.append("selfie", selfie);
     }
 
-    try {
-      const response = await axios.post(`/api/user/game/${code}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+    const response = await axios
+      .post(`/api/user/game/${code}`, formData)
+      .then((response) => response.data)
+      .catch((error) => {
+        console.error(error);
       });
-      console.log(response.data);
-    } catch (error) {
-      console.error('Error submitting form:', error);
-    }
   };
 
   return (
     <Box
       component="form"
       onSubmit={handleSubmit}
-      sx={{ maxWidth: 500, margin: 'auto', mt: 4, p: 2, display: 'flex', flexDirection: 'column', gap: 2 }}
+      sx={{
+        maxWidth: 500,
+        margin: "auto",
+        mt: 4,
+        p: 2,
+        display: "flex",
+        flexDirection: "column",
+        gap: 2,
+      }}
     >
       <Typography variant="h5" gutterBottom>
         Join Game
@@ -47,16 +69,12 @@ export default function GameForm({ code }: { code: string }) {
         onChange={(e) => setName(e.target.value)}
         required
       />
-      <Button
-        variant="contained"
-        component="label"
-      >
+      <Button variant="contained" component="label">
         Upload Selfie
-        <input
+        <VisuallyHiddenInput
           type="file"
-          accept="image/*"
-          hidden
           onChange={handleSelfieChange}
+          accept="image/*"
         />
       </Button>
       <Button type="submit" variant="contained" color="primary">

@@ -1,6 +1,7 @@
 import { Assigned, GameCode } from "@/database";
 import checkAuthAndRedirect from "@/utils/checkAuthAndRedirect";
 import { NextRequest, NextResponse } from "next/server";
+import { Selfie } from "@/database";
 
 interface GameRouteParams {
   code: string;
@@ -10,8 +11,8 @@ function fetchLatestAssigned(gameCodeId: number, userId: string) {
   return Assigned.findOne({
     where: {
       userId: userId,
-      isCompleted: false,
       gameCodeId: gameCodeId,
+      completedAt: null,
     },
     include: [
       {
@@ -64,6 +65,89 @@ export async function GET(
   }
 }
 
-export async function POST(request: NextRequest) {
-    
+async function validateSelfie(selfie: File | null) {
+  if (!selfie || !selfie.type.startsWith("image/")) {
+    throw new Error("File is not an image");
+  }
+}
+
+async function validateAssigned(assignedId: string, userId: string) {
+  const assigned = await Assigned.findByPk(Number(assignedId), {
+    include: ["assignedUser"],
+  });
+
+  if (!assigned) {
+    throw new Error("Invalid assignedId");
+  }
+
+  if (assigned.userId !== userId) {
+    throw new Error("FORBIDDEN");
+  }
+
+  return assigned;
+}
+
+function validateAssignedUserName(assignedUserName: string, assigned: any) {
+  if (assignedUserName !== assigned.assignedUser.actualName) {
+    throw new Error("INVALID_NAME");
+  }
+}
+
+export async function POST(
+  request: NextRequest,
+  { params }: { params: GameRouteParams },
+) {
+  const session = await checkAuthAndRedirect();
+  const userId = session.user?.id!;
+  const code = params.code;
+  const formData = await request.formData();
+
+  const assignedUserName = formData.get("name") as string;
+  const selfie = formData.get("selfie") as File;
+  const assignedId = formData.get("assignedId") as string;
+
+  try {
+    await validateSelfie(selfie);
+    const assigned = await validateAssigned(assignedId, userId);
+    validateAssignedUserName(assignedUserName, assigned);
+
+    const selfieBuffer = Buffer.from(await selfie.arrayBuffer());
+    const mimeType = selfie.type;
+
+    await assigned.update({ completedAt: new Date() });
+    await Selfie.create({
+      data: selfieBuffer,
+      mimeType: mimeType,
+      assignedId: Number(assignedId),
+    });
+
+    return NextResponse.json({ code: "SUCCESS" }, { status: 201 });
+  } catch (error) {
+    if (!(error instanceof Error)) {
+      return NextResponse.json({ message: "Unknown error" }, { status: 500 });
+    }
+    console.error(error);
+    let status = 400;
+    let message = error.message;
+
+    switch (message) {
+      case "File is not an image":
+        status = 400;
+        break;
+      case "Invalid assignedId":
+        status = 404;
+        break;
+      case "FORBIDDEN":
+        status = 403;
+        break;
+      case "INVALID_NAME":
+        status = 400;
+        break;
+      default:
+        status = 500;
+        break;
+    }
+
+    return NextResponse.json(message, { status });
+  }
 }
