@@ -1,7 +1,8 @@
-import { Assigned, GameCode } from "@/database";
+import { AboutUser, Assigned, GameCode } from "@/database";
 import checkAuthAndRedirect from "@/utils/checkAuthAndRedirect";
 import { NextRequest, NextResponse } from "next/server";
 import { Selfie } from "@/database";
+import { createUserAssignment } from "@/app/api/controllers/createUserAssignment";
 
 interface GameRouteParams {
   code: string;
@@ -87,8 +88,14 @@ async function validateAssigned(assignedId: string, userId: string) {
   return assigned;
 }
 
-function validateAssignedUserName(assignedUserName: string, assigned: any) {
-  if (assignedUserName !== assigned.assignedUser.actualName) {
+async function validateAssignedUserName(
+  postedUserName: string,
+  assigned: Assigned,
+) {
+  const aboutUser = await AboutUser.findOne({
+    where: { userId: assigned.assignedUserId },
+  });
+  if (postedUserName !== aboutUser?.name) {
     throw new Error("INVALID_NAME");
   }
 }
@@ -102,14 +109,22 @@ export async function POST(
   const code = params.code;
   const formData = await request.formData();
 
-  const assignedUserName = formData.get("name") as string;
+  const postedUserName = formData.get("name") as string;
   const selfie = formData.get("selfie") as File;
   const assignedId = formData.get("assignedId") as string;
 
+  console.log(assignedId);
+
   try {
+    const gameCode = await GameCode.findOne({
+      where: { code },
+    });
+    if (!gameCode) {
+      return NextResponse.json("Game code not found", { status: 404 });
+    }
     await validateSelfie(selfie);
     const assigned = await validateAssigned(assignedId, userId);
-    validateAssignedUserName(assignedUserName, assigned);
+    await validateAssignedUserName(postedUserName, assigned);
 
     const selfieBuffer = Buffer.from(await selfie.arrayBuffer());
     const mimeType = selfie.type;
@@ -120,8 +135,12 @@ export async function POST(
       mimeType: mimeType,
       assignedId: Number(assignedId),
     });
+    const nextAssignment = !!(await createUserAssignment(gameCode, userId));
 
-    return NextResponse.json({ code: "SUCCESS" }, { status: 201 });
+    return NextResponse.json(
+      { code: "SUCCESS", nextAssignment },
+      { status: 201 },
+    );
   } catch (error) {
     if (!(error instanceof Error)) {
       return NextResponse.json({ message: "Unknown error" }, { status: 500 });
