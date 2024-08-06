@@ -18,7 +18,7 @@ export class GameCode extends Model<
   public declare code: CreationOptional<string>;
   public declare expiry: CreationOptional<Date>;
   public declare startedAt: CreationOptional<Date>;
-  public declare endedAt: CreationOptional<Date>;
+  public declare endedAt: CreationOptional<Date | null>;
   public declare users: NonAttribute<User[]>;
 
   public static async validateGameCode(code: string): Promise<boolean> {

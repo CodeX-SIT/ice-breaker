@@ -1,8 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { AboutUser } from "@/database"; // Adjust the path as necessary
 import { User } from "@/database"; // Adjust the path as necessary
-import { InferCreationAttributes, UUIDV4 } from "sequelize";
-import { randomUUID } from "crypto";
+import { InferCreationAttributes } from "sequelize";
 
 const hobbyList = [
   "Reading",
