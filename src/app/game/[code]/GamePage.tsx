@@ -1,16 +1,20 @@
 "use client";
-import { AvatarProps } from "@/components/AvatarPreview";
 import { useEffect, useState } from "react";
-import Avatar from "avataaars";
 import axios from "axios";
-import Hobby, { AboutUserProps } from "@/components/Hobby";
-import NavBar from "@/components/NavBar";
 import { useRouter } from "next/navigation";
+import Avatar from "avataaars";
+import NavBar from "@/components/NavBar";
+import Hobby, { AboutUserProps } from "@/components/Hobby";
+import { AvatarProps } from "@/components/AvatarPreview";
+import GameForm from "@/components/GameForm";
+
+interface PageState {
+  gameState?: "waiting" | "started" | "ended" | "notInGame";
+  assigned?: any;
+}
 
 export default function GamePage({ code }: { code: string }) {
-  const [assigned, setAssigned] = useState<any>();
-  type GameStates = "waiting" | "started" | "ended" | "notInGame";
-  const [gameState, setGameState] = useState<GameStates>();
+  const [state, setState] = useState<PageState>({});
   const router = useRouter();
 
   useEffect(() => {
@@ -19,8 +23,10 @@ export default function GamePage({ code }: { code: string }) {
         .get(`/api/user/game/${code}`)
         .then((response) => response.data)
         .then((data) => {
-          setGameState(data.gameState);
-          setAssigned(data.assigned);
+          setState({
+            gameState: data.gameState,
+            assigned: data.assigned,
+          });
         })
         .catch((e) => {
           if (e.response) {
@@ -31,15 +37,14 @@ export default function GamePage({ code }: { code: string }) {
           }
         });
     }
-
-    fetchAssigned(); // first fetch needs to be done (otherwise it will be called after 1 second)
+    fetchAssigned(); // first fetch
     const interval = setInterval(fetchAssigned, 3000);
 
-    return () => clearInterval(interval); // this will delete the interval when the component is unmounted
-  }, []);
+    return () => clearInterval(interval); // clean up interval on component unmount
+  }, [code]);
 
-  switch (gameState) {
-    case null || undefined:
+  switch (state.gameState) {
+    case undefined:
       return <div>Page is loading...</div>;
 
     case "notInGame":
@@ -54,25 +59,20 @@ export default function GamePage({ code }: { code: string }) {
       return <div>Game has ended.</div>;
 
     case "started":
-      if (!assigned) {
+      if (!state.assigned) {
         return <div>Waiting for next assignment...</div>;
       }
 
-      const avatarProps: AvatarProps = assigned.avatar;
-      const aboutUserProps: AboutUserProps = assigned.aboutUser;
+      const avatarProps: AvatarProps = state.assigned.avatar;
+      const aboutUserProps: AboutUserProps = state.assigned.aboutUser;
 
-      // TODO: Upload selfie button
-      // TODO: Name button
-      // TODO: Submit button
       return (
         <>
           <NavBar />
           <Avatar {...avatarProps} />
           <Hobby aboutUser={aboutUserProps} />
+          <GameForm code={code} />
         </>
       );
-
-    default:
-      return <div>Invalid game state.</div>;
   }
 }

@@ -13,33 +13,39 @@ import { AvatarProps } from "@/components/AvatarPreview";
 // If it is, get the latest assignment
 // If no uncompleted assignment, wait for the next assignment/game to start
 
+interface PageState {
+  avatar?: AvatarProps;
+  loading: boolean;
+  error: boolean;
+}
+
 export default function SelfAvatar() {
-  const [avatar, setAvatar] = useState<AvatarProps>();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [state, setState] = useState<PageState>({
+    avatar: undefined,
+    loading: true,
+    error: false,
+  });
 
   useEffect(() => {
     axios(`/api/user/avatar`, {
       method: "GET",
     })
       .then((response) => {
-        setAvatar(response.data);
-        setLoading(false);
+        setState({ avatar: response.data, loading: false, error: false });
       })
       .catch((err) => {
         console.error(JSON.stringify(err, null, 2));
-        setLoading(false);
-        setError(true);
+        setState({ avatar: undefined, loading: false, error: true });
       });
-  });
+  }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Avatar could not be fetched.</div>;
-  if (!avatar) return <div>Avatar not found.</div>;
+  if (state.loading) return <div>Loading...</div>;
+  if (state.error) return <div>Avatar could not be fetched.</div>;
+  if (!state.avatar) return <div>Avatar not found.</div>;
   return (
     <>
       <NavBar />
-      <Avatar {...avatar} />
+      <Avatar {...state.avatar} />
     </>
   );
 }

@@ -63,3 +63,7 @@ export async function GET(
     return NextResponse.json({ gameState });
   }
 }
+
+export async function POST(request: NextRequest) {
+    
+}

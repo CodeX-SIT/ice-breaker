@@ -1,3 +1,6 @@
+import React from 'react';
+import { Card, CardContent, Typography, Divider } from '@mui/material';
+
 export interface AboutUserProps {
   hobbies: string;
   guiltyPleasures: string;
@@ -7,16 +10,39 @@ export interface AboutUserProps {
 
 export default function Hobby({ aboutUser }: { aboutUser: AboutUserProps }) {
   const { hobbies, guiltyPleasures, favoriteMovies, favoriteSongs } = aboutUser;
+
   return (
-    <div>
-      <h2>Hobbies</h2>
-      <p>{hobbies}</p>
-      <h2>Guilty Pleasures</h2>
-      <p>{guiltyPleasures}</p>
-      <h2>Favorite Movies</h2>
-      <p>{favoriteMovies}</p>
-      <h2>Favorite Songs</h2>
-      <p>{favoriteSongs}</p>
-    </div>
+    <Card sx={{ maxWidth: 500, margin: 'auto', mt: 4, p: 2 }}>
+      <CardContent>
+        <Typography variant="h5" gutterBottom>
+          Hobbies
+        </Typography>
+        <Typography variant="body1" paragraph>
+          {hobbies}
+        </Typography>
+        <Divider />
+        <Typography variant="h5" gutterBottom>
+          Guilty Pleasures
+        </Typography>
+        <Typography variant="body1" paragraph>
+          {guiltyPleasures}
+        </Typography>
+        <Divider />
+        <Typography variant="h5" gutterBottom>
+          Favorite Movies
+        </Typography>
+        <Typography variant="body1" paragraph>
+          {favoriteMovies}
+        </Typography>
+        <Divider />
+        <Typography variant="h5" gutterBottom>
+          Favorite Songs
+        </Typography>
+        <Typography variant="body1" paragraph>
+          {favoriteSongs}
+        </Typography>
+      </CardContent>
+    </Card>
   );
 }
+
