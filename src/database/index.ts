@@ -10,4 +10,4 @@ export { UserGame } from "./UserGame";
 export { sequelize } from "./sequelize";
 export { Selfie } from "./Selfie";
 import { sequelize } from "./sequelize";
-// sequelize.sync({ force: true });
+//sequelize.sync({ force: true });
