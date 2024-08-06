@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(await GameCode.create(), { status: 201 });
   }
 
-  return NextResponse.json("Unused Game code already exists", {
+  return NextResponse.json(gameCode, {
     status: 409,
   });
 }
