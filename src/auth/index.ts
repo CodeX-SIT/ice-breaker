@@ -32,4 +32,18 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     signIn: "/auth/signin",
     signOut: "/auth/signout",
   },
+  callbacks: {
+    signIn: async ({ user }) => {
+      console.log(user);
+      if (
+        user.email &&
+        user.email.endsWith("@" + process.env.ALLOWED_DOMAIN) &&
+        process.env.NODE_ENV === "production"
+      ) {
+        return true;
+      } else {
+        return "/auth/signin?error=invalid_email";
+      }
+    },
+  },
 });
