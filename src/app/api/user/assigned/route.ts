@@ -1,4 +1,4 @@
-import { Assigned, GameCode, UserGame } from "@/database";
+import { Assigned, GameCode } from "@/database";
 import checkAuthAndRedirect from "@/utils/checkAuthAndRedirect";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -36,7 +36,13 @@ export async function GET(
   }
 
   if (!gameCode.startedAt) {
-    // TODO: Redirect user to game waiting page
+    return NextResponse.json(
+      {
+        message: "User has joined a game but it has not started yet",
+        gameCode: gameCode,
+      },
+      { status: 206 }, // 206 is partial content, I couldn't find a better status code
+    );
   }
 
   // get the latest assignment

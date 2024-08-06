@@ -4,9 +4,11 @@ import {
   InferCreationAttributes,
   InferAttributes,
   CreationOptional,
+  NonAttribute,
 } from "sequelize";
 import { sequelize } from "./sequelize";
 import { createHash, randomBytes } from "crypto";
+import { User } from ".";
 
 export class GameCode extends Model<
   InferAttributes<GameCode>,
@@ -17,6 +19,7 @@ export class GameCode extends Model<
   public declare expiry: CreationOptional<Date>;
   public declare startedAt: CreationOptional<Date>;
   public declare endedAt: CreationOptional<Date>;
+  public declare users: NonAttribute<User[]>;
 
   public static async validateGameCode(code: string): Promise<boolean> {
     const gameCode = await this.findOne({ where: { code } });
