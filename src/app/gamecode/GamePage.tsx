@@ -37,7 +37,7 @@ export function _GameCodePage() {
       setOpen(true);
       setTimeout(() => {
         setOpen(false);
-        router.push(`/game`);
+        router.push(`/game/${gameCode}`);
       }, 3000);
     } else if ([401, 403].includes(response.status)) {
       router.replace("/auth/signin");
@@ -55,6 +55,7 @@ export function _GameCodePage() {
       setOpen(true);
       setTimeout(() => {
         setOpen(false);
+        router.push(`/game/${gameCode}`);
       }, 3000);
     } else {
       setResponse({

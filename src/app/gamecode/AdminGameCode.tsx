@@ -3,12 +3,21 @@
 import NavBar from "@/components/NavBar";
 import { GameCode } from "@/database";
 import { Box, Button, Grid, Paper, Typography } from "@mui/material";
+import axios from "axios";
 import React, { useEffect } from "react";
+import { InferAttributes } from "sequelize";
 
 function AdminGameCode() {
-  const [gameCode, setGameCode] = React.useState<GameCode | null>(null);
+  const [gameCode, setGameCode] = React.useState<GameCode | null>();
   const [createGameCode, setCreateGameCode] = React.useState(false);
   const [date, setDate] = React.useState(new Date());
+
+  const gameCodeActions = async (action: "start" | "end") => {
+    fetch("/api/gamecode/actions", {
+      method: "POST",
+      body: JSON.stringify({ action, gameCode: gameCode?.code }),
+    });
+  };
 
   useEffect(() => {
     const fetchGameCode = async () => {
@@ -16,9 +25,14 @@ function AdminGameCode() {
         body: JSON.stringify({ createGameCode }),
         method: "POST",
       });
+      const json = await response.json();
       if (response.ok) {
-        const data = await response.json();
-        setGameCode(data);
+        setGameCode(json);
+      } else if (response.status === 404) {
+        setGameCode(null);
+      } else if (response.status === 409) {
+        console.log(json, response.ok);
+        setGameCode(json);
       }
     };
 
@@ -82,12 +96,26 @@ function AdminGameCode() {
           >
             <Grid container spacing={2}>
               <Grid item xs={6}>
-                <Button fullWidth variant="contained" color="success">
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="success"
+                  onClick={() => {
+                    gameCodeActions("start");
+                  }}
+                >
                   Start Game
                 </Button>
               </Grid>
               <Grid item xs={6}>
-                <Button fullWidth variant="contained" color="error">
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="error"
+                  onClick={() => {
+                    gameCodeActions("end");
+                  }}
+                >
                   End Game
                 </Button>
               </Grid>
