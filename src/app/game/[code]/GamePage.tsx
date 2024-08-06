@@ -38,7 +38,7 @@ export default function GamePage({ code }: { code: string }) {
         });
     }
     fetchAssigned(); // first fetch
-    const interval = setInterval(fetchAssigned, 3000);
+    const interval = setInterval(fetchAssigned, 1000);
 
     return () => clearInterval(interval); // clean up interval on component unmount
   }, [code]);
@@ -64,7 +64,8 @@ export default function GamePage({ code }: { code: string }) {
       }
 
       const avatarProps: AvatarProps = state.assigned.avatar;
-      const aboutUserProps: AboutUserProps = state.assigned.aboutUser;
+      const aboutUserProps: AboutUserProps =
+        state.assigned.assignedUser.aboutUser;
 
       return (
         <>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Box, Button, styled, TextField, Typography } from "@mui/material";
 import axios from "axios";
+import { set } from "zod";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -23,6 +24,7 @@ export default function GameForm({
 }) {
   const [name, setName] = useState("");
   const [selfie, setSelfie] = useState<File>();
+  const [nextAssignment, setNextAssignment] = useState(true);
 
   const handleSelfieChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -37,10 +39,14 @@ export default function GameForm({
     if (selfie) {
       formData.append("selfie", selfie);
     }
+    formData.append("assignedId", assignedId.toString());
 
     const response = await axios
       .post(`/api/user/game/${code}`, formData)
       .then((response) => response.data)
+      .then((data) => {
+        setNextAssignment(data.nextAssignment);
+      })
       .catch((error) => {
         console.error(error);
       });
@@ -60,9 +66,6 @@ export default function GameForm({
         gap: 2,
       }}
     >
-      <Typography variant="h5" gutterBottom>
-        Join Game
-      </Typography>
       <TextField
         label="Name"
         value={name}
