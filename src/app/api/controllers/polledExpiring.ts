@@ -4,8 +4,10 @@ import { Assigned, GameCode, UserGame } from "@/database";
 function timeDifference(assignedAt: Date) {
   return Date.now() - assignedAt.getTime();
 }
-
-export default async function polledAssigning(code: string) {
+/**
+ * @description This function is used to expire the assignments of users whose time has expired
+ */
+export default async function polledExpiring(code: string) {
   const gameCode = await GameCode.findOne({
     where: {
       code,
@@ -17,6 +19,7 @@ export default async function polledAssigning(code: string) {
 
   if (!gameCode.startedAt) {
     // return has to be true to keep the interval running
+    // below logic is not needed as the game has not started yet
     return true;
   }
 
@@ -41,7 +44,7 @@ export default async function polledAssigning(code: string) {
   //   });
 
   const notAssignedUsers = allUsers.filter((user) => {
-    const isAssigned = assigned.find(
+    const isAssigned = assigned.some(
       (assignment) => assignment.userId === user.userId,
     );
     const isNotAssigned = !isAssigned;
@@ -60,9 +63,6 @@ export default async function polledAssigning(code: string) {
       where: { id: previousAssignmentIds },
     },
   );
-
-  // TODO: Call the new assignment function for previous assignments
-  // TODO: Call the assignment function for notAssignedUsers users
 
   return true;
 }
