@@ -173,7 +173,10 @@ export default function SequelizeAdapter(
     async linkAccount(account) {
       await sync();
 
-      await Account.create(account);
+      await Account.create(account).catch((e) => {
+        console.error(e);
+        console.error(e.stack);
+      });
     },
     async unlinkAccount({ provider, providerAccountId }) {
       await sync();
