@@ -120,7 +120,7 @@ async function validateAssignedUserName(
   const aboutUser = await AboutUser.findOne({
     where: { userId: assigned.assignedUserId },
   });
-  if (postedUserName !== aboutUser?.name) {
+  if (postedUserName.toLowerCase().trim() !== aboutUser?.name.toLowerCase().trim()) {
     throw new Error("INVALID_NAME");
   }
 }
