@@ -11,16 +11,25 @@ import {
   Typography,
 } from "@mui/material";
 import WebhookOutlinedIcon from "@mui/icons-material/WebhookOutlined";
-import { MouseEventHandler, useState } from "react";
+import { MouseEventHandler, useEffect, useState } from "react";
 import ErrorSuccessSnackbar from "@/components/Snackbars/ErrorSuccessSnackbar";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export function _GameCodePage() {
   const [gameCode, setGameCode] = useState("");
   const [open, setOpen] = useState(false);
   const [response, setResponse] = useState({ status: 0, message: "" });
   const router = useRouter();
+  const searchParams = useSearchParams();
 
+  useEffect(() => {
+    // get query argument code
+    const code = searchParams.get("code") as string;
+    // TODO: Set game code in the input field
+    // if (code) {
+    //   setGameCode(code);
+    // }
+  }, []);
   const handleSubmit: MouseEventHandler<HTMLButtonElement> = async (e) => {
     e.preventDefault();
 
@@ -34,11 +43,11 @@ export function _GameCodePage() {
         status: 200,
         message: `Added you to the game ${gameCode}`,
       });
-      setOpen(true);
-      setTimeout(() => {
-        setOpen(false);
-        router.push(`/game/${gameCode}`);
-      }, 3000);
+      router.push(`/game/${gameCode}`);
+      // setOpen(true);
+      // setTimeout(() => {
+      //   setOpen(false);
+      // }, 3000);
     } else if ([401, 403].includes(response.status)) {
       router.replace("/auth/signin");
     } else if ([400, 404].includes(response.status)) {
@@ -52,11 +61,11 @@ export function _GameCodePage() {
         status: 409,
         message: response.statusText,
       });
-      setOpen(true);
-      setTimeout(() => {
-        setOpen(false);
-        router.push(`/game/${gameCode}`);
-      }, 3000);
+      // setOpen(true);
+      router.push(`/game/${gameCode}`);
+      // setTimeout(() => {
+      //   setOpen(false);
+      // }, 3000);
     } else {
       setResponse({
         status: 500,
@@ -104,6 +113,7 @@ export function _GameCodePage() {
                   name="gameCode"
                   autoFocus
                   color="primary"
+                  // defaultValue={gameCode}
                   onChange={(e) => {
                     setGameCode(e.target.value);
                   }}
