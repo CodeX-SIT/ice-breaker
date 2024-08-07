@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Box, Button, styled, TextField, Typography } from "@mui/material";
 import axios from "axios";
 import { set } from "zod";
+import { useRouter } from "next/navigation";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -25,7 +26,7 @@ export default function GameForm({
   const [name, setName] = useState("");
   const [selfie, setSelfie] = useState<File>();
   const [nextAssignment, setNextAssignment] = useState(true);
-
+  const router = useRouter();
   const handleSelfieChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       setSelfie(event.target.files[0]);
@@ -36,15 +37,24 @@ export default function GameForm({
     event.preventDefault();
     const formData = new FormData();
     formData.append("name", name);
-    if (selfie) {
-      formData.append("selfie", selfie);
-    }
+    if (!selfie) return; // TODO: Use state to show selfie error message
+
+    formData.append("selfie", selfie);
     formData.append("assignedId", assignedId.toString());
 
     const response = await axios
       .post(`/api/user/game/${code}`, formData)
       .then((response) => response.data)
       .then((data) => {
+        if (data.code === "INVALID_NAME") {
+          // TODO: Use state to show name error message
+          alert("Invalid name");
+          return;
+        }
+        if (data.code === "COMPLETED") {
+          router.push(`/game/completed`);
+          return;
+        }
         setNextAssignment(data.nextAssignment);
       })
       .catch((error) => {

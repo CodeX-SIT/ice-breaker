@@ -33,6 +33,20 @@ export async function GET(
   const userId = session.user?.id!;
   const code = params.code;
 
+  // get query param assignedId from request
+  const url = new URL(request.url);
+  const assignedIdString = url.searchParams.get("assignedId");
+  const assignedId = Number(assignedIdString);
+  if (assignedId) {
+    // fetch assigned record from the database
+    const assignedRecord = await Assigned.findByPk(assignedId, {
+      attributes: ["completedAt"],
+    });
+    // check if the record exists and is not complete
+    if (assignedRecord && !assignedRecord.completedAt) {
+      return NextResponse.json("VALID");
+    }
+  }
   const gameCode = await GameCode.findOne({
     where: {
       code: code,
@@ -58,7 +72,11 @@ export async function GET(
     return NextResponse.json({ gameState });
   } else if (gameCode.startedAt) {
     gameState = "started";
-    const assigned = await fetchLatestAssigned(gameCode.id, userId);
+    let assigned = await fetchLatestAssigned(gameCode.id, userId);
+    if (!assigned) {
+      assigned = await createUserAssignment(gameCode, userId);
+      if (!assigned) return NextResponse.json("COMPLETED");
+    }
     return NextResponse.json({ gameState, assigned });
   } else {
     gameState = "waiting";
@@ -113,8 +131,6 @@ export async function POST(
   const selfie = formData.get("selfie") as File;
   const assignedId = formData.get("assignedId") as string;
 
-  console.log(assignedId);
-
   try {
     const gameCode = await GameCode.findOne({
       where: { code },
@@ -136,6 +152,10 @@ export async function POST(
       assignedId: Number(assignedId),
     });
     const nextAssignment = !!(await createUserAssignment(gameCode, userId));
+
+    if (!nextAssignment) {
+      return NextResponse.json({ code: "COMPLETED" }, { status: 200 });
+    }
 
     return NextResponse.json(
       { code: "SUCCESS", nextAssignment },

@@ -16,13 +16,21 @@ interface PageState {
 export default function GamePage({ code }: { code: string }) {
   const [state, setState] = useState<PageState>({});
   const router = useRouter();
+  const assigned = state.assigned;
 
   useEffect(() => {
     function fetchAssigned() {
       axios
-        .get(`/api/user/game/${code}`)
-        .then((response) => response.data)
-        .then((data) => {
+        .get(`/api/user/game/${code}?assignedId=${assigned?.id}`)
+        .then(({ data }) => {
+          if (data === "VALID") return;
+          if (data === "WAITING") {
+            // this will never happen
+            return setState({ gameState: "started", assigned: null });
+          }
+          if (data === "COMPLETED") {
+            return router.push(`/game/completed`);
+          }
           setState({
             gameState: data.gameState,
             assigned: data.assigned,
@@ -31,7 +39,7 @@ export default function GamePage({ code }: { code: string }) {
         .catch((e) => {
           if (e.response) {
             // Invalid game code, so redirect to gamecode page
-            router.push("/gamecode");
+            router.push(`/gamecode?code=${code}`);
           } else {
             console.error(e);
           }
@@ -41,7 +49,7 @@ export default function GamePage({ code }: { code: string }) {
     const interval = setInterval(fetchAssigned, 1000);
 
     return () => clearInterval(interval); // clean up interval on component unmount
-  }, [code]);
+  }, [code, assigned]);
 
   switch (state.gameState) {
     case undefined:
@@ -70,7 +78,13 @@ export default function GamePage({ code }: { code: string }) {
       return (
         <>
           <NavBar />
-          <Avatar {...avatarProps} />
+          <section
+            className="flex w-screen justify-center items-center"
+            style={{ marginTop: "70px" }}
+          >
+            <Avatar {...avatarProps} />
+          </section>
+
           <Hobby aboutUser={aboutUserProps} />
           <GameForm code={code} assignedId={state.assigned.id} />
         </>
