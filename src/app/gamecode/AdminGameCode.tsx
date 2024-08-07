@@ -4,6 +4,7 @@ import NavBar from "@/components/NavBar";
 import { GameCode } from "@/database";
 import { Box, Button, Grid, Paper, Typography } from "@mui/material";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
 function AdminGameCode() {
@@ -11,6 +12,7 @@ function AdminGameCode() {
   const [createGameCode, setCreateGameCode] = React.useState(false);
   const [date, setDate] = React.useState(new Date());
   const [users, setUsers] = React.useState<any>();
+  const router = useRouter();
 
   const gameCodeActions = async (action: "start" | "end") => {
     fetch("/api/gamecode/actions", {
@@ -60,7 +62,6 @@ function AdminGameCode() {
   const userNames = users?.map((user: any) => user.aboutUser.name) as
     | any[]
     | undefined;
-  
 
   return (
     <main>
@@ -142,6 +143,14 @@ function AdminGameCode() {
                   End Game
                 </Button>
               </Grid>
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                onClick={() => router.push(`/game/${gameCode?.code}/stats`)}
+              >
+                View Stats
+              </Button>
             </Grid>
           </Paper>
           <Paper

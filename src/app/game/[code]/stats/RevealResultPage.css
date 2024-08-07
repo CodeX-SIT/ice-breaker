@@ -1,0 +1,33 @@
+.result-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: #f0f0f0;
+    overflow: hidden;
+    position: relative;
+}
+  
+.result-number {
+    font-size: 5rem;
+    font-weight: bold;
+    color: #333;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 1s ease-out, transform 1s ease-out;
+}
+  
+.result-number.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+  
+.confetti-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}

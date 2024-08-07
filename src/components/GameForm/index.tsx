@@ -37,8 +37,9 @@ export default function GameForm({
     event.preventDefault();
     const formData = new FormData();
     formData.append("name", name);
-    if (!selfie) return; // TODO: Use state to show selfie error message
-
+    if (!selfie) return;
+    // TODO: Use state to show selfie error message
+    // TODO: Add selfie image compression
     formData.append("selfie", selfie);
     formData.append("assignedId", assignedId.toString());
 
@@ -61,7 +62,7 @@ export default function GameForm({
         console.error(error);
       });
   };
-
+  //TODO: Upload from camera
   return (
     <Box
       component="form"

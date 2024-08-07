@@ -2,7 +2,7 @@ import { Model, DataTypes, ForeignKey, NonAttribute } from "sequelize";
 import { sequelize } from "./sequelize";
 import { AdapterUser } from "next-auth/adapters";
 import { Avatar } from "avataaars";
-import { AboutUser } from ".";
+import { AboutUser, Assigned } from ".";
 export class User extends Model<
   AdapterUser & { actualName: string | null },
   Partial<AdapterUser>
@@ -15,6 +15,7 @@ export class User extends Model<
   public declare actualName: string | null;
   public declare avatar: NonAttribute<Avatar>;
   public declare aboutUser: NonAttribute<AboutUser>;
+  public declare assignedUsers: NonAttribute<Assigned[]>;
 }
 
 User.init(
