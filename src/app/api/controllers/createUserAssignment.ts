@@ -1,7 +1,6 @@
 import { Assigned, GameCode, UserGame } from "@/database";
 
 export async function createUserAssignment(gameCode: GameCode, userId: string) {
-  console.log("Creating assignment for", userId);
   const assignee = await UserGame.findAll({
     where: { gameCodeId: gameCode.id },
   });

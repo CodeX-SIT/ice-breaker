@@ -4,3 +4,4 @@
 // TODO: Name comparison without case
 // TODO: Error messages for user
 // TODO: Add place to questions
+// TODO: Loader in places where there is a delay

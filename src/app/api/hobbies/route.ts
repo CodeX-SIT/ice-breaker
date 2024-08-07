@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
       favoriteSongs: formData.get("favoriteSongs"),
     });
   } catch (error) {
-    console.log("Error parsing data", error);
+    console.error("Error parsing data", error);
     return new NextResponse("Invalid data", { status: 400 });
   }
 

@@ -50,7 +50,6 @@ export default function _HobbiesPage({
       body: data,
     });
 
-    console.log(response);
 
     if (response.ok) {
       setResponse({ status: 201, message: "Hobbies saved!" });

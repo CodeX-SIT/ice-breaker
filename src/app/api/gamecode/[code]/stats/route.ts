@@ -36,7 +36,6 @@ async function getStats(gameCode: GameCode) {
   });
 
   const result = users.map((user) => {
-    console.log(user);
     return {
       userId: user.id,
       completedAssignments: user.assignedUsers.length,

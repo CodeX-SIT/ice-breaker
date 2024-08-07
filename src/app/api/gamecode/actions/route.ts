@@ -19,7 +19,6 @@ export async function POST(request: NextRequest) {
   try {
     let _requestBody = await request.json();
     requestBody = schema.parse(_requestBody);
-    console.log(_requestBody);
   } catch (error) {
     return NextResponse.json("Invalid body", { status: 400 });
   }
@@ -89,6 +88,5 @@ async function createAllAssignments(gameCode: GameCode) {
       isSkipped: false,
     });
 
-    console.log(`Assigned ${user.userId} to ${assignedUserId}`);
   }
 }

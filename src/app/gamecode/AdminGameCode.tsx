@@ -51,7 +51,6 @@ function AdminGameCode() {
       axios
         .get(`/api/gamecode/${code}/users`)
         .then(({ data }) => {
-          console.log(data);
           const users = data.users;
           setUsers(users);
         })
