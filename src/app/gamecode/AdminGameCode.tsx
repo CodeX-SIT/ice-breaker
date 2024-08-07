@@ -5,12 +5,12 @@ import { GameCode } from "@/database";
 import { Box, Button, Grid, Paper, Typography } from "@mui/material";
 import axios from "axios";
 import React, { useEffect } from "react";
-import { InferAttributes } from "sequelize";
 
 function AdminGameCode() {
   const [gameCode, setGameCode] = React.useState<GameCode | null>();
   const [createGameCode, setCreateGameCode] = React.useState(false);
   const [date, setDate] = React.useState(new Date());
+  const [users, setUsers] = React.useState<any>();
 
   const gameCodeActions = async (action: "start" | "end") => {
     fetch("/api/gamecode/actions", {
@@ -38,6 +38,29 @@ function AdminGameCode() {
 
     fetchGameCode();
   }, [createGameCode, date]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!gameCode) return;
+      if (gameCode.startedAt && users) return;
+      const code = gameCode.code;
+      axios
+        .get(`/api/gamecode/${code}/users`)
+        .then(({ data }) => {
+          console.log(data);
+          const users = data.users;
+          setUsers(users);
+        })
+        .catch((error) => console.error(error));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [gameCode, users]);
+
+  const userNames = users?.map((user: any) => user.aboutUser.name) as
+    | any[]
+    | undefined;
+  
 
   return (
     <main>
@@ -120,6 +143,22 @@ function AdminGameCode() {
                 </Button>
               </Grid>
             </Grid>
+          </Paper>
+          <Paper
+            sx={{
+              mt: 4,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              minWidth: "50%",
+              p: 2,
+            }}
+          >
+            {userNames?.map((user, index) => (
+              <Typography key={index} variant="h5">
+                {user}
+              </Typography>
+            ))}
           </Paper>
         </Box>
       </section>
