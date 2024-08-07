@@ -37,6 +37,23 @@ export async function GET(
   const url = new URL(request.url);
   const assignedIdString = url.searchParams.get("assignedId");
   const assignedId = Number(assignedIdString);
+  const gameCode = await GameCode.findOne({
+    where: {
+      code: code,
+    },
+    include: ["users"],
+  });
+  let gameState: "waiting" | "started" | "ended" | "notInGame";
+
+  if (!gameCode) {
+    return NextResponse.json("Game code not found", { status: 404 });
+  }
+  if (gameCode.endedAt) {
+    gameState = "ended";
+    // TODO: Send game stats
+    return NextResponse.json({ gameState });
+  }
+
   if (assignedId) {
     // fetch assigned record from the database
     const assignedRecord = await Assigned.findByPk(assignedId, {
@@ -47,19 +64,8 @@ export async function GET(
       return NextResponse.json("VALID");
     }
   }
-  const gameCode = await GameCode.findOne({
-    where: {
-      code: code,
-    },
-    include: ["users"],
-  });
-
-  if (!gameCode) {
-    return NextResponse.json("Game code not found", { status: 404 });
-  }
 
   const userInGame = gameCode.users.find((user) => user.id === userId);
-  let gameState: "waiting" | "started" | "ended" | "notInGame";
 
   if (!userInGame) {
     gameState = "notInGame";
@@ -74,8 +80,9 @@ export async function GET(
     gameState = "started";
     let assigned = await fetchLatestAssigned(gameCode.id, userId);
     if (!assigned) {
-      assigned = await createUserAssignment(gameCode, userId);
-      if (!assigned) return NextResponse.json("COMPLETED");
+      const isAssigned = !!(await createUserAssignment(gameCode, userId));
+      if (!isAssigned) return NextResponse.json("COMPLETED");
+      assigned = await fetchLatestAssigned(gameCode.id, userId);
     }
     return NextResponse.json({ gameState, assigned });
   } else {

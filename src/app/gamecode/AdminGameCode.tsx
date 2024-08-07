@@ -15,10 +15,12 @@ function AdminGameCode() {
   const router = useRouter();
 
   const gameCodeActions = async (action: "start" | "end") => {
-    fetch("/api/gamecode/actions", {
-      method: "POST",
-      body: JSON.stringify({ action, gameCode: gameCode?.code }),
-    });
+    axios
+      .post("/api/gamecode/actions", {
+        action,
+        gameCode: gameCode?.code,
+      })
+      .catch(console.error);
   };
 
   useEffect(() => {

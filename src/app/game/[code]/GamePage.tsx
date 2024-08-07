@@ -17,6 +17,7 @@ export default function GamePage({ code }: { code: string }) {
   const [state, setState] = useState<PageState>({});
   const router = useRouter();
   const assigned = state.assigned;
+  const gameState = state.gameState;
 
   useEffect(() => {
     function fetchAssigned() {
@@ -47,9 +48,11 @@ export default function GamePage({ code }: { code: string }) {
     }
     fetchAssigned(); // first fetch
     const interval = setInterval(fetchAssigned, 1000);
-
+    if (gameState === "ended") {
+      clearInterval(interval);
+    }
     return () => clearInterval(interval); // clean up interval on component unmount
-  }, [code, assigned]);
+  }, [code, assigned, gameState]);
 
   switch (state.gameState) {
     case undefined:
