@@ -27,7 +27,6 @@ export default function GameForm({
 }) {
   const [name, setName] = useState("");
   const [selfie, setSelfie] = useState<File>();
-  const [nextAssignment, setNextAssignment] = useState(true);
   const router = useRouter();
   const handleSelfieChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -53,9 +52,11 @@ export default function GameForm({
 
     await axios
       .post(`/api/user/game/${code}`, formData)
-      .then((response) => response.data)
-      .then((data) => {
-        setNextAssignment(data.nextAssignment);
+      .then(() => {
+        handleSnackbar(true, 200, "Submitted.");
+        setTimeout(() => handleSnackbar(false), 1000);
+        setName("");
+        setSelfie(undefined);
       })
       .catch((error) => {
         const data = error.response.data;
@@ -63,10 +64,9 @@ export default function GameForm({
           handleSnackbar(true, 400, "Incorrect name.");
           setTimeout(() => handleSnackbar(false), 1000);
           return;
-        }
-        if (data.code === "COMPLETED") {
-          router.push(`/game/completed`);
-          return;
+        } else {
+          handleSnackbar(true, 500, data?.code);
+          setTimeout(() => handleSnackbar(false), 1000);
         }
         console.error(error);
       });
@@ -100,6 +100,7 @@ export default function GameForm({
           accept="image/*"
         />
       </Button>
+      {selfie && <Typography>{selfie.name}</Typography>}
       <Button type="submit" variant="contained" color="primary">
         Submit
       </Button>

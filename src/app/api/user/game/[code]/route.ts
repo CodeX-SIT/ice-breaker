@@ -161,21 +161,14 @@ export async function POST(
       mimeType: mimeType,
       assignedId: Number(assignedId),
     });
-    const nextAssignment = !!(await createUserAssignment(gameCode, userId));
 
-    if (!nextAssignment) {
-      return NextResponse.json({ code: "COMPLETED" }, { status: 200 });
-    }
-
-    return NextResponse.json(
-      { code: "SUCCESS", nextAssignment },
-      { status: 201 },
-    );
+    // Removed new assignment creation from this function
+    // as it will be managed by the get function.
+    return NextResponse.json({ code: "SUCCESS" }, { status: 201 });
   } catch (error) {
     if (!(error instanceof Error)) {
       return NextResponse.json({ code: "Unknown error" }, { status: 500 });
     }
-    console.error(error);
     let status = 400;
     let code = error.message;
 
@@ -193,6 +186,7 @@ export async function POST(
         status = 400;
         break;
       default:
+        console.error(error);
         status = 500;
         break;
     }
