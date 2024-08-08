@@ -51,7 +51,7 @@ export default function GameForm({
     formData.append("selfie", selfie);
     formData.append("assignedId", assignedId.toString());
 
-    const response = await axios
+    await axios
       .post(`/api/user/game/${code}`, formData)
       .then((response) => response.data)
       .then((data) => {
@@ -103,7 +103,9 @@ export default function GameForm({
       <Button type="submit" variant="contained" color="primary">
         Submit
       </Button>
-      <Button onClick={(e) => fetch(`/api/game/${code}/skip/${assignedId}`)}>
+      <Button
+        onClick={(e) => axios.get(`/api/user/game/${code}/skip/${assignedId}`)}
+      >
         Skip
       </Button>
     </Box>

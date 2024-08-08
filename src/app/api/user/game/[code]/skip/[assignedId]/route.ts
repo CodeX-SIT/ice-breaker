@@ -11,7 +11,6 @@ export async function GET(
   { params }: { params: PageParams },
 ) {
   const { code, assignedId } = params;
-
   const gameCode = GameCode.findOne({
     where: {
       code: code.toLowerCase(),
@@ -21,14 +20,14 @@ export async function GET(
   const assigned = await Assigned.findByPk(Number(assignedId));
 
   if (!assigned)
-    return NextResponse.json("Invalid assignedId", { status: 404 });
+    return NextResponse.json("Invalid assignedId", { status: 400 });
 
-  if (assigned.completedAt) return NextResponse.json(null, { status: 204 });
+  if (assigned.completedAt) return NextResponse.json(null, { status: 200 });
 
   await assigned.update({
     isSkipped: true,
     completedAt: new Date(),
   });
 
-  return NextResponse.json(null, { status: 204 });
+  return NextResponse.json(null, { status: 200 });
 }
