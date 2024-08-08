@@ -43,10 +43,14 @@ function AdminGameCode() {
     fetchGameCode();
   }, [createGameCode, date]);
 
+  let isFetchingPlayers = false;
+
   useEffect(() => {
     const interval = setInterval(() => {
       if (!gameCode) return;
-      if (gameCode.startedAt && users) return;
+      if (isFetchingPlayers) return;
+      // if (gameCode.startedAt && users) return; 
+      isFetchingPlayers = true;
       const code = gameCode.code;
       axios
         .get(`/api/gamecode/${code}/users`)
@@ -54,7 +58,10 @@ function AdminGameCode() {
           const users = data.users;
           setUsers(users);
         })
-        .catch((error) => console.error(error));
+        .catch((error) => console.error(error))
+        .finally(() => {
+          isFetchingPlayers = false;
+        });
     }, 1000);
 
     return () => clearInterval(interval);

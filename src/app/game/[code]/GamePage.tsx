@@ -16,6 +16,7 @@ export default function GamePage({ code }: { code: string }) {
   const [gameState, setGameState] = useState<GameStates>();
   const [open, setOpen] = useState(false);
   const [response, setResponse] = useState({ status: 0, message: "" });
+  const [fetchNext, setFetchNext] = useState(true);
   const router = useRouter();
 
   const handleSnackbar = (open: boolean, status?: number, message?: string) => {
@@ -31,7 +32,11 @@ export default function GamePage({ code }: { code: string }) {
   };
 
   useEffect(() => {
+    let isFetching = false; // to track if a request is in progress
+
     function fetchAssigned() {
+      if (isFetching) return; // skip if a request is already in progress
+      isFetching = true; // mark as fetching
       axios
         .get(`/api/user/game/${code}?assignedId=${assigned?.id}`)
         .then(({ data }) => {
@@ -46,6 +51,9 @@ export default function GamePage({ code }: { code: string }) {
           console.log(e.response);
           console.log(e.stack);
           router.push(`/gamecode?code=${code}`);
+        })
+        .finally(() => {
+          isFetching = false; // reset the fetching status
         });
     }
 
@@ -61,21 +69,65 @@ export default function GamePage({ code }: { code: string }) {
 
   switch (gameState) {
     case undefined:
-      return <div>Page is loading...</div>;
+      return (
+        <>
+          <NavBar />
+          <ErrorSuccessSnackbar
+            open={true}
+            response={{
+              status: 1000,
+              message: "Page is loading.",
+            }}
+          />
+        </>
+      );
 
     case "notInGame":
       router.push(`/gamecode?code=${code}`);
       return <div>You are not a part of this game.</div>;
 
     case "waiting":
-      return <div>Waiting for the host to start the game...</div>;
+      return (
+        <>
+          <NavBar />
+          <ErrorSuccessSnackbar
+            open={true}
+            response={{
+              status: 1000,
+              message: "Waiting for host to start the game.",
+            }}
+          />
+        </>
+      );
 
     case "ended":
-      return <div>Game has ended.</div>;
+      return (
+        <>
+          <NavBar />
+          <ErrorSuccessSnackbar
+            open={true}
+            response={{
+              status: 200,
+              message: "Game has ended.",
+            }}
+          />
+        </>
+      );
 
     case "started":
       if (!assigned) {
-        return <div>Waiting for next assignment...</div>;
+        return (
+          <>
+            <NavBar />
+            <ErrorSuccessSnackbar
+              open={true}
+              response={{
+                status: 1000,
+                message: "Waiting for next assignment.",
+              }}
+            />
+          </>
+        );
       }
 
       const avatarProps: AvatarProps = assigned.assignedUser.avatar;
