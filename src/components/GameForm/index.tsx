@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Box, Button, styled, TextField, Typography } from "@mui/material";
 import axios from "axios";
-import { set } from "zod";
 import { useRouter } from "next/navigation";
 import imageCompression from "browser-image-compression";
+import { MAX_IMAGE_SIZE_MB } from "@/constants";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -21,10 +21,12 @@ export default function GameForm({
   code,
   assignedId,
   handleSnackbar,
+  resetAssigned,
 }: {
   code: string;
   assignedId: number;
   handleSnackbar: (open: boolean, status?: number, message?: string) => void;
+  resetAssigned: () => void;
 }) {
   const [name, setName] = useState("");
   const [selfie, setSelfie] = useState<File>();
@@ -34,20 +36,21 @@ export default function GameForm({
   ) => {
     if (event.target.files && event.target.files[0]) {
       const image = event.target.files[0];
+      if (image.size < 1024 * 1024 * MAX_IMAGE_SIZE_MB) {
+        // image is less than 0.5 MB
+        return setSelfie(image);
+      }
       handleSnackbar(true, 1000, "Compressing...");
       const compressedSelfie = await compressImage(image);
-      handleSnackbar(false);
+      handleSnackbar(false, 200, "Compressed");
       setSelfie(compressedSelfie);
-      // Commented as it now required, there is already a notification when it is compressing.
-      // handleSnackbar(true, 200, "Selfie uploaded.");
-      // setTimeout(() => handleSnackbar(false), 1000);
     }
   };
 
   const compressImage = async (image: File) => {
     const options = {
-      maxSizeMB: 0.5,
-      maxWidthOrHeight: 1280,
+      maxSizeMB: MAX_IMAGE_SIZE_MB,
+      maxWidthOrHeight: 1000,
       useWebWorker: true,
     };
     try {
@@ -77,6 +80,7 @@ export default function GameForm({
       .then(() => {
         handleSnackbar(true, 200, "Submitted.");
         setTimeout(() => handleSnackbar(false), 1000);
+        resetAssigned();
         setName("");
         setSelfie(undefined);
       })
@@ -87,6 +91,7 @@ export default function GameForm({
           setTimeout(() => handleSnackbar(false), 1000);
           return;
         } else {
+          console.error(data);
           handleSnackbar(true, 500, data?.code);
           setTimeout(() => handleSnackbar(false), 1000);
         }
@@ -122,7 +127,7 @@ export default function GameForm({
           accept="image/*"
         />
       </Button>
-      {selfie && <Typography>{selfie.name}</Typography>}
+      {selfie && <Typography>{selfie.size/1024}</Typography>}
       <Button type="submit" variant="contained" color="primary">
         Submit
       </Button>
