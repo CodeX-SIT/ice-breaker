@@ -11,4 +11,4 @@ export { Selfie } from "./Selfie";
 export { sequelize } from "./sequelize";
 
 import { sequelize } from "./sequelize";
-// sequelize.sync({ force: true });
+// sequelize.sync({force: true});

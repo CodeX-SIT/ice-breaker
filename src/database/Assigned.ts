@@ -36,5 +36,5 @@ Assigned.init(
       defaultValue: false,
     },
   },
-  { sequelize, tableName: "assigned" },
+  { sequelize, tableName: "assigned", modelName:"Assigned" },
 );

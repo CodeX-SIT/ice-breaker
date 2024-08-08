@@ -24,5 +24,5 @@ Selfie.init(
     data: { type: DataTypes.BLOB("medium"), allowNull: false },
     mimeType: { type: DataTypes.STRING, allowNull: false },
   },
-  { sequelize, tableName: "selfies" },
+  { sequelize, tableName: "selfies", modelName: "Selfie" },
 );

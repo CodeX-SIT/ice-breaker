@@ -13,5 +13,5 @@ export const sequelize = new Sequelize({
     },
     // timestamps: false,
   },
-  // logging: false,
+  logging: false,
 });

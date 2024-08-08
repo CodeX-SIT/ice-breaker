@@ -44,5 +44,5 @@ Avatar.init(
     clotheType: { type: DataTypes.STRING },
     clotheColor: { type: DataTypes.STRING },
   },
-  { sequelize, tableName: "avatars" },
+  { sequelize, tableName: "avatars", modelName: "Avatar" },
 );

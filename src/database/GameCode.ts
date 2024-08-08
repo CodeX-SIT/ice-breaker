@@ -65,5 +65,6 @@ GameCode.init(
   {
     sequelize,
     tableName: "game_codes",
+    modelName: "GameCode"
   },
 );

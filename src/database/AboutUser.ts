@@ -37,5 +37,5 @@ AboutUser.init(
     favoriteMovies: { type: DataTypes.TEXT("medium") },
     favoriteSongs: { type: DataTypes.TEXT("medium") },
   },
-  { sequelize, tableName: "about_user" },
+  { sequelize, tableName: "about_user", modelName: "AboutUser" },
 );
