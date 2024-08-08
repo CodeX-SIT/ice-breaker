@@ -103,6 +103,9 @@ export default function GameForm({
       <Button type="submit" variant="contained" color="primary">
         Submit
       </Button>
+      <Button onClick={(e) => fetch(`/api/game/${code}/skip/${assignedId}`)}>
+        Skip
+      </Button>
     </Box>
   );
 }

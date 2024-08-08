@@ -12,10 +12,15 @@ import ErrorSuccessSnackbar from "@/components/Snackbars/ErrorSuccessSnackbar";
 interface PageState {
   gameState?: "waiting" | "started" | "ended" | "notInGame";
   assigned?: any;
+  timer: NodeJS.Timeout;
 }
 
 export default function GamePage({ code }: { code: string }) {
-  const [state, setState] = useState<PageState>({});
+  const [state, setState] = useState<PageState>({
+    gameState: undefined,
+    assigned: undefined,
+    timer: setTimeout(() => {}, 0),
+  });
   const [open, setOpen] = useState(false);
   const [response, setResponse] = useState({ status: 0, message: "" });
   const router = useRouter();
@@ -83,6 +88,7 @@ export default function GamePage({ code }: { code: string }) {
       if (!state.assigned) {
         return <div>Waiting for next assignment...</div>;
       }
+
 
       const avatarProps: AvatarProps = state.assigned.assignedUser.avatar;
       const aboutUserProps: AboutUserProps =
