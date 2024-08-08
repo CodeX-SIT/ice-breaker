@@ -127,7 +127,7 @@ export default function GameForm({
           accept="image/*"
         />
       </Button>
-      {selfie && <Typography>{selfie.size/1024}</Typography>}
+      {selfie && <Typography>{selfie.name}</Typography>}
       <Button type="submit" variant="contained" color="primary">
         Submit
       </Button>
