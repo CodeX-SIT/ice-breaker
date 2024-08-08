@@ -7,6 +7,7 @@ import NavBar from "@/components/NavBar";
 import Hobby, { AboutUserProps } from "@/components/Hobby";
 import { AvatarProps } from "@/components/AvatarPreview";
 import GameForm from "@/components/GameForm";
+import ErrorSuccessSnackbar from "@/components/Snackbars/ErrorSuccessSnackbar";
 
 interface PageState {
   gameState?: "waiting" | "started" | "ended" | "notInGame";
@@ -15,9 +16,21 @@ interface PageState {
 
 export default function GamePage({ code }: { code: string }) {
   const [state, setState] = useState<PageState>({});
+  const [open, setOpen] = useState(false);
+  const [response, setResponse] = useState({ status: 0, message: "" });
   const router = useRouter();
   const assigned = state.assigned;
   const gameState = state.gameState;
+
+  const handleSnackbar = (open: boolean, status?: number, message?: string) => {
+    setOpen(open);
+    setResponse((prevState) => {
+      return {
+        status: status || prevState.status,
+        message: message || prevState.message,
+      };
+    });
+  };
 
   useEffect(() => {
     function fetchAssigned() {
@@ -89,7 +102,15 @@ export default function GamePage({ code }: { code: string }) {
           </section>
 
           <Hobby aboutUser={aboutUserProps} />
-          <GameForm code={code} assignedId={state.assigned.id} />
+          <GameForm
+            code={code}
+            assignedId={state.assigned.id}
+            handleSnackbar={handleSnackbar}
+          />
+          <ErrorSuccessSnackbar
+            open={open}
+            response={{ status: response.status, message: response.message }}
+          />
         </>
       );
   }

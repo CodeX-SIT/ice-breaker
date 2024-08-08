@@ -120,7 +120,9 @@ async function validateAssignedUserName(
   const aboutUser = await AboutUser.findOne({
     where: { userId: assigned.assignedUserId },
   });
-  if (postedUserName.toLowerCase().trim() !== aboutUser?.name.toLowerCase().trim()) {
+  if (
+    postedUserName.toLowerCase().trim() !== aboutUser?.name.toLowerCase().trim()
+  ) {
     throw new Error("INVALID_NAME");
   }
 }
@@ -170,13 +172,13 @@ export async function POST(
     );
   } catch (error) {
     if (!(error instanceof Error)) {
-      return NextResponse.json({ message: "Unknown error" }, { status: 500 });
+      return NextResponse.json({ code: "Unknown error" }, { status: 500 });
     }
     console.error(error);
     let status = 400;
-    let message = error.message;
+    let code = error.message;
 
-    switch (message) {
+    switch (code) {
       case "File is not an image":
         status = 400;
         break;
@@ -194,6 +196,6 @@ export async function POST(
         break;
     }
 
-    return NextResponse.json(message, { status });
+    return NextResponse.json({ code }, { status });
   }
 }

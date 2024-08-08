@@ -7,7 +7,6 @@ interface PageParams {
 }
 
 async function getStats(gameCode: GameCode) {
-
   const userGames = await UserGame.findAll({
     where: {
       gameCodeId: gameCode.id,
@@ -27,6 +26,7 @@ async function getStats(gameCode: GameCode) {
           completedAt: {
             [Op.ne]: null,
           },
+          isSkipped: false,
           gameCodeId: gameCode.id,
         },
         required: false,
@@ -36,9 +36,14 @@ async function getStats(gameCode: GameCode) {
   });
 
   const result = users.map((user) => {
+    const score = user.assignedUsers.length;
+    for (const assigned of user.assignedUsers) {
+      const assignedAt = assigned.assignedAt;
+      const completedAt = assigned.completedAt;
+    }
     return {
       userId: user.id,
-      completedAssignments: user.assignedUsers.length,
+      completedAssignments: score,
       name: user.aboutUser?.name,
     };
   });

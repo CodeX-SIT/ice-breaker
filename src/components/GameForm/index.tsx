@@ -19,9 +19,11 @@ const VisuallyHiddenInput = styled("input")({
 export default function GameForm({
   code,
   assignedId,
+  handleSnackbar,
 }: {
   code: string;
   assignedId: number;
+  handleSnackbar: (open: boolean, status?: number, message?: string) => void;
 }) {
   const [name, setName] = useState("");
   const [selfie, setSelfie] = useState<File>();
@@ -30,6 +32,8 @@ export default function GameForm({
   const handleSelfieChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       setSelfie(event.target.files[0]);
+      handleSnackbar(true, 200, "Selfie uploaded.");
+      setTimeout(() => handleSnackbar(false), 1000);
     }
   };
 
@@ -37,7 +41,11 @@ export default function GameForm({
     event.preventDefault();
     const formData = new FormData();
     formData.append("name", name);
-    if (!selfie) return;
+    if (!selfie) {
+      handleSnackbar(true, 400, "Selfie not uploaded.");
+      setTimeout(() => handleSnackbar(false), 1000);
+      return;
+    }
     // TODO: Use state to show selfie error message
     // TODO: Add selfie image compression
     formData.append("selfie", selfie);
@@ -47,18 +55,19 @@ export default function GameForm({
       .post(`/api/user/game/${code}`, formData)
       .then((response) => response.data)
       .then((data) => {
+        setNextAssignment(data.nextAssignment);
+      })
+      .catch((error) => {
+        const data = error.response.data;
         if (data.code === "INVALID_NAME") {
-          // TODO: Use state to show name error message
-          alert("Invalid name");
+          handleSnackbar(true, 400, "Incorrect name.");
+          setTimeout(() => handleSnackbar(false), 1000);
           return;
         }
         if (data.code === "COMPLETED") {
           router.push(`/game/completed`);
           return;
         }
-        setNextAssignment(data.nextAssignment);
-      })
-      .catch((error) => {
         console.error(error);
       });
   };
