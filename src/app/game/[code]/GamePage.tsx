@@ -12,14 +12,14 @@ import ErrorSuccessSnackbar from "@/components/Snackbars/ErrorSuccessSnackbar";
 interface PageState {
   gameState?: "waiting" | "started" | "ended" | "notInGame";
   assigned?: any;
-  timer: NodeJS.Timeout;
+  // timer: NodeJS.Timeout;
 }
 
 export default function GamePage({ code }: { code: string }) {
   const [state, setState] = useState<PageState>({
     gameState: undefined,
     assigned: undefined,
-    timer: setTimeout(() => {}, 0),
+    // timer: setTimeout(() => {}, 0),
   });
   const [open, setOpen] = useState(false);
   const [response, setResponse] = useState({ status: 0, message: "" });
