@@ -5,165 +5,164 @@ import {
   Avatar,
   Box,
   Button,
+  CircularProgress,
   Grid,
   Paper,
   TextField,
   Typography,
 } from "@mui/material";
 import WebhookOutlinedIcon from "@mui/icons-material/WebhookOutlined";
-import { MouseEventHandler, Suspense, useEffect, useState } from "react";
+import { MouseEventHandler, useEffect, useState } from "react";
 import ErrorSuccessSnackbar from "@/components/Snackbars/ErrorSuccessSnackbar";
 import { useRouter, useSearchParams } from "next/navigation";
-import axios, { AxiosError, isAxiosError } from "axios";
+import axios, { isAxiosError } from "axios";
 
 export function _GameCodePage() {
   const [gameCode, setGameCode] = useState("");
   const [open, setOpen] = useState(false);
   const [response, setResponse] = useState({ status: 0, message: "" });
+  const [interactive, setInteractive] = useState(false);
+  const [disable, setDisable] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    // get query argument code
+    setInteractive(true);
     const code = searchParams.get("code") as string;
     // TODO: Set game code in the input field
-    // if (code) {
-    //   setGameCode(code);
-    // }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   const handleSubmit: MouseEventHandler<HTMLButtonElement> = async (e) => {
     e.preventDefault();
+    setDisable(true);
 
     try {
       const response = await axios.post("/api/gamecode", gameCode);
-
+      setDisable(false);
       setResponse({
         status: 200,
         message: `Added you to the game ${gameCode}`,
       });
       router.push(`/game/${gameCode}`);
-      // setOpen(true);
-      // setTimeout(() => {
-      //   setOpen(false);
-      // }, 3000);
     } catch (error) {
+      setDisable(false);
+
       if (!isAxiosError(error)) {
         console.error(error);
         return;
       }
+
       console.error(error);
-      if (error.response) {
-        const { status, statusText } = error.response;
-        if ([401, 403].includes(status)) {
-          router.replace("/auth/signin");
-        } else if ([400, 404].includes(status)) {
-          setResponse({ status: 400, message: "Invalid game code." });
-          setOpen(true);
-          setTimeout(() => {
-            setOpen(false);
-          }, 3000);
-        } else if (status === 409) {
-          setResponse({
-            status: 409,
-            message: statusText,
-          });
-          // setOpen(true);
-          router.push(`/game/${gameCode}`);
-          // setTimeout(() => {
-          //   setOpen(false);
-          // }, 3000);
-        } else {
-          console.error(error.response);
-          setResponse({
-            status: 500,
-            message:
-              "There was an internal server error. Please contact support.",
-          });
-          setOpen(true);
-          setTimeout(() => {
-            setOpen(false);
-          }, 3000);
-        }
+
+      if (!error.response) {
+        handleServerError();
+        return;
+      }
+
+      const { status, statusText } = error.response;
+
+      if ([401, 403].includes(status)) {
+        router.replace("/auth/signin");
+      } else if ([400, 404].includes(status)) {
+        handleClientError("Invalid game code.");
+      } else if (status === 409) {
+        handleConflictError(statusText);
       } else {
-        console.error(error);
-        setResponse({
-          status: 500,
-          message:
-            "There was an internal server error. Please contact support.",
-        });
-        setOpen(true);
-        setTimeout(() => {
-          setOpen(false);
-        }, 3000);
+        handleServerError();
       }
     }
   };
 
+  const handleClientError = (message: string) => {
+    setResponse({ status: 400, message });
+    setOpen(true);
+    setTimeout(() => {
+      setOpen(false);
+    }, 3000);
+  };
+
+  const handleConflictError = (message: string) => {
+    setResponse({ status: 409, message });
+    router.push(`/game/${gameCode}`);
+  };
+
+  const handleServerError = () => {
+    setResponse({
+      status: 500,
+      message: "There was an internal server error. Please contact support.",
+    });
+    setOpen(true);
+    setTimeout(() => {
+      setOpen(false);
+    }, 3000);
+  };
+
+  if (!interactive) {
+    return (
+      <section className="flex h-screen w-screen justify-center items-center">
+        <CircularProgress />
+      </section>
+    );
+  }
+
   return (
-    <Suspense
-      fallback={
-        <ErrorSuccessSnackbar
-          open={true}
-          response={{ status: 1000, message: "Loading" }}
-        />
-      }
-    >
-      <main>
-        <NavBar />
-        <section className="flex h-screen w-screen justify-center items-center">
-          <Box
+    <main>
+      <NavBar />
+      <section className="flex h-screen w-screen justify-center items-center">
+        <Box
+          sx={{
+            marginTop: 8,
+            width: "90%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Paper
             sx={{
-              marginTop: 8,
-              width: "90%",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
             }}
           >
-            <Paper
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
-                <WebhookOutlinedIcon />
-              </Avatar>
-              <Typography component="h1" variant="h5" sx={{ m: 1, mt: 0 }}>
-                Game Code
-              </Typography>
-              <Grid container spacing={2} sx={{ p: 2 }}>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="gameCode"
-                    label="Game Code"
-                    name="gameCode"
-                    autoFocus
-                    color="primary"
-                    // defaultValue={gameCode}
-                    onChange={(e) => {
-                      setGameCode(e.target.value);
-                    }}
-                  />
-                </Grid>
+            <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
+              <WebhookOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5" sx={{ m: 1, mt: 0 }}>
+              Game Code
+            </Typography>
+            <Grid container spacing={2} sx={{ p: 2 }}>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="gameCode"
+                  label="Game Code"
+                  name="gameCode"
+                  autoFocus
+                  color="primary"
+                  // defaultValue={gameCode}
+                  onChange={(e) => {
+                    setGameCode(e.target.value);
+                  }}
+                />
               </Grid>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mb: 2, width: "50%" }}
-                onClick={handleSubmit}
-              >
-                <Typography>Submit</Typography>
-              </Button>
-            </Paper>
-          </Box>
-        </section>
-        <ErrorSuccessSnackbar open={open} response={response} />
-      </main>
-    </Suspense>
+            </Grid>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mb: 2, width: "50%" }}
+              onClick={handleSubmit}
+              disabled={disable}
+            >
+              <Typography>Submit</Typography>
+            </Button>
+          </Paper>
+        </Box>
+      </section>
+      <ErrorSuccessSnackbar open={open} response={response} />
+    </main>
   );
 }
