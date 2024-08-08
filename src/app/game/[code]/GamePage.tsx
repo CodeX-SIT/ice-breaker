@@ -9,32 +9,25 @@ import { AvatarProps } from "@/components/AvatarPreview";
 import GameForm from "@/components/GameForm";
 import ErrorSuccessSnackbar from "@/components/Snackbars/ErrorSuccessSnackbar";
 
-interface PageState {
-  gameState?: "waiting" | "started" | "ended" | "notInGame";
-  assigned?: any;
-  // timer: NodeJS.Timeout;
-}
+type GameStates = "waiting" | "started" | "ended" | "notInGame";
 
 export default function GamePage({ code }: { code: string }) {
-  const [state, setState] = useState<PageState>({
-    gameState: undefined,
-    assigned: undefined,
-    // timer: setTimeout(() => {}, 0),
-  });
+  const [assigned, setAssigned] = useState<any>();
+  const [gameState, setGameState] = useState<GameStates>();
   const [open, setOpen] = useState(false);
   const [response, setResponse] = useState({ status: 0, message: "" });
   const router = useRouter();
-  const assigned = state.assigned;
-  const gameState = state.gameState;
 
   const handleSnackbar = (open: boolean, status?: number, message?: string) => {
     setOpen(open);
-    setResponse((prevState) => {
-      return {
-        status: status || prevState.status,
-        message: message || prevState.message,
-      };
-    });
+    setResponse((prevState) => ({
+      status: status || prevState.status,
+      message: message || prevState.message,
+    }));
+  };
+
+  const resetAssigned = () => {
+    setAssigned(undefined);
   };
 
   useEffect(() => {
@@ -43,17 +36,11 @@ export default function GamePage({ code }: { code: string }) {
         .get(`/api/user/game/${code}?assignedId=${assigned?.id}`)
         .then(({ data }) => {
           if (data === "VALID") return;
-          if (data === "WAITING") {
-            // this will never happen
-            return setState({ gameState: "started", assigned: null });
-          }
           if (data === "COMPLETED") {
             return router.push(`/game/completed`);
           }
-          setState({
-            gameState: data.gameState,
-            assigned: data.assigned,
-          });
+          setGameState(data.gameState);
+          setAssigned(data.assigned);
         })
         .catch((e) => {
           console.log(e.response);
@@ -61,15 +48,18 @@ export default function GamePage({ code }: { code: string }) {
           router.push(`/gamecode?code=${code}`);
         });
     }
+
     fetchAssigned(); // first fetch
     const interval = setInterval(fetchAssigned, 1000);
+
     if (gameState === "ended") {
       clearInterval(interval);
     }
+
     return () => clearInterval(interval); // clean up interval on component unmount
   }, [code, assigned, gameState]);
 
-  switch (state.gameState) {
+  switch (gameState) {
     case undefined:
       return <div>Page is loading...</div>;
 
@@ -81,18 +71,15 @@ export default function GamePage({ code }: { code: string }) {
       return <div>Waiting for the host to start the game...</div>;
 
     case "ended":
-      // TODO: Show stats of the game.
       return <div>Game has ended.</div>;
 
     case "started":
-      if (!state.assigned) {
+      if (!assigned) {
         return <div>Waiting for next assignment...</div>;
       }
 
-
-      const avatarProps: AvatarProps = state.assigned.assignedUser.avatar;
-      const aboutUserProps: AboutUserProps =
-        state.assigned.assignedUser.aboutUser;
+      const avatarProps: AvatarProps = assigned.assignedUser.avatar;
+      const aboutUserProps: AboutUserProps = assigned.assignedUser.aboutUser;
 
       return (
         <>
@@ -107,8 +94,9 @@ export default function GamePage({ code }: { code: string }) {
           <Hobby aboutUser={aboutUserProps} />
           <GameForm
             code={code}
-            assignedId={state.assigned.id}
+            assignedId={assigned.id}
             handleSnackbar={handleSnackbar}
+            resetAssigned={resetAssigned}
           />
           <ErrorSuccessSnackbar
             open={open}
