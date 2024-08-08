@@ -132,7 +132,12 @@ export default function GameForm({
         Submit
       </Button>
       <Button
-        onClick={(e) => axios.get(`/api/user/game/${code}/skip/${assignedId}`)}
+        onClick={(e) => {
+          axios
+            .get(`/api/user/game/${code}/skip/${assignedId}`)
+            .catch(console.error);
+          resetAssigned();
+        }}
       >
         Skip
       </Button>

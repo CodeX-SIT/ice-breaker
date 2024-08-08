@@ -1,12 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Confetti from "react-confetti";
 import "./RevealResultPage.css";
 import axios from "axios";
 import NavBar from "../../../../components/NavBar";
+import CustomConfetti from "@/components/CustomConfetti";
 
 const TopThree = ({ code }: { code: string }) => {
-  const [reveal, setReveal] = useState(0);
+  const [reveal, setReveal] = useState<number[]>([]);
   const [confetti, setConfetti] = useState(false);
   const [stats, setStats] = React.useState<any[]>([]);
 
@@ -20,11 +20,15 @@ const TopThree = ({ code }: { code: string }) => {
   }, [code]);
 
   const handleRevealNext = () => {
-    if (reveal < 3) {
-      setReveal(reveal + 1);
-      if (reveal + 1 === 3) {
-        setConfetti(true); // Trigger confetti
-      }
+    if (reveal.length === 0) setReveal([2]);
+    else if (reveal.length === 1) setReveal([1, 2]);
+    else if (reveal.length === 2) {
+      setReveal([0, 1, 2]);
+      setConfetti(true);
+    } else if (reveal.length === 3) {
+      setReveal([0, 1, 2, 3]);
+    } else {
+      setReveal([0, 1, 2, 3, 4]);
     }
   };
 
@@ -42,30 +46,31 @@ const TopThree = ({ code }: { code: string }) => {
   });
 
   // Getting the top 3 results
-  const topResults = sortedArray.slice(0, 3).reverse();
+  const topResults = sortedArray.slice(0, 3);
+  const otherResults = sortedArray.slice(3);
   return (
     <>
       <NavBar />
       <div className="result-container" onClick={handleRevealNext}>
         <div className="confetti-container">
-          <Confetti
-            width={window.innerWidth}
-            height={window.innerHeight}
-            run={confetti}
-            numberOfPieces={500}
-            recycle={false}
-            gravity={0.3}
-            initialVelocityY={20}
-          />
+          <CustomConfetti run={confetti} />
         </div>
         {topResults.map((result, index) => (
           <div
             key={result.name}
-            className={`result-number ${reveal > index ? "revealed" : ""}`}
+            className={`result-number ${
+              reveal.includes(index) ? "revealed" : ""
+            }`}
           >
             {`${result.name}: ${result.completedAssignments}`}
           </div>
         ))}
+        {reveal.includes(4) &&
+          otherResults.map((result) => (
+            <div key={result.name} className={`result-number "revealed"`}>
+              {`${result.name}: ${result.completedAssignments}`}
+            </div>
+          ))}
       </div>
     </>
   );
