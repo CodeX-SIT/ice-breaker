@@ -73,11 +73,7 @@ export async function GET(
     return NextResponse.json({ gameState });
   }
 
-  if (gameCode.endedAt) {
-    gameState = "ended";
-    // TODO: Send game stats
-    return NextResponse.json({ gameState });
-  } else if (gameCode.startedAt) {
+  if (gameCode.startedAt) {
     gameState = "started";
     let assigned = await fetchLatestAssigned(gameCode.id, userId);
     if (!assigned) {

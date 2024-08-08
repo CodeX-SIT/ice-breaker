@@ -52,7 +52,7 @@ GameCode.init(
         const hash = createHash("sha1");
         hash.update(randomBytes(8));
         hash.update(date.toISOString());
-        return hash.digest("hex").slice(0, 8);
+        return hash.digest("hex").slice(0, 5);
       },
     },
     expiry: {
