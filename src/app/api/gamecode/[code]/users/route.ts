@@ -16,7 +16,7 @@ export async function GET(
 
   const gameCode = await GameCode.findOne({
     where: {
-      code: code,
+      code: code.toLowerCase(),
     },
     include: [{ association: "users", include: ["aboutUser"] }],
   });

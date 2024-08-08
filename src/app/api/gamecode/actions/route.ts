@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
 
   if (action === "start") {
     const gameCode = await GameCode.findOne({
-      where: { code: requestBody.gameCode },
+      where: { code: requestBody.gameCode.toLowerCase() },
     });
 
     if (!gameCode) {

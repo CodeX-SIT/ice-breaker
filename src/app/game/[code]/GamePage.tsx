@@ -51,12 +51,9 @@ export default function GamePage({ code }: { code: string }) {
           });
         })
         .catch((e) => {
-          if (e.response) {
-            // Invalid game code, so redirect to gamecode page
-            router.push(`/gamecode?code=${code}`);
-          } else {
-            console.error(e);
-          }
+          console.log(e.response);
+          console.log(e.stack);
+          router.push(`/gamecode?code=${code}`);
         });
     }
     fetchAssigned(); // first fetch

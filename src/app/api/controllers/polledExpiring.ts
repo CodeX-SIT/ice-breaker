@@ -10,7 +10,7 @@ function timeDifference(assignedAt: Date) {
 export default async function polledExpiring(code: string) {
   const gameCode = await GameCode.findOne({
     where: {
-      code,
+      code: code.toLowerCase(),
     },
   });
   if (!gameCode || gameCode.endedAt) {

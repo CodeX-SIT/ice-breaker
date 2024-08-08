@@ -39,7 +39,7 @@ export async function GET(
   const assignedId = Number(assignedIdString);
   const gameCode = await GameCode.findOne({
     where: {
-      code: code,
+      code: code.toLowerCase(),
     },
     include: ["users"],
   });
@@ -48,6 +48,7 @@ export async function GET(
   if (!gameCode) {
     return NextResponse.json("Game code not found", { status: 404 });
   }
+
   if (gameCode.endedAt) {
     gameState = "ended";
     // TODO: Send game stats
@@ -142,7 +143,7 @@ export async function POST(
 
   try {
     const gameCode = await GameCode.findOne({
-      where: { code },
+      where: { code: code.toLowerCase() },
     });
     if (!gameCode) {
       return NextResponse.json("Game code not found", { status: 404 });

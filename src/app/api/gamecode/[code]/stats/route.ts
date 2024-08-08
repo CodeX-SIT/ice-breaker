@@ -60,7 +60,7 @@ export async function GET(
   const code = params.code;
   const gameCode = await GameCode.findOne({
     where: {
-      code: code,
+      code: code.toLowerCase(),
     },
   });
   if (!gameCode) {
