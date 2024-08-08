@@ -29,14 +29,18 @@ export async function POST(request: NextRequest) {
   }
 
   const unverifiedGameCode = await request.text();
+  console.log(unverifiedGameCode);
   if (!unverifiedGameCode) {
     return NextResponse.json("Invalid body", { status: 400 });
   }
+
 
   let gameCode = null;
   try {
     gameCode = z.string().parse(unverifiedGameCode);
   } catch (error) {
+    console.error(error);
+
     return NextResponse.json("Invalid body", { status: 400 });
   }
 

@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import WebhookOutlinedIcon from "@mui/icons-material/WebhookOutlined";
-import { MouseEventHandler, useEffect, useState } from "react";
+import { MouseEventHandler, Suspense, useEffect, useState } from "react";
 import ErrorSuccessSnackbar from "@/components/Snackbars/ErrorSuccessSnackbar";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios, { AxiosError, isAxiosError } from "axios";
@@ -35,8 +35,8 @@ export function _GameCodePage() {
     e.preventDefault();
 
     try {
-      const response = await axios.post('/api/gamecode', gameCode );
-  
+      const response = await axios.post("/api/gamecode", gameCode);
+
       setResponse({
         status: 200,
         message: `Added you to the game ${gameCode}`,
@@ -50,13 +50,14 @@ export function _GameCodePage() {
       if (!isAxiosError(error)) {
         console.error(error);
         return;
-      };
+      }
+      console.error(error);
       if (error.response) {
         const { status, statusText } = error.response;
         if ([401, 403].includes(status)) {
-          router.replace('/auth/signin');
+          router.replace("/auth/signin");
         } else if ([400, 404].includes(status)) {
-          setResponse({ status: 400, message: 'Invalid game code.' });
+          setResponse({ status: 400, message: "Invalid game code." });
           setOpen(true);
           setTimeout(() => {
             setOpen(false);
@@ -75,7 +76,8 @@ export function _GameCodePage() {
           console.error(error.response);
           setResponse({
             status: 500,
-            message: 'There was an internal server error. Please contact support.',
+            message:
+              "There was an internal server error. Please contact support.",
           });
           setOpen(true);
           setTimeout(() => {
@@ -86,7 +88,8 @@ export function _GameCodePage() {
         console.error(error);
         setResponse({
           status: 500,
-          message: 'There was an internal server error. Please contact support.',
+          message:
+            "There was an internal server error. Please contact support.",
         });
         setOpen(true);
         setTimeout(() => {
@@ -95,63 +98,72 @@ export function _GameCodePage() {
       }
     }
   };
-  
+
   return (
-    <main>
-      <NavBar />
-      <section className="flex h-screen w-screen justify-center items-center">
-        <Box
-          sx={{
-            marginTop: 8,
-            width: "90%",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Paper
+    <Suspense
+      fallback={
+        <ErrorSuccessSnackbar
+          open={true}
+          response={{ status: 1000, message: "Loading" }}
+        />
+      }
+    >
+      <main>
+        <NavBar />
+        <section className="flex h-screen w-screen justify-center items-center">
+          <Box
             sx={{
+              marginTop: 8,
+              width: "90%",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
-              <WebhookOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5" sx={{ m: 1, mt: 0 }}>
-              Game Code
-            </Typography>
-            <Grid container spacing={2} sx={{ p: 2 }}>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="gameCode"
-                  label="Game Code"
-                  name="gameCode"
-                  autoFocus
-                  color="primary"
-                  // defaultValue={gameCode}
-                  onChange={(e) => {
-                    setGameCode(e.target.value);
-                  }}
-                />
-              </Grid>
-            </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mb: 2, width: "50%" }}
-              onClick={handleSubmit}
+            <Paper
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
             >
-              <Typography>Submit</Typography>
-            </Button>
-          </Paper>
-        </Box>
-      </section>
-      <ErrorSuccessSnackbar open={open} response={response} />
-    </main>
+              <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
+                <WebhookOutlinedIcon />
+              </Avatar>
+              <Typography component="h1" variant="h5" sx={{ m: 1, mt: 0 }}>
+                Game Code
+              </Typography>
+              <Grid container spacing={2} sx={{ p: 2 }}>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    id="gameCode"
+                    label="Game Code"
+                    name="gameCode"
+                    autoFocus
+                    color="primary"
+                    // defaultValue={gameCode}
+                    onChange={(e) => {
+                      setGameCode(e.target.value);
+                    }}
+                  />
+                </Grid>
+              </Grid>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mb: 2, width: "50%" }}
+                onClick={handleSubmit}
+              >
+                <Typography>Submit</Typography>
+              </Button>
+            </Paper>
+          </Box>
+        </section>
+        <ErrorSuccessSnackbar open={open} response={response} />
+      </main>
+    </Suspense>
   );
 }
