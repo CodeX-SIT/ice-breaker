@@ -5,3 +5,5 @@
 // TODO: Error messages for user
 // TODO: Add place to questions
 // TODO: Loader in places where there is a delay
+// TODO: Intermediary State
+// TODO: Game completed feature on admin page

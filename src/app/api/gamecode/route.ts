@@ -60,5 +60,5 @@ export async function POST(request: NextRequest) {
     gameCodeId: dbGameCode.id,
   });
 
-  return redirect("/game", RedirectType.replace);
+  return redirect(`/game/${dbGameCode.code}`, RedirectType.replace);
 }

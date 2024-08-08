@@ -8,6 +8,24 @@ import ErrorSuccessSnackbar from "@/components/Snackbars/ErrorSuccessSnackbar";
 import { AboutUser } from "@/database";
 import { InferAttributes } from "sequelize";
 
+import emptyFunction from "./emptyAction";
+
+const FUTURE_SNARKS = [
+  "Born in the future, are we? Time travel much?",
+  "Predicting the future, huh? Try a date that's already happened.",
+  "Unless you're a time traveler, that date won't work!",
+  "Got a crystal ball? Because that date is yet to come.",
+  "Back from the future, are we? Pick a real birthdate!",
+];
+
+const PAST_SNARKS = [
+  "Did you know dinosaurs? That date's a bit too ancient.",
+  "Unless you're a vampire, that birthdate's too old!",
+  "Were you friends with Methuselah? Enter a more recent date.",
+  "That's a bit pre-historic, don't you think? Try again.",
+  "Did you come with the pyramids? Event Egyptians knew time better than you!",
+];
+
 export default function _HobbiesPage({
   previousAboutMe,
 }: {
@@ -50,6 +68,43 @@ export default function _HobbiesPage({
       body: data,
     });
 
+    if (
+      !name ||
+      !dateOfBirth ||
+      !hobbies ||
+      !guiltyPleasures ||
+      !favoriteMovies ||
+      !favoriteSongs
+    ) {
+      setResponse({ status: 400, message: "Please fill out all fields." });
+      setOpen(true);
+      setTimeout(() => {
+        setOpen(false);
+      }, 3000);
+      return;
+    }
+
+    if (dateOfBirth > new Date()) {
+      setResponse({
+        status: 400,
+        message: FUTURE_SNARKS[Math.floor(Math.random() * 5)],
+      });
+      setOpen(true);
+      setTimeout(() => {
+        setOpen(false);
+      }, 3000);
+      return;
+    } else if (dateOfBirth < new Date("1920-01-01")) {
+      setResponse({
+        status: 400,
+        message: PAST_SNARKS[Math.floor(Math.random() * 5)],
+      });
+      setOpen(true);
+      setTimeout(() => {
+        setOpen(false);
+      }, 3000);
+      return;
+    }
 
     if (response.ok) {
       setResponse({ status: 201, message: "Hobbies saved!" });

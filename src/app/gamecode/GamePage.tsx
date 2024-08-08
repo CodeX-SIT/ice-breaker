@@ -14,6 +14,7 @@ import WebhookOutlinedIcon from "@mui/icons-material/WebhookOutlined";
 import { MouseEventHandler, useEffect, useState } from "react";
 import ErrorSuccessSnackbar from "@/components/Snackbars/ErrorSuccessSnackbar";
 import { useRouter, useSearchParams } from "next/navigation";
+import axios, { AxiosError, isAxiosError } from "axios";
 
 export function _GameCodePage() {
   const [gameCode, setGameCode] = useState("");
@@ -33,12 +34,9 @@ export function _GameCodePage() {
   const handleSubmit: MouseEventHandler<HTMLButtonElement> = async (e) => {
     e.preventDefault();
 
-    const response = await fetch("/api/gamecode", {
-      body: gameCode,
-      method: "POST",
-    });
-
-    if (response.ok) {
+    try {
+      const response = await axios.post('/api/gamecode', gameCode );
+  
       setResponse({
         status: 200,
         message: `Added you to the game ${gameCode}`,
@@ -48,35 +46,56 @@ export function _GameCodePage() {
       // setTimeout(() => {
       //   setOpen(false);
       // }, 3000);
-    } else if ([401, 403].includes(response.status)) {
-      router.replace("/auth/signin");
-    } else if ([400, 404].includes(response.status)) {
-      setResponse({ status: 400, message: "Invalid game code." });
-      setOpen(true);
-      setTimeout(() => {
-        setOpen(false);
-      }, 3000);
-    } else if (response.status === 409) {
-      setResponse({
-        status: 409,
-        message: response.statusText,
-      });
-      // setOpen(true);
-      router.push(`/game/${gameCode}`);
-      // setTimeout(() => {
-      //   setOpen(false);
-      // }, 3000);
-    } else {
-      setResponse({
-        status: 500,
-        message: "There was an internal server error. Please contact support.",
-      });
-      setOpen(true);
-      setTimeout(() => {
-        setOpen(false);
-      }, 3000);
+    } catch (error) {
+      if (!isAxiosError(error)) {
+        console.error(error);
+        return;
+      };
+      if (error.response) {
+        const { status, statusText } = error.response;
+        if ([401, 403].includes(status)) {
+          router.replace('/auth/signin');
+        } else if ([400, 404].includes(status)) {
+          setResponse({ status: 400, message: 'Invalid game code.' });
+          setOpen(true);
+          setTimeout(() => {
+            setOpen(false);
+          }, 3000);
+        } else if (status === 409) {
+          setResponse({
+            status: 409,
+            message: statusText,
+          });
+          // setOpen(true);
+          router.push(`/game/${gameCode}`);
+          // setTimeout(() => {
+          //   setOpen(false);
+          // }, 3000);
+        } else {
+          console.error(error.response);
+          setResponse({
+            status: 500,
+            message: 'There was an internal server error. Please contact support.',
+          });
+          setOpen(true);
+          setTimeout(() => {
+            setOpen(false);
+          }, 3000);
+        }
+      } else {
+        console.error(error);
+        setResponse({
+          status: 500,
+          message: 'There was an internal server error. Please contact support.',
+        });
+        setOpen(true);
+        setTimeout(() => {
+          setOpen(false);
+        }, 3000);
+      }
     }
   };
+  
   return (
     <main>
       <NavBar />
