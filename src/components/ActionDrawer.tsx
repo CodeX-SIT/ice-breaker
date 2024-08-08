@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Divider,
   Drawer,
@@ -12,6 +14,7 @@ import AvatarIcon from "@mui/icons-material/AccountCircle";
 import LogOutIcon from "@mui/icons-material/Logout";
 import React from "react";
 import signOutAction from "./signOutAction";
+import { useRouter } from "next/navigation";
 
 function DrawerItem({
   text,
@@ -39,12 +42,25 @@ function ActionDrawer({
   open: boolean;
   toggleDrawer: (open: boolean) => () => void;
 }) {
+  const router = useRouter();
   return (
     <>
       <Drawer open={open} onClose={toggleDrawer(false)}>
         <List disablePadding>
-          <DrawerItem text="Edit Aboutme" icon={<EditIcon />} />
-          <DrawerItem text="Edit Avatar" icon={<AvatarIcon />} />
+          <DrawerItem
+            text="Edit Aboutme"
+            icon={<EditIcon />}
+            onClick={() => {
+              router.push("/aboutme");
+            }}
+          />
+          <DrawerItem
+            text="Edit Avatar"
+            icon={<AvatarIcon />}
+            onClick={() => {
+              router.push("/aboutme/avatar");
+            }}
+          />
           <Divider />
           <DrawerItem
             text="Logout"
