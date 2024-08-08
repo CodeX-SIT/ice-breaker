@@ -3,6 +3,7 @@ import { Box, Button, styled, TextField, Typography } from "@mui/material";
 import axios from "axios";
 import { set } from "zod";
 import { useRouter } from "next/navigation";
+import imageCompression from "browser-image-compression";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -28,16 +29,38 @@ export default function GameForm({
   const [name, setName] = useState("");
   const [selfie, setSelfie] = useState<File>();
   const router = useRouter();
-  const handleSelfieChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSelfieChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     if (event.target.files && event.target.files[0]) {
-      setSelfie(event.target.files[0]);
-      handleSnackbar(true, 200, "Selfie uploaded.");
-      setTimeout(() => handleSnackbar(false), 1000);
+      const image = event.target.files[0];
+      handleSnackbar(true, 1000, "Compressing...");
+      const compressedSelfie = await compressImage(image);
+      handleSnackbar(false);
+      setSelfie(compressedSelfie);
+      // Commented as it now required, there is already a notification when it is compressing.
+      // handleSnackbar(true, 200, "Selfie uploaded.");
+      // setTimeout(() => handleSnackbar(false), 1000);
+    }
+  };
+
+  const compressImage = async (image: File) => {
+    const options = {
+      maxSizeMB: 0.5,
+      maxWidthOrHeight: 1280,
+      useWebWorker: true,
+    };
+    try {
+      const compressedImage = await imageCompression(image, options);
+      return compressedImage;
+    } catch (error) {
+      console.error(error);
     }
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    handleSnackbar(true, 1000, "Submitting...");
     const formData = new FormData();
     formData.append("name", name);
     if (!selfie) {
@@ -45,9 +68,8 @@ export default function GameForm({
       setTimeout(() => handleSnackbar(false), 1000);
       return;
     }
-    // TODO: Use state to show selfie error message
-    // TODO: Add selfie image compression
-    formData.append("selfie", selfie);
+
+    formData.append("selfie", selfie as Blob);
     formData.append("assignedId", assignedId.toString());
 
     await axios
