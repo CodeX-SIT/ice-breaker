@@ -3,7 +3,6 @@ import { Selfie, sequelize } from "@/database";
 import NavBar from "@/components/NavBar";
 import checkAuthAndRedirect from "@/utils/checkAuthAndRedirect";
 
-
 export default async function Page({ params }: { params: { code: string } }) {
   // Fetch 100 random selfies
   const session = await checkAuthAndRedirect();
@@ -17,8 +16,10 @@ export default async function Page({ params }: { params: { code: string } }) {
             attributes: [],
             association: "gameCode",
             where: { code: params.code },
+            required: true,
           },
         ],
+        required: true,
       },
     ],
     order: [sequelize.fn("RANDOM")],
@@ -39,7 +40,7 @@ export default async function Page({ params }: { params: { code: string } }) {
   }));
 
   return (
-    <div  >
+    <div>
       <NavBar />
       <div style={{ marginTop: "64px" }}></div>
       <Gallery selfieData={selfieData} />
