@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Box, Button, styled, TextField, Typography } from "@mui/material";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -30,18 +30,25 @@ export default function GameForm({
 }) {
   const [name, setName] = useState("");
   const [selfie, setSelfie] = useState<File>();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const handleSelfieChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     if (event.target.files && event.target.files[0]) {
       const image = event.target.files[0];
+      if (fileInputRef.current) fileInputRef.current.value = "";
       if (image.size < 1024 * 1024 * MAX_IMAGE_SIZE_MB) {
         // image is less than 0.5 MB
         return setSelfie(image);
       }
       handleSnackbar(true, 1000, "Compressing...");
       const compressedSelfie = await compressImage(image);
+      if (!compressedSelfie) {
+        handleSnackbar(true, 400, "Compression Failed.");
+        setTimeout(() => handleSnackbar(false), 1000);
+        return;
+      }
       handleSnackbar(false, 200, "Compressed");
       setSelfie(compressedSelfie);
     }
@@ -123,8 +130,9 @@ export default function GameForm({
         Upload Selfie
         <VisuallyHiddenInput
           type="file"
+          ref={fileInputRef}
           onChange={handleSelfieChange}
-          accept="image/*"
+          accept="image/png, image/jpeg"
         />
       </Button>
       {selfie && <Typography>{selfie.name}</Typography>}

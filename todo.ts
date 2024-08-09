@@ -3,8 +3,8 @@
 // TODO: SubmitterButton on admin page
 // TODO: Add a SubmitterButton to GameForm
 // TODO: Beautify completed page - Add confetti, add navbar,
-//! BUG: HEIC Image uplaod error
 //! BUG: Incorrect Name continuously
+// MAYBE (BUG): HEIC Image uplaod error
 // DONE (BUG): Invalid GameCode on slow internet
 
 // LOW PRIORITY
