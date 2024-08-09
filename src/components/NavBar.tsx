@@ -1,13 +1,21 @@
 "use client";
 
-import { Toolbar, IconButton, AppBar } from "@mui/material";
+import { Toolbar, IconButton, AppBar, Typography } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import ActionDrawer from "./ActionDrawer";
+import axios from "axios";
 
 export default function NavBar() {
   const [open, setOpen] = React.useState(false);
+  const [about, setAbout] = React.useState<any>();
+
+  useEffect(() => {
+    axios.get("/api/user/about").then(({ data }) => {
+      setAbout(data);
+    });
+  }, []);
 
   return (
     <React.Fragment>
@@ -23,6 +31,7 @@ export default function NavBar() {
           >
             <MenuIcon />
           </IconButton>
+          <Typography>{about && about.name}</Typography>
           <div className="flex flex-grow" />
           <Image
             src={"/images/CodeXDark20PxPad.png"}
