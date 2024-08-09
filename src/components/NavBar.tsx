@@ -7,7 +7,11 @@ import Image from "next/image";
 import ActionDrawer from "./ActionDrawer";
 import axios from "axios";
 
-export default function NavBar() {
+export default function NavBar({
+  variant = "name",
+}: {
+  variant?: "name" | "induction";
+}) {
   const [open, setOpen] = React.useState(false);
   const [about, setAbout] = React.useState<any>();
 
@@ -31,7 +35,11 @@ export default function NavBar() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography>{about && about.name}</Typography>
+          {variant === "name" ? (
+            <Typography>{about && about.name}</Typography>
+          ) : (
+            <Typography>{"Induction"}</Typography>
+          )}
           <div className="flex flex-grow" />
           <Image
             src={"/images/CodeXDark20PxPad.png"}
