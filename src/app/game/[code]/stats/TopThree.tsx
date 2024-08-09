@@ -4,14 +4,16 @@ import "./RevealResultPage.css";
 import axios from "axios";
 import NavBar from "../../../../components/NavBar";
 import CustomConfetti from "@/components/CustomConfetti";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 
 const TopThree = ({ code }: { code: string }) => {
   const [reveal, setReveal] = useState<number[]>([]);
   const [confetti, setConfetti] = useState(false);
   const [stats, setStats] = React.useState<any[]>([]);
+  const [interactive, setInteractive] = React.useState(false);
 
   useEffect(() => {
+    setInteractive(true);
     axios
       .get(`/api/gamecode/${code}/stats`)
       .then(({ data }) => {
@@ -49,6 +51,16 @@ const TopThree = ({ code }: { code: string }) => {
   // Getting the top 3 results
   const topResults = sortedArray.slice(0, 3);
   const otherResults = sortedArray.slice(3, 10);
+
+  if (!interactive) {
+    return (
+      <>
+        <section className="flex h-screen w-screen justify-center items-center">
+          <CircularProgress />
+        </section>
+      </>
+    );
+  }
   return (
     <>
       <NavBar />
@@ -74,6 +86,7 @@ const TopThree = ({ code }: { code: string }) => {
             color="primary"
             href={`/game/${code}/gallery`}
             className="reveal"
+            onClick={() => setInteractive(false)}
           >
             View Photobooth
           </Button>

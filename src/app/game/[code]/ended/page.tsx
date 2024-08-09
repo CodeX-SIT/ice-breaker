@@ -5,6 +5,7 @@ import { getStatsForUser } from "@/app/api/controllers/getStats";
 import { GameCode } from "@/database";
 import { Button, Divider, Typography } from "@mui/material";
 import ErrorSuccessSnackbar from "@/components/Snackbars/ErrorSuccessSnackbar";
+import Ended from "./Ended";
 export default async function Page({
   params,
 }: {
@@ -25,24 +26,5 @@ export default async function Page({
     return "User not found";
   }
 
-  return (
-    <>
-      <NavBar />
-      <section className="flex h-screen w-screen justify-center items-center">
-        <div className="text-center">
-          <Typography variant="h1">Hi {result.name}.</Typography>
-          <Typography variant="h1">
-            You scored {result.completedAssignments}.
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            href={`/game/${code}/ended/mycollage`}
-          >
-            View your collage
-          </Button>
-        </div>
-      </section>
-    </>
-  );
+  return <Ended code={code} result={result} />;
 }
