@@ -85,7 +85,6 @@ export default function GameForm({
         setSelfie(undefined);
       })
       .catch((error) => {
-        alert(error);
         const data = error.response.data;
         if (data.code === "INVALID_NAME") {
           handleSnackbar(true, 400, "Incorrect name.");

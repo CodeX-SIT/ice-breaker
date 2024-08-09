@@ -20,7 +20,6 @@ export async function POST(request: NextRequest) {
   }
 
   const unverifiedGameCode = await request.text();
-  console.log(unverifiedGameCode);
   if (!unverifiedGameCode) {
     return NextResponse.json("Invalid body", { status: 400 });
   }

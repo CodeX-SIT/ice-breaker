@@ -92,7 +92,7 @@ export default function SequelizeAdapter(
   const sync = async () => {
     if (synchronize && !_synced) {
       const syncOptions: SyncOptions = {
-        force: process.env.NODE_ENV === "production",
+        // force: process.env.NODE_ENV === "production",
       };
 
       await Promise.all([
