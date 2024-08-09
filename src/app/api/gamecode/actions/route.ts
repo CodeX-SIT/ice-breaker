@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
 
   if (action === "start") {
     const gameCode = await GameCode.findOne({
-      where: { code: requestBody.gameCode.toLowerCase() },
+      where: { code: requestBody.gameCode.toLowerCase().trim() },
     });
 
     if (!gameCode) {
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(gameCode);
   } else {
     const gameCode = await GameCode.findOne({
-      where: { code: requestBody.gameCode },
+      where: { code: requestBody.gameCode.trim().toLowerCase() },
     });
 
     if (!gameCode) {

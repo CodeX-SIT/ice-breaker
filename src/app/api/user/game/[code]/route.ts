@@ -39,7 +39,7 @@ export async function GET(
   const assignedId = Number(assignedIdString);
   const gameCode = await GameCode.findOne({
     where: {
-      code: code.toLowerCase(),
+      code: code.toLowerCase().trim(),
     },
     include: ["users"],
   });
@@ -139,7 +139,7 @@ export async function POST(
 
   try {
     const gameCode = await GameCode.findOne({
-      where: { code: code.toLowerCase() },
+      where: { code: code.toLowerCase().trim() },
     });
     if (!gameCode) {
       return NextResponse.json("Game code not found", { status: 404 });

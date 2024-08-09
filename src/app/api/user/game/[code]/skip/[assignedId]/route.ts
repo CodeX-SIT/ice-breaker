@@ -13,7 +13,7 @@ export async function GET(
   const { code, assignedId } = params;
   const gameCode = GameCode.findOne({
     where: {
-      code: code.toLowerCase(),
+      code: code.toLowerCase().trim(),
     },
   });
 

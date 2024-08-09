@@ -7,17 +7,7 @@ import { redirect, RedirectType } from "next/navigation";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-export async function GET(request: NextRequest) {
-  const session = await checkAuthAndRedirect();
-
-  if (!ADMINS.includes(session.user?.email ?? "")) {
-    return NextResponse.json("Forbidden", { status: 403 });
-  }
-
-  const gameCode = await GameCode.findOne({ order: [["createdAt", "DESC"]] });
-
-  return NextResponse.json(gameCode, { status: 200 });
-}
+// User posts to this route to join a game
 
 export async function POST(request: NextRequest) {
   const session = await checkAuthAndRedirect();
@@ -34,7 +24,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json("Invalid body", { status: 400 });
   }
 
-
   let gameCode = null;
   try {
     gameCode = z.string().parse(unverifiedGameCode);
@@ -45,7 +34,7 @@ export async function POST(request: NextRequest) {
   }
 
   const dbGameCode = await GameCode.findOne({
-    where: { code: gameCode.toLowerCase() },
+    where: { code: gameCode.toLowerCase().trim() },
   });
   if (!dbGameCode) {
     return NextResponse.json("Invalid game code", { status: 404 });
