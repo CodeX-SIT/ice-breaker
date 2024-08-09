@@ -106,35 +106,22 @@ export default function _HobbiesPage({
       return;
     }
 
-    try {
-      const response = await axios.post("/api/hobbies", data);
+    const response = await fetch("/api/hobbies", {
+      method: "POST",
+      body: data,
+    });
 
-      if (response.status === 200) {
-        handleSuccess();
-      } else if ([401, 403].includes(response.status)) {
-        setInteractive(false);
-        router.push("/auth/signin");
-      } else if (String(response.status).startsWith("5")) {
-        handleError(
-          500,
-          "There was an internal server error. Please contact support.",
-        );
-      } else {
-        handleError(400, "There was an error. Please try again!");
-      }
-    } catch (error: any) {
-      if (error.response) {
-        handleError(
-          error.response.status,
-          error.response.data.message ||
-            "There was an error. Please try again!",
-        );
-      } else {
-        handleError(
-          500,
-          "There was an internal server error. Please contact support.",
-        );
-      }
+    if (response.ok) {
+      handleSuccess();
+    } else if ([401, 403].includes(response.status)) {
+      router.push("/auth/signin");
+    } else if (String(response.status).startsWith("5")) {
+      handleError(
+        500,
+        "There was an internal server error. Please contact support.",
+      );
+    } else {
+      handleError(400, "There was an error. Please try again!");
     }
   };
 
