@@ -1,13 +1,15 @@
-// TODO: Add place to questions
+// DONE: Multiple concurrent games/ VMs
+// TODO: Add an ended page
+
+
+// DONE: Add place to questions
+// TODO: Add a SubmitterButton to GameForm
 // TODO: Name on Navbar (user.aboutUser.name)
 // TODO: Beautify completed page
-// TODO: Add an ended page
-// TODO: Error messages for admin
-// TODO: Grid alignment on admin gamecode
-// TODO: Multiple concurrent games/ VMs
+
 // BUG: Not being able to submit
-// BUG: Invalid GameCode on slow internet
 // BUG: Incorrect Name continuously
+// DONE (BUG): Invalid GameCode on slow internet
 
 // LOW PRIORITY
 // TODO: Remove user from game
@@ -15,6 +17,8 @@
 // TODO: Live scores
 // TODO: Game completed feature on admin page
 
+// DONE: Grid alignment on admin gamecode
+// DONE: Error messages for admin
 // DONE: 4 digit code
 // DONE: Notification delay removal
 // DONE: Loader in places where there is a delay
