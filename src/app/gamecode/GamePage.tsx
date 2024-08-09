@@ -4,7 +4,6 @@ import NavBar from "@/components/NavBar";
 import {
   Avatar,
   Box,
-  Button,
   CircularProgress,
   Grid,
   Paper,
@@ -16,6 +15,7 @@ import { MouseEventHandler, useEffect, useState } from "react";
 import ErrorSuccessSnackbar from "@/components/Snackbars/ErrorSuccessSnackbar";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios, { isAxiosError } from "axios";
+import SubmitterButton from "@/components/Button/SubmitterButton";
 
 export function _GameCodePage() {
   const [gameCode, setGameCode] = useState("");
@@ -40,9 +40,10 @@ export function _GameCodePage() {
     try {
       const response = await axios.post("/api/gamecode", gameCode);
       setDisable(false);
+      setOpen(true);
       setResponse({
         status: 200,
-        message: `Added you to the game ${gameCode}`,
+        message: `Redirecting you to ${gameCode}`,
       });
       router.push(`/game/${gameCode}`);
     } catch (error) {
@@ -149,16 +150,11 @@ export function _GameCodePage() {
                 />
               </Grid>
             </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mb: 2, width: "50%" }}
-              onClick={handleSubmit}
-              disabled={disable}
-            >
-              <Typography>Submit</Typography>
-            </Button>
+            <SubmitterButton
+              text="Join"
+              disable={disable}
+              handleSubmit={handleSubmit}
+            />
           </Paper>
         </Box>
       </section>

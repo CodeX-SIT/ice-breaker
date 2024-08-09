@@ -1,14 +1,20 @@
 "use client";
 
-import React from "react";
-import { Box, Button, TextField, Grid, Paper, Typography } from "@mui/material";
+import React, { useEffect } from "react";
+import {
+  Box,
+  TextField,
+  Grid,
+  Paper,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
 import NavBar from "@/components/NavBar";
 import { useRouter } from "next/navigation";
 import ErrorSuccessSnackbar from "@/components/Snackbars/ErrorSuccessSnackbar";
 import { AboutUser } from "@/database";
 import { InferAttributes } from "sequelize";
-
-import emptyFunction from "./emptyAction";
+import SubmitterButton from "@/components/Button/SubmitterButton";
 
 const FUTURE_SNARKS = [
   "Born in the future, are we? Time travel much?",
@@ -47,11 +53,19 @@ export default function _HobbiesPage({
   const [favoriteSongs, setFavoriteSongs] = React.useState(
     previousAboutMe?.favoriteSongs || "",
   );
+  const [disable, setDisable] = React.useState(false);
+  const [interactive, setInteractive] = React.useState(false);
 
   const router = useRouter();
 
+  useEffect(() => {
+    setInteractive(true);
+  }, []);
+
   const onClick: React.MouseEventHandler<HTMLButtonElement> = (event) => {
     event.preventDefault();
+    setDisable(true);
+
     const formData = new FormData();
     formData.append("name", name);
     formData.append("dateOfBirth", dateOfBirth.toISOString());
@@ -59,15 +73,11 @@ export default function _HobbiesPage({
     formData.append("guiltyPleasures", guiltyPleasures);
     formData.append("favoriteMovies", favoriteMovies);
     formData.append("favoriteSongs", favoriteSongs);
+
     handleSubmit(formData);
   };
 
   const handleSubmit = async (data: FormData) => {
-    const response = await fetch("/api/hobbies", {
-      method: "POST",
-      body: data,
-    });
-
     if (
       !name ||
       !dateOfBirth ||
@@ -76,65 +86,65 @@ export default function _HobbiesPage({
       !favoriteMovies ||
       !favoriteSongs
     ) {
-      setResponse({ status: 400, message: "Please fill out all fields." });
-      setOpen(true);
-      setTimeout(() => {
-        setOpen(false);
-      }, 3000);
+      handleError(400, "Please fill out all fields.");
       return;
     }
 
     if (dateOfBirth > new Date()) {
-      setResponse({
-        status: 400,
-        message: FUTURE_SNARKS[Math.floor(Math.random() * 5)],
-      });
-      setOpen(true);
-      setTimeout(() => {
-        setOpen(false);
-      }, 3000);
-      return;
-    } else if (dateOfBirth < new Date("1920-01-01")) {
-      setResponse({
-        status: 400,
-        message: PAST_SNARKS[Math.floor(Math.random() * 5)],
-      });
-      setOpen(true);
-      setTimeout(() => {
-        setOpen(false);
-      }, 3000);
+      handleError(400, FUTURE_SNARKS[Math.floor(Math.random() * 5)]);
       return;
     }
 
+    if (dateOfBirth < new Date("1920-01-01")) {
+      handleError(400, PAST_SNARKS[Math.floor(Math.random() * 5)]);
+      return;
+    }
+
+    const response = await fetch("/api/hobbies", {
+      method: "POST",
+      body: data,
+    });
+
     if (response.ok) {
-      setResponse({ status: 201, message: "Hobbies saved!" });
-      setOpen(true);
-      setTimeout(() => {
-        setOpen(false);
-        router.push("/aboutme/avatar");
-      }, 2000);
+      handleSuccess();
     } else if ([401, 403].includes(response.status)) {
       router.push("/auth/signin");
     } else if (String(response.status).startsWith("5")) {
-      setResponse({
-        status: 500,
-        message: "There was an internal server error. Please contact support.",
-      });
-      setOpen(true);
-      setTimeout(() => {
-        setOpen(false);
-      }, 3000);
+      handleError(
+        500,
+        "There was an internal server error. Please contact support.",
+      );
     } else {
-      setResponse({
-        status: 400,
-        message: "There was an error. Please try again!",
-      });
-      setOpen(true);
-      setTimeout(() => {
-        setOpen(false);
-      }, 3000);
+      handleError(400, "There was an error. Please try again!");
     }
   };
+
+  const handleError = (status: number, message: string) => {
+    setDisable(false);
+    setResponse({ status, message });
+    setOpen(true);
+    setTimeout(() => {
+      setOpen(false);
+    }, 3000);
+  };
+
+  const handleSuccess = () => {
+    setDisable(false);
+    setResponse({ status: 201, message: "Hobbies saved!" });
+    setOpen(true);
+    setTimeout(() => {
+      setOpen(false);
+      router.push("/aboutme/avatar");
+    }, 2000);
+  };
+
+  if (!interactive) {
+    return (
+      <section className="flex h-screen w-screen justify-center items-center">
+        <CircularProgress />
+      </section>
+    );
+  }
 
   return (
     <main>
@@ -256,14 +266,11 @@ export default function _HobbiesPage({
                   />
                 </Grid>
               </Grid>
-              <Button
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2, width: "50%" }}
-                onClick={onClick}
-              >
-                <Typography>Submit</Typography>
-              </Button>
+              <SubmitterButton
+                text="Submit"
+                disable={disable}
+                handleSubmit={onClick}
+              />
             </form>
           </Paper>
         </Box>

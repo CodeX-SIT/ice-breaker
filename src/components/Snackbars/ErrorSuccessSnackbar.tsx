@@ -17,9 +17,18 @@ export default function ErrorSuccessSnackbar({
   return (
     <Snackbar open={open} TransitionComponent={SlideTransition}>
       <Alert
-        severity={
-          !String(response.status).startsWith("2") ? "error" : "success"
-        }
+        severity={(() => {
+          if (String(response.status).startsWith("2")) {
+            return "success";
+          } else if (
+            String(response.status).startsWith("4") ||
+            String(response.status).startsWith("5")
+          ) {
+            return "error";
+          } else if (String(response.status).startsWith("10")) {
+            return "warning";
+          }
+        })()}
         variant="filled"
         sx={{ width: "100%" }}
       >

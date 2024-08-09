@@ -1,8 +1,17 @@
 "use client";
 
 import NavBar from "@/components/NavBar";
+import ErrorSuccessSnackbar from "@/components/Snackbars/ErrorSuccessSnackbar";
 import { GameCode } from "@/database";
-import { Box, Button, Grid, Paper, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Grid,
+  Paper,
+  Typography,
+  CircularProgress,
+  formControlLabelClasses,
+} from "@mui/material";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
@@ -10,17 +19,28 @@ import React, { useEffect } from "react";
 function AdminGameCode() {
   const [gameCode, setGameCode] = React.useState<GameCode | null>();
   const [createGameCode, setCreateGameCode] = React.useState(false);
+  const [fetchedGameCode, setFetchedGameCode] = React.useState(false);
+  const [firstFetch, setFirstFetch] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
+  const [response, setResponse] = React.useState({ status: 0, message: "" });
+  const [gameState, setGameState] = React.useState<
+    "started" | "ended" | "waiting"
+  >("waiting");
   const [date, setDate] = React.useState(new Date());
   const [users, setUsers] = React.useState<any>();
   const router = useRouter();
 
   const gameCodeActions = async (action: "start" | "end") => {
+    setFetchedGameCode(false);
     axios
       .post("/api/gamecode/actions", {
         action,
         gameCode: gameCode?.code,
       })
       .catch(console.error);
+
+    setGameState(action === "start" ? "started" : "ended");
+    setFetchedGameCode(true);
   };
 
   useEffect(() => {
@@ -29,14 +49,22 @@ function AdminGameCode() {
         body: JSON.stringify({ createGameCode }),
         method: "POST",
       });
+      setFetchedGameCode(true);
       const json = await response.json();
       if (response.ok) {
         setGameCode(json);
       } else if (response.status === 404) {
         setGameCode(null);
       } else if (response.status === 409) {
+        setResponse({ status: 409, message: "Unused game code!" });
+        if (!firstFetch) setOpen(true);
+        if (firstFetch) setFirstFetch(false);
         console.log(json, response.ok);
         setGameCode(json);
+
+        setTimeout(() => {
+          setOpen(false);
+        }, 2000);
       }
     };
 
@@ -49,7 +77,7 @@ function AdminGameCode() {
     const interval = setInterval(() => {
       if (!gameCode) return;
       if (isFetchingPlayers) return;
-      // if (gameCode.startedAt && users) return; 
+      // if (gameCode.startedAt && users) return;
       isFetchingPlayers = true;
       const code = gameCode.code;
       axios
@@ -94,17 +122,18 @@ function AdminGameCode() {
             <Typography variant="h3" sx={{ marginTop: 2 }}>
               Game Code
             </Typography>
-            {gameCode && (
+            {fetchedGameCode && gameCode && (
               <Typography variant="h1" sx={{ m: 2 }}>
                 Your game code is:{" "}
                 <strong className="uppercase">{gameCode.code}</strong>
               </Typography>
             )}
-            {!gameCode && (
+            {fetchedGameCode && !gameCode && (
               <Typography variant="h1" sx={{ m: 2 }}>
                 No game code available
               </Typography>
             )}
+            {!fetchedGameCode && <CircularProgress sx={{ m: 2 }} />}
             <Button
               sx={{ mb: 2 }}
               variant="contained"
@@ -135,6 +164,7 @@ function AdminGameCode() {
                   onClick={() => {
                     gameCodeActions("start");
                   }}
+                  disabled={gameState === "started"}
                 >
                   Start Game
                 </Button>
@@ -147,18 +177,21 @@ function AdminGameCode() {
                   onClick={() => {
                     gameCodeActions("end");
                   }}
+                  disabled={gameState !== "started"}
                 >
                   End Game
                 </Button>
               </Grid>
-              <Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                onClick={() => router.push(`/game/${gameCode?.code}/stats`)}
-              >
-                View Stats
-              </Button>
+              <Grid item xs={12}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  onClick={() => router.push(`/game/${gameCode?.code}/stats`)}
+                >
+                  View Stats
+                </Button>
+              </Grid>
             </Grid>
           </Paper>
           <Paper
@@ -179,6 +212,7 @@ function AdminGameCode() {
           </Paper>
         </Box>
       </section>
+      <ErrorSuccessSnackbar open={open} response={response} />
     </main>
   );
 }
