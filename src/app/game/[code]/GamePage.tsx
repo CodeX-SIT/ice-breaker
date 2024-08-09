@@ -18,7 +18,6 @@ export default function GamePage({ code }: { code: string }) {
   const [open, setOpen] = useState(false);
   const [interactive, setInteractive] = useState(false);
   const [response, setResponse] = useState({ status: 0, message: "" });
-  const [fetchNext, setFetchNext] = useState(true);
   const router = useRouter();
 
   const handleSnackbar = (open: boolean, status?: number, message?: string) => {

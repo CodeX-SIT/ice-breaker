@@ -1,22 +1,21 @@
-// DONE: Multiple concurrent games/ VMs
-// TODO: Add an ended page
-
-
-// DONE: Add place to questions
+// TODO: Add an ended page - Show score to user and thier images
+// TODO: Admin page state based on response
+// TODO: SubmitterButton on admin page
 // TODO: Add a SubmitterButton to GameForm
-// TODO: Name on Navbar (user.aboutUser.name)
-// TODO: Beautify completed page
-
-// BUG: Not being able to submit
-// BUG: Incorrect Name continuously
+// TODO: Beautify completed page - Add confetti, add navbar,
+//! BUG: HEIC Image uplaod error
+//! BUG: Incorrect Name continuously
 // DONE (BUG): Invalid GameCode on slow internet
 
 // LOW PRIORITY
 // TODO: Remove user from game
-// TODO: Show score to user after game end
-// TODO: Live scores
 // TODO: Game completed feature on admin page
+// TODO: Live scores
 
+// DONE: Place on gamepage
+// DONE: Add place to questions
+// DONE: Multiple concurrent games/ VMs
+// DONE: Name on Navbar (user.aboutUser.name)
 // DONE: Grid alignment on admin gamecode
 // DONE: Error messages for admin
 // DONE: 4 digit code
