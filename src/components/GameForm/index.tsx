@@ -4,6 +4,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import imageCompression from "browser-image-compression";
 import { MAX_IMAGE_SIZE_MB } from "@/constants";
+import SubmitterButton from "../Button/SubmitterButton";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -30,8 +31,8 @@ export default function GameForm({
 }) {
   const [name, setName] = useState("");
   const [selfie, setSelfie] = useState<File>();
+  const [disableButtons, setDisableButtons] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
   const handleSelfieChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -70,7 +71,6 @@ export default function GameForm({
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    handleSnackbar(true, 1000, "Submitting...");
     const formData = new FormData();
     formData.append("name", name);
     if (!selfie) {
@@ -82,6 +82,8 @@ export default function GameForm({
     formData.append("selfie", selfie as Blob);
     formData.append("assignedId", assignedId.toString());
 
+    handleSnackbar(true, 1000, "Submitting...");
+    setDisableButtons(true);
     await axios
       .post(`/api/user/game/${code}`, formData)
       .then(() => {
@@ -103,13 +105,29 @@ export default function GameForm({
           setTimeout(() => handleSnackbar(false), 1000);
         }
         console.error(error);
-      });
+      })
+      .finally(() => setDisableButtons(false));
+  };
+
+  const handleSkip = async () => {
+    setDisableButtons(true);
+    handleSnackbar(true, 1000, "Skipping...");
+    axios
+      .get(`/api/user/game/${code}/skip/${assignedId}`)
+      .then(() => {
+        resetAssigned();
+        handleSnackbar(false, 200, "Skipped.");
+      })
+      .catch((error) => {
+        handleSnackbar(false, 500, "Skip failed.");
+        console.error(error);
+      })
+      .finally(() => setDisableButtons(false));
   };
   //TODO: Upload from camera
   return (
     <Box
       component="form"
-      onSubmit={handleSubmit}
       sx={{
         maxWidth: 500,
         margin: "auto",
@@ -136,19 +154,25 @@ export default function GameForm({
         />
       </Button>
       {selfie && <Typography>{selfie.name}</Typography>}
-      <Button type="submit" variant="contained" color="primary">
-        Submit
-      </Button>
-      <Button
-        onClick={(e) => {
-          axios
-            .get(`/api/user/game/${code}/skip/${assignedId}`)
-            .catch(console.error);
-          resetAssigned();
+      <SubmitterButton
+        text="Submit"
+        sx={{ width: "100%" }}
+        disable={disableButtons}
+        handleSubmit={handleSubmit}
+        spinOnDisable={false}
+      />
+      <SubmitterButton
+        text="Skip"
+        disable={disableButtons}
+        handleSubmit={handleSkip}
+        spinOnDisable={false}
+        sx={{
+          width: "100%",
+          backgroundColor: "white",
+          color: "black",
+          ":hover": { backgroundColor: "black", color: "white" },
         }}
-      >
-        Skip
-      </Button>
+      />
     </Box>
   );
 }
