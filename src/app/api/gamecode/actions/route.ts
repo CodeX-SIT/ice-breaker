@@ -74,6 +74,10 @@ async function createAllAssignments(gameCode: GameCode) {
   });
 
   for (const user of users) {
+    const filteredUsers = users.filter((user) => user.userId !== user.userId);
+    if (filteredUsers.length === 0) {
+      return;
+    }
     // pick a random user from users who is not user
     let assignedUserId = user.userId;
     while (assignedUserId === user.userId) {
@@ -87,6 +91,5 @@ async function createAllAssignments(gameCode: GameCode) {
       assignedAt: new Date(),
       isSkipped: false,
     });
-
   }
 }
