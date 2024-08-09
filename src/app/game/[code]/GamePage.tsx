@@ -9,8 +9,9 @@ import Hobby, { AboutUserProps } from "@/components/Hobby";
 import GameForm from "@/components/GameForm";
 import ErrorSuccessSnackbar from "@/components/Snackbars/ErrorSuccessSnackbar";
 import { AvatarProps } from "@/components/AvatarPreview";
+import CustomConfetti from "@/components/CustomConfetti";
 
-type GameStates = "waiting" | "started" | "ended" | "notInGame";
+type GameStates = "waiting" | "started" | "ended" | "notInGame" | "completed";
 
 export default function GamePage({ code }: { code: string }) {
   const [assigned, setAssigned] = useState<any>();
@@ -45,7 +46,7 @@ export default function GamePage({ code }: { code: string }) {
         );
         if (data === "VALID") return;
         if (data === "COMPLETED") {
-          router.push(`/game/completed`);
+          setGameState("completed");
           return;
         }
         setGameState(data.gameState);
@@ -114,19 +115,22 @@ export default function GamePage({ code }: { code: string }) {
           </>
         );
 
-      case "ended":
+      case "completed":
         return (
           <>
             <NavBar />
+            <CustomConfetti run={true} />
             <ErrorSuccessSnackbar
               open={true}
               response={{
                 status: 200,
-                message: "Game has ended.",
+                message: "You've found everybody.",
               }}
             />
           </>
         );
+      case "ended":
+        router.push(`/game/${code}/ended`);
 
       case "started":
         if (!assigned) {
