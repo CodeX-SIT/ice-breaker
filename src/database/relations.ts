@@ -36,7 +36,10 @@ GameCode.belongsToMany(User, {
   through: UserGame,
 });
 
+GameCode.belongsTo(User, { as: "admin", foreignKey: "userId" });
+User.hasMany(GameCode, { as: "gameCode", foreignKey: "userId" });
+
 Assigned.hasOne(Selfie, { as: "selfie", foreignKey: "assignedId" });
 Selfie.belongsTo(Assigned, { as: "assigned", foreignKey: "assignedId" });
 
-// sequelize.sync({ force: true });
+// sequelize.sync();
