@@ -47,30 +47,35 @@ const TopThree = ({ code }: { code: string }) => {
 
   // Getting the top 3 results
   const topResults = sortedArray.slice(0, 3);
-  const otherResults = sortedArray.slice(3);
+  const otherResults = sortedArray.slice(3, 10);
   return (
     <>
       <NavBar />
+      <div className="confetti-container">
+        <CustomConfetti run={confetti} />
+      </div>
       <div className="result-container" onClick={handleRevealNext}>
-        <div className="confetti-container">
-          <CustomConfetti run={confetti} />
-        </div>
-        {topResults.map((result, index) => (
-          <div
-            key={result.name}
-            className={`result-number ${
-              reveal.includes(index) ? "revealed" : ""
-            }`}
-          >
-            {`${result.name}: ${result.completedAssignments}`}
-          </div>
-        ))}
-        {reveal.includes(4) &&
-          otherResults.map((result) => (
-            <div key={result.name} className={`result-number "revealed"`}>
+        <div className="top-results-container">
+          {topResults.map((result, index) => (
+            <div
+              key={result.name}
+              className={`result-number ${
+                reveal.includes(index) ? "revealed" : ""
+              }`}
+            >
               {`${result.name}: ${result.completedAssignments}`}
             </div>
           ))}
+        </div>
+        {reveal.includes(4) && (
+          <div className="other-results-container">
+            {otherResults.map((result) => (
+              <div key={result.name} className="result-number revealed">
+                {`${result.name}: ${result.completedAssignments}`}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </>
   );

@@ -12,6 +12,7 @@
 // TODO: Game completed feature on admin page
 // TODO: Live scores
 
+// DONE: Top 10 results on 5th click
 // DONE: Place on gamepage
 // DONE: Add place to questions
 // DONE: Multiple concurrent games/ VMs

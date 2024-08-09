@@ -2,13 +2,21 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background: #f0f0f0;
-    overflow: hidden;
+    justify-content: flex-start;
+    margin-top: 30vh;
+    height: auto; /* Set height to auto to allow content expansion */
+    overflow-y: hidden; /* Prevent the container from having its own scroll */
+    overflow-x: hidden;
     position: relative;
 }
-  
+
+.top-results-container, .other-results-container {
+    width: 100%; /* Make sure they take the full width */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center align the individual result */
+}
+
 .result-number {
     font-size: 5rem;
     font-weight: bold;
@@ -24,6 +32,7 @@
 }
   
 .confetti-container {
+    overflow-x: hidden;
     position: absolute;
     top: 0;
     left: 0;
