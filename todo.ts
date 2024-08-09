@@ -1,8 +1,6 @@
+// TODO: Add a SubmitterButton to GameForm
 // TODO: Admin page state based on response
 // TODO: SubmitterButton on admin page
-// TODO: Add a SubmitterButton to GameForm
-// TODO: Beautify completed page - Add confetti, add navbar
-// TODO: Update name
 // TODO: Show user their images
 //! BUG: Incorrect Name continuously
 // MAYBE (BUG): HEIC Image uplaod error
@@ -13,6 +11,8 @@
 // TODO: Game completed feature on admin page
 // TODO: Live scores
 
+// DONE: Update name
+// DONE: Beautify completed page - Add confetti, add navbar
 // DONE: Add an ended page - Show score to user
 // DONE: Top 10 results on 5th click
 // DONE: Place on gamepage

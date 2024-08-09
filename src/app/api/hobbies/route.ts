@@ -51,6 +51,8 @@ export async function POST(req: NextRequest) {
 
   if (prevHobbies) {
     await prevHobbies.update({
+      name: name ?? prevHobbies.name,
+      dateOfBirth: dateOfBirth ?? prevHobbies.dateOfBirth,
       homeTown: homeTown ?? prevHobbies.homeTown,
       hobbies: hobbies ?? prevHobbies.hobbies,
       guiltyPleasures: guiltyPleasures ?? prevHobbies.guiltyPleasures,
