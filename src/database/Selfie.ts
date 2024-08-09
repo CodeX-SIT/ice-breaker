@@ -7,6 +7,7 @@ import {
   ForeignKey,
 } from "sequelize";
 import { sequelize } from "./sequelize";
+import { Assigned } from ".";
 
 export class Selfie extends Model<
   InferAttributes<Selfie>,
@@ -16,6 +17,7 @@ export class Selfie extends Model<
   public declare data: Buffer;
   public declare mimeType: string;
   public declare assignedId: ForeignKey<number>;
+  public declare assigned?: ForeignKey<Assigned>;
 }
 
 Selfie.init(

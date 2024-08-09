@@ -7,11 +7,12 @@ import { Button } from "@mui/material";
 export default async function Page({ params }: { params: { code: string } }) {
   // Fetch 100 random selfies
   await checkAuthAndRedirect();
+  const LIMIT = 100;
   const code = params.code.toLowerCase().trim();
   const selfies = await Selfie.findAll({
     include: [
       {
-        attributes: [],
+        attributes: ["userId"], // Fetch userId for grouping
         association: "assigned",
         include: [
           {
@@ -24,9 +25,42 @@ export default async function Page({ params }: { params: { code: string } }) {
         required: true,
       },
     ],
-    order: [sequelize.fn("RANDOM")],
-    limit: 100,
+    limit: LIMIT * 2,
+    order: [sequelize.fn("RANDOM")], // Shuffle the results
   });
+
+  // Group selfies by userId
+  const groupedSelfies = selfies.reduce((acc, selfie) => {
+    const userId = selfie.assigned!.userId;
+    // @ts-ignore
+    if (!acc[userId]) acc[userId] = [];
+    // @ts-ignore
+    acc[userId].push(selfie);
+    return acc;
+  }, {});
+
+  // Shuffle each group (optional, but recommended)
+  for (let userId in groupedSelfies) {
+    // @ts-ignore
+    groupedSelfies[userId] = groupedSelfies[userId].sort(
+      () => 0.5 - Math.random(),
+    );
+  }
+
+  const evenlyDistributedSelfies = [];
+  const limit = selfies.length > LIMIT ? LIMIT : selfies.length;
+  while (evenlyDistributedSelfies.length < limit) {
+    for (let userId in groupedSelfies) {
+      // @ts-ignore
+      if (groupedSelfies[userId].length > 0) {
+        // @ts-ignore
+        evenlyDistributedSelfies.push(groupedSelfies[userId].shift());
+        if (evenlyDistributedSelfies.length === limit) break;
+      }
+    }
+  }
+  
+  // console.log(evenlyDistributedSelfies);
 
   // console.log(
   //   selfies.map((selfie) => {
@@ -34,7 +68,7 @@ export default async function Page({ params }: { params: { code: string } }) {
   //   }),
   // );
 
-  const selfieData = selfies.map((selfie) => ({
+  const selfieData = evenlyDistributedSelfies.map((selfie) => ({
     id: selfie.id,
     mimeType: selfie.mimeType,
     assignedId: selfie.assignedId,
@@ -43,7 +77,7 @@ export default async function Page({ params }: { params: { code: string } }) {
 
   return (
     <div>
-      <NavBar />
+      <NavBar variant="induction"/>
       <div style={{ marginTop: "64px" }}></div>
       <Gallery selfieData={selfieData} />
       <div className="text-center mt-5">

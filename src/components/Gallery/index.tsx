@@ -18,7 +18,6 @@ const chunkArray = (array: Selfie[], numChunks: number): Selfie[][] => {
 };
 
 export const Gallery = ({ selfieData }: { selfieData: Selfie[] }) => {
-  if (!selfieData.length) return <div>No selfies found.</div>;
   const [loading, setLoading] = React.useState(true);
 
   // Split the data into 4 chunks
@@ -28,6 +27,7 @@ export const Gallery = ({ selfieData }: { selfieData: Selfie[] }) => {
     setLoading(false);
   }, []);
 
+  if (!selfieData.length) return <div>No selfies found.</div>;
   if (loading)
     return (
       <section className="flex h-screen w-screen justify-center items-center">
