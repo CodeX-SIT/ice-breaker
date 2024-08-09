@@ -31,7 +31,8 @@ export default function GameForm({
 }) {
   const [name, setName] = useState("");
   const [selfie, setSelfie] = useState<File>();
-  const [disableButtons, setDisableButtons] = useState(false);
+  const [disableSubmit, setDisableSubmit] = useState(false);
+  const [disableSkip, setDisableSkip] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const handleSelfieChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -83,7 +84,7 @@ export default function GameForm({
     formData.append("assignedId", assignedId.toString());
 
     handleSnackbar(true, 1000, "Submitting...");
-    setDisableButtons(true);
+    setDisableSubmit(true);
     await axios
       .post(`/api/user/game/${code}`, formData)
       .then(() => {
@@ -106,11 +107,11 @@ export default function GameForm({
         }
         console.error(error);
       })
-      .finally(() => setDisableButtons(false));
+      .finally(() => setDisableSubmit(false));
   };
 
   const handleSkip = async () => {
-    setDisableButtons(true);
+    setDisableSkip(true);
     handleSnackbar(true, 1000, "Skipping...");
     axios
       .get(`/api/user/game/${code}/skip/${assignedId}`)
@@ -122,7 +123,7 @@ export default function GameForm({
         handleSnackbar(false, 500, "Skip failed.");
         console.error(error);
       })
-      .finally(() => setDisableButtons(false));
+      .finally(() => setDisableSkip(false));
   };
   //TODO: Upload from camera
   return (
@@ -157,15 +158,15 @@ export default function GameForm({
       <SubmitterButton
         text="Submit"
         sx={{ width: "100%" }}
-        disable={disableButtons}
+        disable={disableSubmit}
         handleSubmit={handleSubmit}
-        spinOnDisable={false}
+        spinOnDisable={true}
       />
       <SubmitterButton
         text="Skip"
-        disable={disableButtons}
+        disable={disableSkip}
         handleSubmit={handleSkip}
-        spinOnDisable={false}
+        spinOnDisable={true}
         sx={{
           width: "100%",
           backgroundColor: "white",
