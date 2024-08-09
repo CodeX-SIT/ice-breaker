@@ -1,16 +1,18 @@
+// DONE: Show user their images (query)
 // TODO: Add a SubmitterButton to GameForm
+//! MAYBE (BUG): HEIC Image uplaod error (TESTING)
+// TODO: Loaders on all pages (List pages left)
 // TODO: Admin page state based on response
 // TODO: SubmitterButton on admin page
-// TODO: Show user their images
-//! BUG: Incorrect Name continuously
-// MAYBE (BUG): HEIC Image uplaod error
 // DONE (BUG): Invalid GameCode on slow internet
+// BUG: Incorrect Name continuously
 
 // LOW PRIORITY
 // TODO: Remove user from game
 // TODO: Game completed feature on admin page
 // TODO: Live scores
 
+// DONE: Removal of error alerts
 // DONE: Update name
 // DONE: Beautify completed page - Add confetti, add navbar
 // DONE: Add an ended page - Show score to user

@@ -3,7 +3,7 @@ import checkAuthAndRedirect from "@/utils/checkAuthAndRedirect";
 import NavBar from "@/components/NavBar";
 import { getStatsForUser } from "@/app/api/controllers/getStats";
 import { GameCode } from "@/database";
-import { Divider, Typography } from "@mui/material";
+import { Button, Divider, Typography } from "@mui/material";
 import ErrorSuccessSnackbar from "@/components/Snackbars/ErrorSuccessSnackbar";
 export default async function Page({
   params,
@@ -29,16 +29,18 @@ export default async function Page({
     <>
       <NavBar />
       <section className="flex h-screen w-screen justify-center items-center">
-        <div>
-          <div>
-            <Typography variant="h1">Hi {result.name}.</Typography>
-          </div>
-          <Divider />
-          <div>
-            <Typography variant="h1">
-              You scored {result.completedAssignments}.
-            </Typography>
-          </div>
+        <div className="text-center">
+          <Typography variant="h1">Hi {result.name}.</Typography>
+          <Typography variant="h1">
+            You scored {result.completedAssignments}.
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            href={`/game/${code}/ended/mycollage`}
+          >
+            View your collage
+          </Button>
         </div>
       </section>
     </>

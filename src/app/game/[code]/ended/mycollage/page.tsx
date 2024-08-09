@@ -3,13 +3,21 @@ import React from "react";
 import NavBar from "@/components/NavBar";
 import Image from "next/image";
 import { MyCollage } from "./MyCollage";
+import checkAuthAndRedirect from "@/utils/checkAuthAndRedirect";
+import { Op } from "sequelize";
 
 const Page = async ({ params }: { params: { code: string } }) => {
+  const session = await checkAuthAndRedirect();
+  const userId = session?.user?.id!;
   const selfies = await Selfie.findAll({
     include: [
       {
-        attributes: [],
+        attributes: ["id", "assignedUserId", "userId"],
         association: "assigned",
+        where: {
+          [Op.or]: [{ userId }, { assignedUserId: userId }],
+        },
+        required: true,
         include: [
           {
             attributes: [],
@@ -18,7 +26,6 @@ const Page = async ({ params }: { params: { code: string } }) => {
             required: true,
           },
         ],
-        required: true,
       },
     ],
     order: [sequelize.fn("RANDOM")],

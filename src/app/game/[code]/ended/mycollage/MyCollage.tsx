@@ -2,8 +2,7 @@
 import React, { useState } from "react";
 import NavBar from "@/components/NavBar";
 import html2canvas from "html2canvas";
-import { Button } from "@mui/material";
-import { set } from "zod";
+import { Button, Typography } from "@mui/material";
 import ErrorSuccessSnackbar from "@/components/Snackbars/ErrorSuccessSnackbar";
 
 type Selfie = {
@@ -188,7 +187,7 @@ export const MyCollage = ({ selfieData }: { selfieData: Selfie[] }) => {
         </div>
       </section>
       <div style={{ display: "flex", justifyContent: "center" }}>
-        <Button onClick={handleDownload} color="primary" variant="contained">
+        <Button onClick={handleDownload} color="primary" variant="contained" style={{marginBottom: "40px"}}>
           Download Collage
         </Button>
       </div>
@@ -196,6 +195,19 @@ export const MyCollage = ({ selfieData }: { selfieData: Selfie[] }) => {
         open={processing}
         response={{ message: "Processing. Please wait", status: 1000 }}
       />
+      <Typography
+        variant="h6"
+        style={{
+          textAlign: "center",
+          position: "fixed",
+          bottom: "0px",
+          width: "100%",
+          marginBottom: "0px",
+          zIndex: -1,
+        }}
+      >
+        Reload page to reset your collage.
+      </Typography>
     </main>
   );
 };
