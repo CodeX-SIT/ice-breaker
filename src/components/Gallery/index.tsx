@@ -1,9 +1,8 @@
 "use client";
 import React, { useEffect, useCallback } from "react";
-import useEmblaCarousel from "embla-carousel-react";
 import "./embla.css"; // Include your custom styles here
 import Marquee from "react-fast-marquee";
-
+import { CircularProgress } from "@mui/material";
 
 type Selfie = {
   mimeType: string;
@@ -20,70 +19,88 @@ const chunkArray = (array: Selfie[], numChunks: number): Selfie[][] => {
 
 export const Gallery = ({ selfieData }: { selfieData: Selfie[] }) => {
   if (!selfieData.length) return <div>No selfies found.</div>;
+  const [loading, setLoading] = React.useState(true);
 
   // Split the data into 4 chunks
   const chunks = chunkArray(selfieData, 4);
 
+  useEffect(() => {
+    setLoading(false);
+  }, []);
+
+  if (loading)
+    return (
+      <section className="flex h-screen w-screen justify-center items-center">
+        <CircularProgress />
+      </section>
+    );
+
   return (
     <>
-      <div style={{display:"flex",alignItems:"center",justifyContent:"center",background: "#26282f"}}>
-      <div>
-      <Marquee>
-        <div className="embla__container">
-          {chunks[0].map((selfie) => (
-            <div className="embla__slide" key={selfie.id}>
-              <img
-                className="embla__img"
-                src={`data:${selfie.mimeType};base64,${selfie.data}`}
-                alt={`Selfie ${selfie.id}`}
-              />
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "#26282f",
+        }}
+      >
+        <div>
+          <Marquee>
+            <div className="embla__container">
+              {chunks[0].map((selfie) => (
+                <div className="embla__slide" key={selfie.id}>
+                  <img
+                    className="embla__img"
+                    src={`data:${selfie.mimeType};base64,${selfie.data}`}
+                    alt={`Selfie ${selfie.id}`}
+                  />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </Marquee>
-      <Marquee direction="right">
-        <div className="embla__container">
-          {chunks[1].map((selfie) => (
-            <div className="embla__slide" key={selfie.id}>
-              <img
-                className="embla__img"
-                src={`data:${selfie.mimeType};base64,${selfie.data}`}
-                alt={`Selfie ${selfie.id}`}
-              />
+          </Marquee>
+          <Marquee direction="right">
+            <div className="embla__container">
+              {chunks[1].map((selfie) => (
+                <div className="embla__slide" key={selfie.id}>
+                  <img
+                    className="embla__img"
+                    src={`data:${selfie.mimeType};base64,${selfie.data}`}
+                    alt={`Selfie ${selfie.id}`}
+                  />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </Marquee>
-      <Marquee>
-        <div className="embla__container">
-          {chunks[2].map((selfie) => (
-            <div className="embla__slide" key={selfie.id}>
-              <img
-                className="embla__img"
-                src={`data:${selfie.mimeType};base64,${selfie.data}`}
-                alt={`Selfie ${selfie.id}`}
-              />
+          </Marquee>
+          <Marquee>
+            <div className="embla__container">
+              {chunks[2].map((selfie) => (
+                <div className="embla__slide" key={selfie.id}>
+                  <img
+                    className="embla__img"
+                    src={`data:${selfie.mimeType};base64,${selfie.data}`}
+                    alt={`Selfie ${selfie.id}`}
+                  />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </Marquee>
-      <Marquee direction="right">
-        <div className="embla__container">
-          {chunks[3].map((selfie) => (
-            <div className="embla__slide" key={selfie.id}>
-              <img
-                className="embla__img"
-                src={`data:${selfie.mimeType};base64,${selfie.data}`}
-                alt={`Selfie ${selfie.id}`}
-              />
+          </Marquee>
+          <Marquee direction="right">
+            <div className="embla__container">
+              {chunks[3].map((selfie) => (
+                <div className="embla__slide" key={selfie.id}>
+                  <img
+                    className="embla__img"
+                    src={`data:${selfie.mimeType};base64,${selfie.data}`}
+                    alt={`Selfie ${selfie.id}`}
+                  />
+                </div>
+              ))}
             </div>
-          ))}
+          </Marquee>
         </div>
-      </Marquee>
       </div>
-    </div>
     </>
-  
   );
 };
 

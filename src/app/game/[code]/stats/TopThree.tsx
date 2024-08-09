@@ -4,6 +4,7 @@ import "./RevealResultPage.css";
 import axios from "axios";
 import NavBar from "../../../../components/NavBar";
 import CustomConfetti from "@/components/CustomConfetti";
+import { Button } from "@mui/material";
 
 const TopThree = ({ code }: { code: string }) => {
   const [reveal, setReveal] = useState<number[]>([]);
@@ -67,6 +68,16 @@ const TopThree = ({ code }: { code: string }) => {
             </div>
           ))}
         </div>
+        {reveal.includes(0) && (
+          <Button
+            variant="contained"
+            color="primary"
+            href={`/game/${code}/gallery`}
+            className="reveal"
+          >
+            View Photobooth
+          </Button>
+        )}
         {reveal.includes(4) && (
           <div className="other-results-container">
             {otherResults.map((result) => (

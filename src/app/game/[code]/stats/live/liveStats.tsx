@@ -25,6 +25,7 @@ export default function AdminStats({ code }: { code: string }) {
   return (
     <>
       <NavBar />
+      <div style={{marginTop: "64px"}}></div>
       <Container>
         <Paper style={{ padding: "16px" }}>
           {/* <Typography variant="h4" gutterBottom>

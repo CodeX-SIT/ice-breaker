@@ -1,5 +1,3 @@
-// DONE: Show user their images (query)
-// TODO: Add a SubmitterButton to GameForm
 //! MAYBE (BUG): HEIC Image uplaod error (TESTING)
 // TODO: Loaders on all pages (List pages left)
 // TODO: Admin page state based on response
@@ -12,6 +10,8 @@
 // TODO: Game completed feature on admin page
 // TODO: Live scores
 
+// DONE: Show user their images (query)
+// DONE: Add a SubmitterButton to GameForm
 // DONE: Removal of error alerts
 // DONE: Update name
 // DONE: Beautify completed page - Add confetti, add navbar
