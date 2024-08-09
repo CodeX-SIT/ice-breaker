@@ -192,6 +192,16 @@ function AdminGameCode() {
                   View Stats
                 </Button>
               </Grid>
+              <Grid item xs={12}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  onClick={() => router.push(`/game/${gameCode?.code}/gallery`)}
+                >
+                 Photo-Booth
+                </Button>
+              </Grid>
             </Grid>
           </Paper>
           <Paper

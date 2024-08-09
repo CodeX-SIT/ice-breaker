@@ -1,0 +1,30 @@
+.embla {
+    overflow: hidden;
+    width: 100%;
+    margin: auto;
+  }
+  
+  .embla__container {
+    display: flex;
+    transition: transform 0.3s ease;
+  }
+  
+  .embla__slide {
+    
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    margin: 10px;
+
+  }
+  
+  .embla__img {
+    display: block;
+    width: auto;
+    height: 195px; /* Fixed height */
+    max-width: 100%;
+    object-fit: cover; /* Ensure the image covers the area while maintaining aspect ratio */
+    border-radius: 10px; /* Optional: Add border radius */
+    
+  }
+  
