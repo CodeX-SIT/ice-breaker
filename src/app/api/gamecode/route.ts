@@ -48,9 +48,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json("Invalid game code", { status: 404 });
   }
 
-  await UserGame.create({
-    userId,
-    gameCodeId: dbGameCode.id,
-  });
+  const userGame = await UserGame.findOne({
+    where: { userId: userId, gameCodeId: dbGameCode.id }
+  })
+  if (!userGame){
+    await UserGame.create({
+      userId,
+      gameCodeId: dbGameCode.id,
+    });
+  }
+  
   return redirect(`/game/${dbGameCode.code}`, RedirectType.push);
 }

@@ -206,7 +206,7 @@ export const MyCollage = ({ selfieData }: { selfieData: Selfie[] }) => {
           zIndex: -1,
         }}
       >
-        Reload page to reset your collage.
+        Reload page to randomize your collage.
       </Typography>
     </main>
   );
