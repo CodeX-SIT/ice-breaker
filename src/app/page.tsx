@@ -4,10 +4,15 @@ import { Avatar, AboutUser, UserGame, GameCode } from "@/database";
 import checkAuthAndRedirect from "@/utils/checkAuthAndRedirect";
 import { redirect } from "next/navigation";
 import latestValidGameCodeOfUser from "./api/controllers/latestValidGameOfUser";
+import { ADMINS } from "@/constants";
 
 export default async function Home() {
   await checkAuthAndRedirect();
   const session = await auth();
+
+  if (ADMINS.includes(session!.user!.email!)) {
+    redirect("/gamecode");
+  }
 
   const hobbiesSet = await AboutUser.findOne({
     where: { userId: session!.user!.id! },
