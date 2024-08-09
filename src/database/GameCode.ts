@@ -5,6 +5,7 @@ import {
   InferAttributes,
   CreationOptional,
   NonAttribute,
+  ForeignKey,
 } from "sequelize";
 import { sequelize } from "./sequelize";
 import { createHash, randomBytes } from "crypto";
@@ -19,6 +20,7 @@ export class GameCode extends Model<
   public declare expiry: CreationOptional<Date>;
   public declare startedAt: CreationOptional<Date>;
   public declare endedAt: CreationOptional<Date | null>;
+  public declare userId: ForeignKey<string>;
   public declare users: NonAttribute<User[]>;
 
   public static async validateGameCode(code: string): Promise<boolean> {
@@ -65,6 +67,6 @@ GameCode.init(
   {
     sequelize,
     tableName: "game_codes",
-    modelName: "GameCode"
+    modelName: "GameCode",
   },
 );
