@@ -16,6 +16,7 @@ export class AboutUser extends Model<
   public declare id: CreationOptional<number>;
   public declare name: string;
   public declare dateOfBirth: Date;
+  public declare homeTown: string;
   public declare hobbies: string;
   public declare guiltyPleasures: string;
   public declare favoriteMovies: string;
@@ -32,6 +33,7 @@ AboutUser.init(
     },
     dateOfBirth: { type: DataTypes.DATE },
     name: { type: DataTypes.STRING },
+    homeTown: { type: DataTypes.STRING },
     hobbies: { type: DataTypes.TEXT("medium") },
     guiltyPleasures: { type: DataTypes.TEXT("medium") },
     favoriteMovies: { type: DataTypes.TEXT("medium") },

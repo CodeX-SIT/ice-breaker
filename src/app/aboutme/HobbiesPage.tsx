@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import NavBar from "@/components/NavBar";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 import ErrorSuccessSnackbar from "@/components/Snackbars/ErrorSuccessSnackbar";
 import { AboutUser } from "@/database";
 import { InferAttributes } from "sequelize";
@@ -43,6 +44,9 @@ export default function _HobbiesPage({
   const [dateOfBirth, setDateOfBirth] = React.useState(
     previousAboutMe?.dateOfBirth || new Date(),
   );
+  const [homeTown, setHomeTown] = React.useState(
+    previousAboutMe?.homeTown || "",
+  );
   const [hobbies, setHobbies] = React.useState(previousAboutMe?.hobbies || "");
   const [guiltyPleasures, setGuiltyPleasures] = React.useState(
     previousAboutMe?.guiltyPleasures || "",
@@ -69,6 +73,7 @@ export default function _HobbiesPage({
     const formData = new FormData();
     formData.append("name", name);
     formData.append("dateOfBirth", dateOfBirth.toISOString());
+    formData.append("homeTown", homeTown);
     formData.append("hobbies", hobbies);
     formData.append("guiltyPleasures", guiltyPleasures);
     formData.append("favoriteMovies", favoriteMovies);
@@ -81,6 +86,7 @@ export default function _HobbiesPage({
     if (
       !name ||
       !dateOfBirth ||
+      !homeTown ||
       !hobbies ||
       !guiltyPleasures ||
       !favoriteMovies ||
@@ -100,22 +106,35 @@ export default function _HobbiesPage({
       return;
     }
 
-    const response = await fetch("/api/hobbies", {
-      method: "POST",
-      body: data,
-    });
+    try {
+      const response = await axios.post("/api/hobbies", data);
 
-    if (response.ok) {
-      handleSuccess();
-    } else if ([401, 403].includes(response.status)) {
-      router.push("/auth/signin");
-    } else if (String(response.status).startsWith("5")) {
-      handleError(
-        500,
-        "There was an internal server error. Please contact support.",
-      );
-    } else {
-      handleError(400, "There was an error. Please try again!");
+      if (response.status === 200) {
+        handleSuccess();
+      } else if ([401, 403].includes(response.status)) {
+        setInteractive(false);
+        router.push("/auth/signin");
+      } else if (String(response.status).startsWith("5")) {
+        handleError(
+          500,
+          "There was an internal server error. Please contact support.",
+        );
+      } else {
+        handleError(400, "There was an error. Please try again!");
+      }
+    } catch (error: any) {
+      if (error.response) {
+        handleError(
+          error.response.status,
+          error.response.data.message ||
+            "There was an error. Please try again!",
+        );
+      } else {
+        handleError(
+          500,
+          "There was an internal server error. Please contact support.",
+        );
+      }
     }
   };
 
@@ -132,6 +151,7 @@ export default function _HobbiesPage({
     setDisable(false);
     setResponse({ status: 201, message: "Hobbies saved!" });
     setOpen(true);
+    setInteractive(false);
     setTimeout(() => {
       setOpen(false);
       router.push("/aboutme/avatar");
@@ -140,9 +160,12 @@ export default function _HobbiesPage({
 
   if (!interactive) {
     return (
-      <section className="flex h-screen w-screen justify-center items-center">
-        <CircularProgress />
-      </section>
+      <>
+        <section className="flex h-screen w-screen justify-center items-center">
+          <CircularProgress />
+        </section>
+        <ErrorSuccessSnackbar open={open} response={response} />
+      </>
     );
   }
 
@@ -171,7 +194,7 @@ export default function _HobbiesPage({
             <Typography component="h1" variant="h5" sx={{ m: 2 }}>
               About Me
             </Typography>
-            <form className="m-4 flex flex-col items-center">
+            <form className="p-4 flex flex-col items-center">
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <TextField
@@ -203,6 +226,21 @@ export default function _HobbiesPage({
                       setDateOfBirth(new Date(e.target.value));
                     }}
                     defaultValue={previousAboutMe?.dateOfBirth}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    id="homeTown"
+                    label="Home Town"
+                    name="homeTown"
+                    autoComplete="address-level2"
+                    color="primary"
+                    onChange={(e) => {
+                      setHomeTown(e.target.value);
+                    }}
+                    defaultValue={previousAboutMe?.name}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -270,6 +308,7 @@ export default function _HobbiesPage({
                 text="Submit"
                 disable={disable}
                 handleSubmit={onClick}
+                sx={{ mt: 2, width: "50%" }}
               />
             </form>
           </Paper>

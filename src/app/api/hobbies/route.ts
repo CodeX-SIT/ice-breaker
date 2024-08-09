@@ -6,6 +6,7 @@ import { z } from "zod";
 const schema = z.object({
   name: z.string(),
   dateOfBirth: z.date({ coerce: true }),
+  homeTown: z.string(),
   hobbies: z.string(),
   guiltyPleasures: z.string(),
   favoriteMovies: z.string(),
@@ -21,6 +22,7 @@ export async function POST(req: NextRequest) {
     parsedData = schema.parse({
       name: formData.get("name"),
       dateOfBirth: formData.get("dateOfBirth"),
+      homeTown: formData.get("homeTown"),
       hobbies: formData.get("hobbies"),
       guiltyPleasures: formData.get("guiltyPleasures"),
       favoriteMovies: formData.get("favoriteMovies"),
@@ -34,8 +36,9 @@ export async function POST(req: NextRequest) {
   if (!parsedData) return new NextResponse("Invalid data", { status: 400 });
 
   const {
-    dateOfBirth,
     name,
+    dateOfBirth,
+    homeTown,
     hobbies,
     guiltyPleasures,
     favoriteMovies,
@@ -48,6 +51,7 @@ export async function POST(req: NextRequest) {
 
   if (prevHobbies) {
     await prevHobbies.update({
+      homeTown: homeTown ?? prevHobbies.homeTown,
       hobbies: hobbies ?? prevHobbies.hobbies,
       guiltyPleasures: guiltyPleasures ?? prevHobbies.guiltyPleasures,
       favoriteMovies: favoriteMovies ?? prevHobbies.favoriteMovies,
@@ -60,6 +64,7 @@ export async function POST(req: NextRequest) {
   const newHobby = await AboutUser.create({
     name,
     dateOfBirth,
+    homeTown,
     favoriteMovies,
     favoriteSongs,
     guiltyPleasures,

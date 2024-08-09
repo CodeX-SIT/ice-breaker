@@ -1,8 +1,8 @@
 "use client";
 import dynamic from "next/dynamic";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import NavBar from "@/components/NavBar";
-import { Button, Box, Typography } from "@mui/material";
+import { Button, Box, Typography, CircularProgress } from "@mui/material";
 import { AvatarProps } from "@/components/AvatarPreview";
 import axios from "axios";
 import { InferAttributes } from "sequelize";
@@ -35,6 +35,7 @@ export default function CreateAvatarPage({
     clotheType: previousAvatar?.clotheType ?? "BlazerShirt",
     clotheColor: previousAvatar?.clotheColor ?? "Black",
   });
+  const [interactive, setInteractive] = useState(false);
   const [open, setOpen] = React.useState(false);
   const [response, setResponse] = React.useState({ status: 0, message: "" });
   const router = useRouter();
@@ -47,6 +48,7 @@ export default function CreateAvatarPage({
       .then(() => {
         setResponse({ status: 201, message: "Avatar saved!" });
         setOpen(true);
+        setInteractive(false);
         setTimeout(() => {
           setOpen(false);
           router.push("/gamecode");
@@ -60,6 +62,21 @@ export default function CreateAvatarPage({
         }, 2000);
       });
   };
+
+  useEffect(() => {
+    setInteractive(true);
+  }, []);
+
+  if (!interactive) {
+    return (
+      <>
+        <section className="flex h-screen w-screen justify-center items-center">
+          <CircularProgress />
+        </section>
+        <ErrorSuccessSnackbar open={open} response={response} />
+      </>
+    );
+  }
 
   return (
     <main>

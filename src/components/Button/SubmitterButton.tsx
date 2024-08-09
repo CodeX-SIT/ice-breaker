@@ -1,4 +1,10 @@
-import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  SxProps,
+  Theme,
+  Typography,
+} from "@mui/material";
 import React from "react";
 
 function SubmitterButton({
@@ -6,18 +12,24 @@ function SubmitterButton({
   handleSubmit,
   spinOnDisable = true,
   disable,
+  sx = {},
 }: {
   text: string;
   handleSubmit?: React.MouseEventHandler<HTMLButtonElement>;
   disable?: boolean;
   spinOnDisable?: boolean;
+  sx?: SxProps<Theme>;
 }) {
   return (
     <Button
       type="submit"
       fullWidth
       variant="contained"
-      sx={{ m: 2, width: "50%", height: "2rem" }}
+      sx={
+        Object.keys(sx as {}).length === 0
+          ? { m: 2, width: "50%", height: "2rem" }
+          : sx
+      }
       onClick={handleSubmit}
       disabled={disable}
     >

@@ -154,6 +154,7 @@ export function _GameCodePage() {
               text="Join"
               disable={disable}
               handleSubmit={handleSubmit}
+              sx={{ mb: 2, width: "50%" }}
             />
           </Paper>
         </Box>
