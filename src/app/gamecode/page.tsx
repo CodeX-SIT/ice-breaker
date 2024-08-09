@@ -5,6 +5,7 @@ import checkAuthAndRedirect from "@/utils/checkAuthAndRedirect";
 import AdminGameCode from "./AdminGameCode";
 import { AboutUser, Avatar } from "@/database";
 import { redirect } from "next/navigation";
+import latestValidGameCodeOfUser from "../api/controllers/latestValidGameOfUser";
 
 export default async function GameCodePage() {
   const session = await checkAuthAndRedirect();
@@ -25,6 +26,9 @@ export default async function GameCodePage() {
     },
   });
   if (!avatar) redirect("/aboutme/avatar");
+
+  const latestGame = await latestValidGameCodeOfUser(session!.user!.id!);
+  if (latestGame) redirect(`/game/${latestGame.code}`);
 
   return <_GameCodePage />;
 }

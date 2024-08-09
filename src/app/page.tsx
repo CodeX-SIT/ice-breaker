@@ -3,6 +3,7 @@ import NavBar from "@/components/NavBar";
 import { Avatar, AboutUser, UserGame, GameCode } from "@/database";
 import checkAuthAndRedirect from "@/utils/checkAuthAndRedirect";
 import { redirect } from "next/navigation";
+import latestValidGameCodeOfUser from "./api/controllers/latestValidGameOfUser";
 
 export default async function Home() {
   await checkAuthAndRedirect();
@@ -24,21 +25,10 @@ export default async function Home() {
     redirect("/aboutme/avatar");
   }
 
-  const userGame = await UserGame.findOne({
-    where: { userId: session!.user!.id! },
-    order: [["createdAt", "DESC"]],
-  });
+  const latestGame = await latestValidGameCodeOfUser(session!.user!.id!);
 
-  if (!userGame) {
-    redirect("/gamecode");
+  if (latestGame) {
+    redirect(`/game/${latestGame.code}`);
   }
-
-  const gameCode = (
-    await GameCode.findOne({
-      where: { id: userGame.gameCodeId, endedAt: null },
-      attributes: ["code"],
-    })
-  )?.code;
-
-  gameCode ? redirect(`/game/${gameCode}`) : redirect("/gamecode");
+  redirect("/gamecode");
 }

@@ -6,6 +6,7 @@ import checkAuthAndRedirect from "@/utils/checkAuthAndRedirect";
 import { redirect, RedirectType } from "next/navigation";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import latestValidGameCodeOfUser from "../controllers/latestValidGameOfUser";
 
 // User posts to this route to join a game
 
@@ -33,25 +34,24 @@ export async function POST(request: NextRequest) {
     return NextResponse.json("Invalid body", { status: 400 });
   }
 
+  const latestGame = await latestValidGameCodeOfUser(userId);
+
+  if (latestGame) {
+    return redirect(`/game/${latestGame.code}`, RedirectType.push);
+    // return NextResponse.json("You are already in a game!", { status: 409 });
+  }
+
   const dbGameCode = await GameCode.findOne({
     where: { code: gameCode.toLowerCase().trim() },
   });
+
   if (!dbGameCode) {
     return NextResponse.json("Invalid game code", { status: 404 });
-  }
-
-  const userGame = await UserGame.findOne({
-    where: { userId, gameCodeId: dbGameCode.id },
-  });
-
-  if (userGame) {
-    return NextResponse.json("You are already in a game!", { status: 409 });
   }
 
   await UserGame.create({
     userId,
     gameCodeId: dbGameCode.id,
   });
-
-  return redirect(`/game/${dbGameCode.code}`, RedirectType.replace);
+  return redirect(`/game/${dbGameCode.code}`, RedirectType.push);
 }
