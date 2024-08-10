@@ -43,9 +43,9 @@ export function _GameCodePage() {
       setOpen(true);
       setResponse({
         status: 200,
-        message: `Redirecting you to ${gameCode}`,
+        message: `Redirecting you to ${gameCode.trim()}`,
       });
-      router.push(`/game/${gameCode}`);
+      router.push(`/game/${gameCode.trim()}`);
     } catch (error) {
       setDisable(false);
 

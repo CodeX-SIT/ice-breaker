@@ -164,7 +164,8 @@ function AdminGameCode() {
                   onClick={() => {
                     gameCodeActions("start");
                   }}
-                  disabled={gameState === "started"}
+                  disabled={false}
+                  // disabled={gameState === "started"}
                 >
                   Start Game
                 </Button>
@@ -177,7 +178,8 @@ function AdminGameCode() {
                   onClick={() => {
                     gameCodeActions("end");
                   }}
-                  disabled={gameState !== "started"}
+                  disabled={false}
+                  // disabled={gameState !== "started"}
                 >
                   End Game
                 </Button>
@@ -211,6 +213,8 @@ function AdminGameCode() {
               flexDirection: "column",
               alignItems: "center",
               minWidth: "50%",
+              overflow: "auto",
+              maxHeight: "20vh",
               p: 2,
             }}
           >
