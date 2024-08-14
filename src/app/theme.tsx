@@ -16,6 +16,9 @@ const theme = createTheme({
     success: {
       main: "hsl(120, 100%, 60%)",
     },
+    info: {
+      main: "hsl(0, 100%, 100%)",
+    },
     background: {
       default: "#fff",
     },

@@ -11,6 +11,8 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import AvatarIcon from "@mui/icons-material/AccountCircle";
+import GalleryIcon from "@mui/icons-material/PhotoLibrary";
+import ControllerIcon from "@mui/icons-material/Gamepad";
 import LogOutIcon from "@mui/icons-material/Logout";
 import React from "react";
 import signOutAction from "./signOutAction";
@@ -59,6 +61,20 @@ function ActionDrawer({
             icon={<AvatarIcon />}
             onClick={() => {
               router.push("/aboutme/avatar");
+            }}
+          />
+          <DrawerItem
+            text="View Gallery"
+            icon={<GalleryIcon />}
+            onClick={() => {
+              router.push("/gallery");
+            }}
+          />
+          <DrawerItem
+            text="Play A Game"
+            icon={<ControllerIcon />}
+            onClick={() => {
+              router.push("/gamecode");
             }}
           />
           <Divider />
