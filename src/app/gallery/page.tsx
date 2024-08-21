@@ -79,6 +79,33 @@ export default async function GalleryPage() {
     }
   }
 
+  if (Object.keys(selfies).length === 0) {
+    return (
+      <>
+        <NavBar />
+        <form
+          className="flex h-screen w-screen justify-center items-center flex-col"
+          action={() => {
+            "use server";
+            redirect("/gamecode", RedirectType.replace);
+          }}
+        >
+          <Typography>
+            Take some photos when you play the game to unlock the gallery!
+          </Typography>
+          <Button
+            variant="contained"
+            startIcon={<LaunchIcon />}
+            type="submit"
+            sx={{ mt: 2 }}
+          >
+            Play a game
+          </Button>
+        </form>
+      </>
+    );
+  }
+
   return (
     <>
       <NavBar />
