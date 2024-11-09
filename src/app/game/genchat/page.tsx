@@ -1,15 +1,17 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import {
-  Card,
-  CardContent,
+  Box,
   TextField,
   Button,
   Typography,
   CircularProgress,
+  Avatar,
 } from "@mui/material";
 import axios, { AxiosError } from "axios";
 import ReactMarkdown from "react-markdown";
+import PersonIcon from "@mui/icons-material/Person";
+import SmartToyIcon from "@mui/icons-material/SmartToy";
 
 type Message = {
   role: "user" | "bot";
@@ -17,7 +19,9 @@ type Message = {
 };
 
 export default function ChatBot() {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([
+    { role: "bot", content: "Hello! How can I help you?" },
+  ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -57,50 +61,88 @@ export default function ChatBot() {
   };
 
   return (
-    <Card sx={{ maxWidth: 500, margin: "auto", mt: 4 }}>
-      <CardContent>
-        <Typography variant="h5">Game Chatbot</Typography>
-        <div
-          style={{
-            height: "300px",
-            overflowY: "auto",
-            marginBottom: "1rem",
-            padding: "0.5rem",
-          }}
-        >
-          {messages.map((msg, index) => (
-            <div
-              key={index}
-              style={{ textAlign: msg.role === "user" ? "right" : "left" }}
+    <Box
+      sx={{
+        maxWidth: 600,
+        margin: "auto",
+        mt: 4,
+        p: 2,
+        backgroundColor: "#f3f3f3",
+        borderRadius: "12px",
+      }}
+    >
+      <Typography variant="h5" align="center" gutterBottom>
+        Game Chatbot
+      </Typography>
+      <Box
+        sx={{
+          height: "500px",
+          overflowY: "auto",
+          marginBottom: "1rem",
+          padding: "1rem",
+          backgroundColor: "#ffffff",
+          borderRadius: "12px",
+        }}
+      >
+        {messages.map((msg, index) => (
+          <Box
+            key={index}
+            sx={{
+              display: "flex",
+              flexDirection: msg.role === "user" ? "row-reverse" : "row",
+              alignItems: "flex-start",
+              mb: 2,
+            }}
+          >
+            <Avatar
+              sx={{
+                bgcolor: msg.role === "user" ? "#0088cc" : "#586e75",
+                ml: msg.role === "user" ? 2 : 0,
+                mr: msg.role === "bot" ? 2 : 0,
+                width: 32,
+                height: 32,
+                mt: 1,
+              }}
             >
-              <div>
-                <strong>{msg.role === "user" ? "You: " : "Bot: "}</strong>
-                <ReactMarkdown>{msg.content}</ReactMarkdown>
-              </div>
-            </div>
-          ))}
-          <div ref={messagesEndRef} />
-        </div>
-        <TextField
-          fullWidth
-          label="Type your message"
-          variant="outlined"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyUp={(e) => {
-            if (e.key === "Enter" && !loading) sendMessage();
-          }}
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={sendMessage}
-          sx={{ mt: 2 }}
-          disabled={loading}
-        >
-          {loading ? <CircularProgress size={24} /> : "Send"}
-        </Button>
-      </CardContent>
-    </Card>
+              {msg.role === "user" ? <PersonIcon /> : <SmartToyIcon />}
+            </Avatar>
+            <Box
+              sx={{
+                maxWidth: "70%",
+                padding: "0.8rem 1rem",
+                backgroundColor: msg.role === "user" ? "#dcf8c6" : "#e6e6e6",
+                borderRadius:
+                  msg.role === "user" ? "18px 18px 0 18px" : "18px 18px 18px 0",
+                fontSize: "0.95rem",
+              }}
+            >
+              <ReactMarkdown>{msg.content}</ReactMarkdown>
+            </Box>
+          </Box>
+        ))}
+        <div ref={messagesEndRef} />
+      </Box>
+      <TextField
+        fullWidth
+        label="Type your message"
+        variant="outlined"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        onKeyUp={(e) => {
+          if (e.key === "Enter" && !loading) sendMessage();
+        }}
+        sx={{ mb: 2, backgroundColor: "#ffffff", borderRadius: "8px" }}
+      />
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={sendMessage}
+        fullWidth
+        disabled={loading}
+        sx={{ height: "3rem", backgroundColor: "#0088cc" }}
+      >
+        {loading ? <CircularProgress size={24} /> : "Send"}
+      </Button>
+    </Box>
   );
 }
