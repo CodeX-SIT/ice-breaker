@@ -18,7 +18,7 @@ type Message = {
   content: string;
 };
 
-export default function ChatBot() {
+export default function ChatBot({ params }: { params: { code: string } }) {
   const [messages, setMessages] = useState<Message[]>([
     { role: "bot", content: "Hello! How can I help you?" },
   ]);
@@ -45,7 +45,9 @@ export default function ChatBot() {
     setLoading(true);
 
     try {
-      const response = await axios.post("/api/chat", { userMessage: input });
+      const response = await axios.post(`/api/gamecode/${params.code}/chat`, {
+        userMessage: input,
+      });
       const botMessage = {
         role: "bot" as const,
         content: response.data.botMessage as string,
