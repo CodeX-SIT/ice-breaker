@@ -41,12 +41,12 @@ export default function NavBar({
             <Typography>{"Induction"}</Typography>
           )}
           <div className="flex flex-grow" />
-          <Image
+          {/* <Image
             src={"/images/CodeXDark20PxPad.png"}
             alt="CodeX Logo"
             width={147.5}
             height={50}
-          />
+          /> */}
         </Toolbar>
       </AppBar>
       <ActionDrawer open={open} toggleDrawer={(open) => () => setOpen(open)} />
