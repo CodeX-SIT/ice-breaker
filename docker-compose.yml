@@ -1,0 +1,62 @@
+services:
+  ice-breaker:
+    build:
+      context: .
+      dockerfile: dockerfile
+      tags:
+        - matricaldefunkt/codex:ice-breaker
+    image: matricaldefunkt/codex:ice-breaker
+    container_name: ice-breaker-app
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+    volumes:
+      # Bind mount for SQLite database persistence
+      - ./database.sqlite:/app/database.sqlite
+    networks:
+      - ice-breaker-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  nginx:
+    image: nginx:alpine
+    container_name: ice-breaker-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - nginx-logs:/var/log/nginx
+    networks:
+      - ice-breaker-network
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost/health",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    depends_on:
+      ice-breaker:
+        condition: service_healthy
+
+networks:
+  ice-breaker-network:
+    driver: bridge
+    name: ice-breaker-network
+
+volumes:
+  nginx-logs:
+    driver: local

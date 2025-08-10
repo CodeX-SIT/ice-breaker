@@ -1,13 +1,6 @@
 import getStats from "@/app/api/controllers/getStats";
-import {
-  ASSIGNMENT_MAX_SCORE_TIME_MS,
-  BASE_SCORE,
-  MAX_ASSIGNMENT_SCORE,
-} from "@/constants";
-import { Assigned, GameCode, User, UserGame } from "@/database";
-import { reverse } from "dns";
+import {GameCode } from "@/database";
 import { NextRequest, NextResponse } from "next/server";
-import { Op } from "sequelize";
 interface PageParams {
   code: string;
 }
