@@ -67,6 +67,7 @@ export default function GamePage({ code }: { code: string }) {
     }
 
     return () => clearInterval(interval); // clean up interval on component unmount
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [code, assigned, gameState]);
 
   useEffect(() => {

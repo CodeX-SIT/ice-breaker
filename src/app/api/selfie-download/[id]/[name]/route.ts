@@ -12,7 +12,7 @@ export async function GET(
     return NextResponse.json("Selfie not found", { status: 404 });
   }
   const selfieFile = selfie.data;
-  return new NextResponse(selfieFile, {
+  return new NextResponse(Buffer.from(selfieFile), {
     headers: {
       "Content-Disposition": `attachment; filename=${selfieName}`,
       "Content-Type": selfie.mimeType,

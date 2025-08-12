@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import React, { useEffect, useCallback } from "react";
 import "./embla.css"; // Include your custom styles here

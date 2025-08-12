@@ -69,6 +69,7 @@ function AdminGameCode() {
     };
 
     fetchGameCode();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createGameCode, date]);
 
   let isFetchingPlayers = false;
@@ -78,6 +79,7 @@ function AdminGameCode() {
       if (!gameCode) return;
       if (isFetchingPlayers) return;
       // if (gameCode.startedAt && users) return;
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       isFetchingPlayers = true;
       const code = gameCode.code;
       axios

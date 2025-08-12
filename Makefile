@@ -1,11 +1,19 @@
-.PHONY: build up down logs clean rebuild
+.PHONY: build up down logs clean rebuild build-nginx push-nginx
 
 # Load environment variables
 include .env.docker
 
 # Build the application
 build:
-	docker compose build --no-cache
+	docker compose build
+	
+# Build nginx image only
+build-nginx:
+	cd nginx && docker build -t matricaldefunkt/codex:ice-breaker-nginx .
+
+# Push nginx image
+push-nginx:
+	docker push matricaldefunkt/codex:ice-breaker-nginx
 
 # Start the services
 up:
@@ -53,3 +61,25 @@ nginx-test:
 # Reload nginx configuration
 nginx-reload:
 	docker compose exec nginx nginx -s reload
+
+# Database commands
+db-shell:
+	docker compose exec postgres psql -U postgres -d ice-breaker
+
+# View database logs
+logs-db:
+	docker compose logs -f postgres
+
+# Reset database (WARNING: This will delete all data!)
+db-reset:
+	docker compose down postgres
+	sudo rm -rf ./postgres-data/*
+	docker compose up -d postgres
+
+# Backup database
+db-backup:
+	docker compose exec postgres pg_dump -U postgres ice-breaker > backup_$(shell date +%Y%m%d_%H%M%S).sql
+
+# Restore database from backup (usage: make db-restore BACKUP_FILE=backup_20250812_120000.sql)
+db-restore:
+	docker compose exec -T postgres psql -U postgres -d ice-breaker < $(BACKUP_FILE)

@@ -1,23 +1,33 @@
 # Multi-stage build for optimized production image
-FROM oven/bun:latest AS deps
+# Build stage
+FROM node:22-alpine AS builder
 WORKDIR /app
 
-# Copy dependency files first for better caching
-COPY package.json bun.lock* ./
-RUN bun install --frozen-lockfile
-RUN bun pm trust --all
+# Copy dependency files and install all dependencies (including dev dependencies for build)
+COPY package*.json ./
+RUN npm ci --legacy-peer-deps
 
-COPY . .
+COPY ./src /app/src
+COPY ./public /app/public
+COPY .env /app/.env
+COPY .eslintrc.json /app/.eslintrc.json
+COPY ./tailwind.config.ts /app/tailwind.config.ts
+COPY ./postcss.config.mjs /app/postcss.config.mjs
+COPY ./tsconfig.json /app/tsconfig.json
+COPY ./next.config.mjs /app/next.config.mjs
 
 # Set environment for build
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
 # Build the application
-RUN bun run build
+RUN npm run build
+
+# Install only production dependencies for the final image
+RUN npm prune --omit=dev --legacy-peer-deps
 
 # Production stage - use slim image for smaller size
-FROM oven/bun:slim AS runner
+FROM node:22-alpine AS runner
 WORKDIR /app
 
 # Set production environment
@@ -25,30 +35,26 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
 # Install curl for health check
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache curl
 
 # Create non-root user for security
-RUN groupadd --gid 1001 nodejs
-RUN useradd --uid 1001 --gid nodejs --shell /bin/bash --create-home nextjs
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
 
-# Copy built application and dependencies
-COPY --from=deps --chown=nextjs:nodejs /app/.next ./.next
-COPY --from=deps --chown=nextjs:nodejs /app/public ./public
-COPY --from=deps --chown=nextjs:nodejs /app/package.json ./package.json
-COPY --from=deps --chown=nextjs:nodejs /app/src ./src
-COPY --from=deps --chown=nextjs:nodejs /app/.env.local .env.local
+# Copy built application and dependencies from builder stage
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 
-# Copy production dependencies only
-COPY --from=deps --chown=nextjs:nodejs /app/node_modules ./node_modules
+# Copy other necessary files
+COPY --from=builder --chown=nextjs:nodejs /app/src ./src
+COPY --from=builder --chown=nextjs:nodejs /app/.env .env
 
 USER nextjs
 
 # Expose port
 EXPOSE 3000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:3000/api/health || exit 1
-
 # Start the application
-CMD ["bun", "run", "start"]
+CMD ["npm", "run", "start"]
