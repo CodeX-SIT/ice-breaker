@@ -24,5 +24,10 @@ export const sequelize = new Sequelize({
     },
     // timestamps: false,
   },
-  logging: false,
+  logging: (message, timing) => {
+    console.log(message, timing)
+  },
+  sync: {
+    // force: true,
+  },
 });

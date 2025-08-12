@@ -6,6 +6,9 @@ import { Avatar } from "./Avatar";
 import { UserGame } from "./UserGame";
 import { sequelize } from "./sequelize";
 import { Selfie } from "./Selfie";
+import { Achievement } from "./Achievement";
+import { UserAchievement } from "./UserAchievement";
+import { FlashEvent } from "./FlashEvent";
 
 // This user is supposed to find ...
 User.hasMany(Assigned, { as: "assignedUsers", foreignKey: "userId" });
@@ -41,5 +44,37 @@ User.hasMany(GameCode, { as: "gameCode", foreignKey: "userId" });
 
 Assigned.hasOne(Selfie, { as: "selfie", foreignKey: "assignedId" });
 Selfie.belongsTo(Assigned, { as: "assigned", foreignKey: "assignedId" });
+
+// Achievement relationships
+Achievement.hasMany(UserAchievement, {
+  as: "userAchievements",
+  foreignKey: "achievementId",
+});
+UserAchievement.belongsTo(Achievement, {
+  as: "achievement",
+  foreignKey: "achievementId",
+});
+
+User.hasMany(UserAchievement, { as: "userAchievements", foreignKey: "userId" });
+UserAchievement.belongsTo(User, { as: "user", foreignKey: "userId" });
+
+GameCode.hasMany(UserAchievement, {
+  as: "achievements",
+  foreignKey: "gameCodeId",
+});
+UserAchievement.belongsTo(GameCode, {
+  as: "gameCode",
+  foreignKey: "gameCodeId",
+});
+
+// Flash Event relationships
+GameCode.hasMany(FlashEvent, { as: "flashEvents", foreignKey: "gameCodeId" });
+FlashEvent.belongsTo(GameCode, { as: "gameCode", foreignKey: "gameCodeId" });
+
+User.hasMany(FlashEvent, {
+  as: "triggeredFlashEvents",
+  foreignKey: "triggeredBy",
+});
+FlashEvent.belongsTo(User, { as: "admin", foreignKey: "triggeredBy" });
 
 // sequelize.sync();

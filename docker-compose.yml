@@ -9,6 +9,8 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
     networks:
       - ice-breaker-network
     healthcheck:
@@ -23,8 +25,8 @@ services:
       context: .
       dockerfile: dockerfile
       tags:
-        - matricaldefunkt/codex:ice-breaker
-    image: matricaldefunkt/codex:ice-breaker
+        - matricaldefunkt/ice-breaker-app:latest
+    image: matricaldefunkt/ice-breaker-app:latest
     container_name: ice-breaker-app
     restart: always
     environment:
@@ -48,13 +50,13 @@ services:
       start_period: 40s
 
   nginx:
-    image: matricaldefunkt/codex:ice-breaker-nginx
+    image: matricaldefunkt/ice-breaker-nginx:latest
     container_name: ice-breaker-nginx
     build:
       context: ./nginx
       dockerfile: Dockerfile
       tags:
-        - matricaldefunkt/codex:ice-breaker-nginx
+        - matricaldefunkt/ice-breaker-nginx:latest
     restart: always
     ports:
       - "80:80"

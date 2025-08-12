@@ -23,11 +23,13 @@ export default function GameForm({
   assignedId,
   handleSnackbar,
   resetAssigned,
+  onSuccess,
 }: {
   code: string;
   assignedId: number;
   handleSnackbar: (open: boolean, status?: number, message?: string) => void;
   resetAssigned: () => void;
+  onSuccess?: () => void;
 }) {
   const [name, setName] = useState("");
   const [selfie, setSelfie] = useState<File>();
@@ -93,6 +95,7 @@ export default function GameForm({
         resetAssigned();
         setName("");
         setSelfie(undefined);
+        if (onSuccess) onSuccess();
       })
       .catch((error) => {
         const data = error.response.data;

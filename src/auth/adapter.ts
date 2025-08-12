@@ -100,14 +100,24 @@ export default function SequelizeAdapter(
     console.log("in sync - starting sync process", { synchronize, _synced });
     if (synchronize && !_synced) {
       console.log("in sync - performing database sync");
+
       const syncOptions: SyncOptions = {
         // force: process.env.NODE_ENV === "production",
       };
 
       try {
         // Import all application models to ensure they are registered
-        const { AboutUser, Avatar, GameCode, UserGame, Assigned, Selfie } =
-          await import("@/database");
+        const {
+          AboutUser,
+          Avatar,
+          GameCode,
+          UserGame,
+          Assigned,
+          Selfie,
+          Achievement,
+          FlashEvent,
+          UserAchievement,
+        } = await import("@/database");
 
         console.log("in sync - syncing User model");
         await User.sync(syncOptions);
@@ -131,6 +141,12 @@ export default function SequelizeAdapter(
         await Assigned.sync(syncOptions);
         console.log("in sync - syncing Selfie model");
         await Selfie.sync(syncOptions);
+        console.log("in sync - syncing Achievement model");
+        await Achievement.sync(syncOptions);
+        console.log("in sync - syncing UserAchievement model");
+        await UserAchievement.sync(syncOptions);
+        console.log("in sync - syncing FlashEvent model");
+        await FlashEvent.sync(syncOptions);
 
         console.log("in sync - all models synced successfully");
         _synced = true;

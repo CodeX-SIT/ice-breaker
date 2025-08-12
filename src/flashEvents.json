@@ -1,0 +1,65 @@
+[
+  {
+    "id": "silent_treatment",
+    "name": "🤫 Silent Hunt",
+    "description": "No talking allowed! Use gestures, expressions, and creativity to find your target!",
+    "duration": 45,
+    "instructions": "You cannot speak for the next 45 seconds. Use hand gestures, facial expressions, or write notes. Get creative with your communication!"
+  },
+  {
+    "id": "whisper_mode",
+    "name": "🗣️ Whisper Challenge",
+    "description": "Shhh! All conversations must be whispered for the next 45 seconds!",
+    "duration": 45,
+    "instructions": "All communication must be whispered. Get close to people to talk. Create intimate conversations. Secrets are more fun when whispered..."
+  },
+  {
+    "id": "animal_kingdom",
+    "name": "🦁 Animal Kingdom",
+    "description": "Communicate only through animal sounds and movements! Roar, chirp, or hop your way to victory!",
+    "duration": 60,
+    "instructions": "No human words allowed! Choose an animal and embody it. Make animal sounds and movements. The wildest hunter wins!"
+  },
+  {
+    "id": "mirror_match",
+    "name": "🪞 Mirror Mirror",
+    "description": "Copy the movements of the person you're talking to! Mirror their gestures and expressions!",
+    "duration": 40,
+    "instructions": "Mirror every movement of people you interact with. Copy their gestures and expressions. Make conversations hilariously awkward!"
+  },
+  {
+    "id": "compliment_cascade",
+    "name": "💝 Compliment Cascade",
+    "description": "Every conversation must start with a genuine compliment! Spread the positivity!",
+    "duration": 50,
+    "instructions": "Start every interaction with a sincere compliment. Make people feel amazing about themselves. Spread joy and positivity!"
+  },
+  {
+    "id": "robot_mode",
+    "name": "🤖 Robot Takeover",
+    "description": "BEEP BOOP! All humans must now communicate like robots for optimal efficiency!",
+    "duration": 45,
+    "instructions": "INITIATING ROBOT MODE. ALL COMMUNICATION MUST BE ROBOTIC. USE MECHANICAL MOVEMENTS. BEEP AND BOOP FREQUENTLY. EMOTION CIRCUITS DISABLED."
+  },
+  {
+    "id": "rhyme_time",
+    "name": "🎵 Rhyme Time",
+    "description": "Every sentence must end with a rhyme! Make your words flow and shine!",
+    "duration": 40,
+    "instructions": "Every sentence you speak must rhyme with something. Get creative with your wordplay. Make conversations poetic and fun!"
+  },
+  {
+    "id": "superhero_stance",
+    "name": "🦸 Hero Hour",
+    "description": "Strike dramatic superhero poses while talking! Save the day with style!",
+    "duration": 35,
+    "instructions": "Strike a superhero pose every time you talk to someone. Cape flowing, hands on hips, dramatic stances only! Be the hero this game needs!"
+  },
+  {
+    "id": "emoji_only",
+    "name": "😀 Emoji Express",
+    "description": "Communication through facial expressions only! Let your face do the talking!",
+    "duration": 30,
+    "instructions": "No words allowed! Use only facial expressions and gestures. Become a human emoji. Express everything through your face!"
+  }
+]

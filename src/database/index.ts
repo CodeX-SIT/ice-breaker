@@ -8,6 +8,9 @@ export { GameCode } from "./GameCode";
 export { User } from "./User";
 export { UserGame } from "./UserGame";
 export { Selfie } from "./Selfie";
+export { Achievement } from "./Achievement";
+export { UserAchievement } from "./UserAchievement";
+export { FlashEvent } from "./FlashEvent";
 export { sequelize } from "./sequelize";
 
 import { sequelize } from "./sequelize";

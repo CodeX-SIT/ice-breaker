@@ -10,6 +10,9 @@ import GameForm from "@/components/GameForm";
 import ErrorSuccessSnackbar from "@/components/Snackbars/ErrorSuccessSnackbar";
 import { AvatarProps } from "@/components/AvatarPreview";
 import CustomConfetti from "@/components/CustomConfetti";
+import AchievementSnackbar from "@/components/AchievementSnackbar";
+import FlashEventOverlay from "@/components/FlashEventOverlay";
+import FlashEventEndOverlay from "@/components/FlashEventEndOverlay";
 
 type GameStates = "waiting" | "started" | "ended" | "notInGame" | "completed";
 
@@ -19,6 +22,10 @@ export default function GamePage({ code }: { code: string }) {
   const [open, setOpen] = useState(false);
   const [interactive, setInteractive] = useState(false);
   const [response, setResponse] = useState({ status: 0, message: "" });
+  const [achievements, setAchievements] = useState<string[]>([]);
+  const [activeFlashEvent, setActiveFlashEvent] = useState<any>(null);
+  const [lastFlashEvent, setLastFlashEvent] = useState<any>(null);
+  const [gameCodeId, setGameCodeId] = useState<number | null>(null);
   const router = useRouter();
 
   const handleSnackbar = (open: boolean, status?: number, message?: string) => {
@@ -31,6 +38,31 @@ export default function GamePage({ code }: { code: string }) {
 
   const resetAssigned = () => {
     setAssigned(undefined);
+  };
+
+  const checkForAchievements = async (assignedId?: number) => {
+    if (!gameCodeId) return;
+
+    try {
+      const response = await axios.post("/api/achievements/check", {
+        gameCodeId,
+        assignedId,
+      });
+
+      if (response.data.achievements && response.data.achievements.length > 0) {
+        setAchievements((prev) => [...prev, ...response.data.achievements]);
+      }
+    } catch (error) {
+      console.error("Error checking achievements:", error);
+    }
+  };
+
+  const dismissAchievement = (achievementName: string) => {
+    setAchievements((prev) => prev.filter((a) => a !== achievementName));
+  };
+
+  const dismissFlashEventEnd = () => {
+    setLastFlashEvent(null);
   };
 
   useEffect(() => {
@@ -50,6 +82,12 @@ export default function GamePage({ code }: { code: string }) {
           return;
         }
         setGameState(data.gameState);
+
+        // Set gameCodeId if we have the data
+        if (data.assigned && data.assigned.gameCodeId) {
+          setGameCodeId(data.assigned.gameCodeId);
+        }
+
         setAssigned(data.assigned);
       } catch (e: any) {
         console.error(e.response, e.stack);
@@ -67,8 +105,36 @@ export default function GamePage({ code }: { code: string }) {
     }
 
     return () => clearInterval(interval); // clean up interval on component unmount
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [code, assigned, gameState]);
+
+  // Separate useEffect for flash events polling
+  useEffect(() => {
+    if (!gameCodeId) return;
+
+    const pollFlashEvents = async () => {
+      try {
+        const response = await axios.get(
+          `/api/flashevents/active?gameCodeId=${gameCodeId}`,
+        );
+        const newActiveEvent = response.data.activeEvent;
+
+        // If there was an active event but now there isn't, show the end overlay
+        if (activeFlashEvent && !newActiveEvent) {
+          setLastFlashEvent(activeFlashEvent);
+        }
+
+        setActiveFlashEvent(newActiveEvent);
+      } catch (error) {
+        console.error("Error polling flash events:", error);
+      }
+    };
+
+    pollFlashEvents();
+    const flashEventInterval = setInterval(pollFlashEvents, 2000);
+
+    return () => clearInterval(flashEventInterval);
+  }, [gameCodeId, activeFlashEvent]);
 
   useEffect(() => {
     setInteractive(true);
@@ -168,6 +234,7 @@ export default function GamePage({ code }: { code: string }) {
               assignedId={assigned.id}
               handleSnackbar={handleSnackbar}
               resetAssigned={resetAssigned}
+              onSuccess={() => checkForAchievements(assigned.id)}
             />
             <ErrorSuccessSnackbar
               open={open}
@@ -178,5 +245,25 @@ export default function GamePage({ code }: { code: string }) {
     }
   };
 
-  return renderContent();
+  return (
+    <>
+      {renderContent()}
+      <AchievementSnackbar
+        newAchievements={achievements}
+        onAchievementShown={dismissAchievement}
+      />
+      {activeFlashEvent && (
+        <FlashEventOverlay
+          activeEvent={activeFlashEvent}
+          onEventEnd={() => setActiveFlashEvent(null)}
+        />
+      )}
+      {lastFlashEvent && (
+        <FlashEventEndOverlay
+          lastEvent={lastFlashEvent}
+          onDismiss={dismissFlashEventEnd}
+        />
+      )}
+    </>
+  );
 }

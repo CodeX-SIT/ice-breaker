@@ -6,6 +6,11 @@ export const ADMINS = [
   "sehaj.saluja.btech2021@sitpune.edu.in",
   "saksham.gupta.btech2021@sitpune.edu.in",
   "pranav.suri.btech2022@sitpune.edu.in",
+  "ankush.dutta.btech2023@sitpune.edu.in",
+  "mitiksha.paliwal.btech2023@sitpune.edu.in",
+  "manasvi.pawa.btech2023@sitpune.edu.in",
+  "aayush.joshi.btech2023@sitpune.edu.in",
+  "abhay.pandey.btech2023@sitpune.edu.in"
 ];
 export const ASSIGNMENT_AUTO_SKIP_MS = 1000 * 60 * 5; // 5 minutes in milliseconds
 export const ASSIGNMENT_MAX_SCORE_TIME_MS = 1000 * 60 * 5; // 5 hour in milliseconds

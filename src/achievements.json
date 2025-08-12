@@ -1,0 +1,40 @@
+{
+  "achievements": [
+    {
+      "name": "FirstMatch",
+      "description": "Complete your first assignment",
+      "icon": "🎯",
+      "criteria": {
+        "type": "first_match"
+      }
+    },
+    {
+      "name": "SpeedDemon",
+      "description": "Complete an assignment in under 30 seconds",
+      "icon": "💨",
+      "criteria": {
+        "type": "speed_assignment",
+        "timeLimit": 30000
+      }
+    },
+    {
+      "name": "FastFriend",
+      "description": "Find 3 people in under 1 minute",
+      "icon": "⚡",
+      "criteria": {
+        "type": "speed_matches",
+        "count": 3,
+        "timeLimit": 60000
+      }
+    },
+    {
+      "name": "SocialButterfly",
+      "description": "Find 5 or more people in one game",
+      "icon": "🦋",
+      "criteria": {
+        "type": "total_matches",
+        "count": 5
+      }
+    }
+  ]
+}
