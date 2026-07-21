@@ -4,6 +4,7 @@ const nextConfig = {
     serverComponentsExternalPackages: ["sequelize"],
     missingSuspenseWithCSRBailout: true,
     taint: true,
+    instrumentationHook: true,
   },
   poweredByHeader: false,
   reactStrictMode: true,

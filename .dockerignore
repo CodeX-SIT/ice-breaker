@@ -1,8 +1,11 @@
 node_modules
 .next
-# .env.local
+.env
+.env.local
 .gitignore
 .git
 .prettierrc
 Dockerfile
 README.md
+data
+*.sqlite
