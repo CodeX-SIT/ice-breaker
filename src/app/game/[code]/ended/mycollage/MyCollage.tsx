@@ -12,6 +12,11 @@ type Selfie = {
   assignedId: number;
 };
 
+const FALLBACK_IMAGE = "/images/CodeXDark20PxPad.png";
+
+const srcFor = (selfie: Selfie) =>
+  selfie.data ? `data:${selfie.mimeType};base64,${selfie.data}` : FALLBACK_IMAGE;
+
 export const MyCollage = ({ selfieData }: { selfieData: Selfie[] }) => {
   const [processing, setProcessing] = useState(false);
   const handleDownload = () => {
@@ -54,7 +59,7 @@ export const MyCollage = ({ selfieData }: { selfieData: Selfie[] }) => {
             >
               <img
                 style={{ width: "20vh", height: "20vh", objectFit: "cover" }}
-                src={`data:${selfieData[0].mimeType};base64,${selfieData[0].data}`}
+                src={srcFor(selfieData[0])}
                 alt={`Selfie ${selfieData[0].id}`}
               />
             </div>
@@ -69,7 +74,7 @@ export const MyCollage = ({ selfieData }: { selfieData: Selfie[] }) => {
             >
               <img
                 style={{ width: "100%", height: "20vh", objectFit: "cover" }}
-                src={`data:${selfieData[1].mimeType};base64,${selfieData[1].data}`}
+                src={srcFor(selfieData[1])}
                 alt={`Selfie ${selfieData[1].id}`}
               />
             </div>
@@ -84,7 +89,7 @@ export const MyCollage = ({ selfieData }: { selfieData: Selfie[] }) => {
             >
               <img
                 style={{ width: "100%", height: "20vh", objectFit: "cover" }}
-                src={`data:${selfieData[2].mimeType};base64,${selfieData[2].data}`}
+                src={srcFor(selfieData[2])}
                 alt={`Selfie ${selfieData[2].id}`}
               />
             </div>
@@ -109,7 +114,7 @@ export const MyCollage = ({ selfieData }: { selfieData: Selfie[] }) => {
             >
               <img
                 style={{ width: "auto", height: "30vh", objectFit: "cover" }}
-                src={`data:${selfieData[3].mimeType};base64,${selfieData[3].data}`}
+                src={srcFor(selfieData[3])}
                 alt={`Selfie ${selfieData[3].id}`}
               />
             </div>
@@ -124,7 +129,7 @@ export const MyCollage = ({ selfieData }: { selfieData: Selfie[] }) => {
             >
               <img
                 style={{ width: "auto", height: "30vh", objectFit: "cover" }}
-                src={`data:${selfieData[4].mimeType};base64,${selfieData[4].data}`}
+                src={srcFor(selfieData[4])}
                 alt={`Selfie ${selfieData[4].id}`}
               />
             </div>
@@ -149,7 +154,7 @@ export const MyCollage = ({ selfieData }: { selfieData: Selfie[] }) => {
             >
               <img
                 style={{ width: "20vh", height: "20vh", objectFit: "cover" }}
-                src={`data:${selfieData[5].mimeType};base64,${selfieData[5].data}`}
+                src={srcFor(selfieData[5])}
                 alt={`Selfie ${selfieData[5].id}`}
               />
             </div>
@@ -164,7 +169,7 @@ export const MyCollage = ({ selfieData }: { selfieData: Selfie[] }) => {
             >
               <img
                 style={{ width: "100%", height: "20vh", objectFit: "cover" }}
-                src={`data:${selfieData[6].mimeType};base64,${selfieData[6].data}`}
+                src={srcFor(selfieData[6])}
                 alt={`Selfie ${selfieData[6].id}`}
               />
             </div>
@@ -179,7 +184,7 @@ export const MyCollage = ({ selfieData }: { selfieData: Selfie[] }) => {
             >
               <img
                 style={{ width: "100%", height: "20vh", objectFit: "cover" }}
-                src={`data:${selfieData[7].mimeType};base64,${selfieData[7].data}`}
+                src={srcFor(selfieData[7])}
                 alt={`Selfie ${selfieData[7].id}`}
               />
             </div>

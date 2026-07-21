@@ -8,6 +8,9 @@ import { Assigned, GameCode, User, UserGame } from "@/database";
 import { reverse } from "dns";
 import { NextRequest, NextResponse } from "next/server";
 import { Op } from "sequelize";
+
+export const dynamic = "force-dynamic";
+
 interface PageParams {
   code: string;
 }

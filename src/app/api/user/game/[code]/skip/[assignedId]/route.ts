@@ -1,6 +1,8 @@
 import { Assigned, GameCode } from "@/database";
 import { NextRequest, NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 interface PageParams {
   code: string;
   assignedId: string;
