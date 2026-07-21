@@ -11,7 +11,7 @@ export async function GET(
   if (!selfie) {
     return NextResponse.json("Selfie not found", { status: 404 });
   }
-  const selfieFile = selfie.data;
+  const selfieFile = new Uint8Array(selfie.data);
   return new NextResponse(selfieFile, {
     headers: {
       "Content-Disposition": `attachment; filename=${selfieName}`,
