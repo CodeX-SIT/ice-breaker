@@ -7,7 +7,15 @@ FROM node:20-slim AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npm run build
+RUN --mount=type=secret,id=google_client_id \
+    --mount=type=secret,id=google_client_secret \
+    --mount=type=secret,id=nextauth_secret \
+    --mount=type=secret,id=nextauth_url \
+    GOOGLE_CLIENT_ID="$(cat /run/secrets/google_client_id)" \
+    GOOGLE_CLIENT_SECRET="$(cat /run/secrets/google_client_secret)" \
+    NEXTAUTH_SECRET="$(cat /run/secrets/nextauth_secret)" \
+    NEXTAUTH_URL="$(cat /run/secrets/nextauth_url)" \
+    npm run build
 
 FROM node:20-slim AS runner
 WORKDIR /app

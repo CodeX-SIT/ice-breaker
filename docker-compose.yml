@@ -1,6 +1,12 @@
 services:
   app:
-    build: .
+    build:
+      context: .
+      secrets:
+        - google_client_id
+        - google_client_secret
+        - nextauth_secret
+        - nextauth_url
     restart: unless-stopped
     env_file: .env
     volumes:
@@ -24,3 +30,13 @@ services:
 volumes:
   caddy_data:
   caddy_config:
+
+secrets:
+  google_client_id:
+    environment: GOOGLE_CLIENT_ID
+  google_client_secret:
+    environment: GOOGLE_CLIENT_SECRET
+  nextauth_secret:
+    environment: NEXTAUTH_SECRET
+  nextauth_url:
+    environment: NEXTAUTH_URL
